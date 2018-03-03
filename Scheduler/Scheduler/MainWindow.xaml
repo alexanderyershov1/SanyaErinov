@@ -1,0 +1,25 @@
+﻿<Window x:Class="Scheduler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Scheduler"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="415" Width="525"
+        Closed="Window_Closed"
+        Loaded="Window_Loaded">
+    <Grid Margin="0,0,0,57">
+        <DatePicker x:Name="DatePicker"
+                    HorizontalAlignment="Left"
+                    Margin="184,10,0,0"
+                    VerticalAlignment="Top"
+                    SelectedDateChanged="DatePicker_SelectedDateChanged"
+                    />
+        <TextBox HorizontalAlignment="Left"
+                 VerticalScrollBarVisibility="Visible"
+                 AcceptsReturn="True"
+                 TextChanged="TextBox_TextChanged"
+                 x:Name="TextBox" Height="284" Margin="30,52,0,-24" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="458"/>
+
+    </Grid>
+</Window>
