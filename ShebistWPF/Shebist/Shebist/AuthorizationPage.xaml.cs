@@ -47,7 +47,7 @@ namespace Shebist
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Name, Password FROM UserDB WHERE Name = N'{LoginTextBox.Text}' AND Password = N'{PasswordTextBox.Text}'", connection);
+                SqlCommand command = new SqlCommand($"SELECT Name, Email, Password FROM UserDB WHERE Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}' AND Password = N'{PasswordTextBox.Text}'", connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.HasRows)

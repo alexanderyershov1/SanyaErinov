@@ -43,36 +43,42 @@ namespace Shebist
         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
         private void RegistrationButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (LoginTextBox.Text == "" || NameTextBox.Text == "" || EmailTextBox.Text == "" || PasswordTextBox.Text == "")
             {
-                
+                MessageBox.Show($"Не все поля заполнены");
             }
-            catch (SqlException)
+            else
             {
-                MessageBox.Show("Пользователь с такими данными уже существует");
-            }
+                try
+                {
+                    MailAddress to = new MailAddress($"{EmailTextBox.Text}");
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        SqlCommand command = new SqlCommand($"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}'," +
+                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordTextBox.Text}')", connection);
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("Вы зарегистрированы");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand($"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}', N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}, N'{this.PasswordTextBox.Text}')", connection);
-                command.ExecuteNonQuery();
-                MessageBox.Show("Вы зарегистрированы");
-
-            }
-            if (EmailTextBox.Text != "")
-            {
-                MailAddress to = new MailAddress($"{EmailTextBox.Text}");
-                MailMessage mailMessage = new MailMessage(from, to);
-                mailMessage.Subject = "Регистрация";
-                mailMessage.Body = $"{NameTextBox.Text}, вы успешно зарегистрировались, ваши данные для входа:" +
-                    $"\nЛогин: {LoginTextBox.Text}" +
-                    $"\nПароль: {PasswordTextBox.Text}";
-                smtp.EnableSsl = true;
-                smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
-                smtp.Send(mailMessage);
-
-            }
+                    }
+                    MailMessage mailMessage = new MailMessage(from, to);
+                    mailMessage.Subject = "Регистрация";
+                    mailMessage.Body = $"{NameTextBox.Text}, вы успешно зарегистрировались, ваши данные для входа:" +
+                        $"\nЛогин: {LoginTextBox.Text}" +
+                        $"\nПароль: {PasswordTextBox.Text}";
+                    smtp.EnableSsl = true;
+                    smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
+                    smtp.Send(mailMessage);
+                }
+                catch (SqlException)
+                {
+                    MessageBox.Show("Пользователь с такими данными уже существует");
+                }
+                catch (FormatException)
+                {
+                    MessageBox.Show("Некорректная почта");
+                }     
+            }       
         }
 
         private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -82,3 +88,4 @@ namespace Shebist
         }
     }
 }
+

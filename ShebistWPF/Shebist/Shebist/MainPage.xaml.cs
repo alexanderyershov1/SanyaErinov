@@ -44,12 +44,12 @@ namespace Shebist
         }
 
 
-        bool isWordsCounterLabelEnabled,
-        isPCMEnabled,
-        isSearchByNumberTextBoxEnabled,
-        isNextBackButtonsEnabled,
-        isProgressBarEnabled,
-        isSoundEnabled = true;
+        bool isWordsCounterLabelEnabled = true;
+        bool isPCMEnabled = true;
+        bool isSearchByNumberTextBoxEnabled = true;
+        bool isNextBackButtonsEnabled = true;
+        bool isProgressBarEnabled = true; 
+        bool isSoundEnabled = true;
 
         MediaPlayer player = new MediaPlayer();
 
