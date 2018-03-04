@@ -7,21 +7,22 @@
       mc:Ignorable="d"
       Title="AuthorizationPage" Height="306.17" Width="627.447" Loaded="Page_Loaded">
 
-    <Grid Background="White" Margin="-13,0,-14,-24">
-        <TextBox x:Name="LoginTextBox" HorizontalAlignment="Left" Height="23" Margin="257,117,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="PasswordTextBox" HorizontalAlignment="Left" Height="23" Margin="257,180,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="LoginLabel" Content="Логин" HorizontalAlignment="Left" Margin="288,86,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="PasswordLabel" Content="Пароль" HorizontalAlignment="Left" Margin="288,149,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="AutorizationLabel" Content="Авторизация" HorizontalAlignment="Left" Margin="273,55,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="LoginButton" Content="Войти" HorizontalAlignment="Left" Margin="280,228,0,0" VerticalAlignment="Top" Width="75" Click="LoginButton_Click"/>
-        <Label x:Name="AlreadyHaveAnAccountLabel"
-               MouseLeftButtonDown="AlreadyHaveAnAccountLabel_MouseLeftButtonDown"
-               Content="Уже есть аккаунт?" HorizontalAlignment="Left" Margin="268,257,0,0" VerticalAlignment="Top"/>
+    <Grid Background="White" Margin="-13,0,-14,-60">
+        <TextBox x:Name="LoginTextBox"
+                 TextAlignment="Center"
+                 HorizontalAlignment="Left" Height="23" Margin="256,136,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="PasswordTextBox"
+                 TextAlignment="Center"
+                 HorizontalAlignment="Left" Height="23" Margin="256,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="LoginLabel" Content="Логин" HorizontalAlignment="Left" Margin="287,105,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="PasswordLabel" Content="Пароль" HorizontalAlignment="Left" Margin="287,168,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="AutorizationLabel" Content="Авторизация" HorizontalAlignment="Left" Margin="273,23,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="LoginButton" Content="Войти" HorizontalAlignment="Left" Margin="279,247,0,0" VerticalAlignment="Top" Width="75" Click="LoginButton_Click"/>
         <Label x:Name="NoAccountYet"
                MouseLeftButtonDown="NoAccountYet_MouseLeftButtonDown"
-               Content="Ещё нет аккаунта?" HorizontalAlignment="Left" Margin="267,283,0,0" VerticalAlignment="Top"/>
+               Content="Ещё нет аккаунта?" HorizontalAlignment="Left" Margin="266,272,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="RememberMeCheckBox"
-                  Content="Запомнить меня" HorizontalAlignment="Left" Margin="257,208,0,0" VerticalAlignment="Top">
+                  Content="Запомнить меня" HorizontalAlignment="Left" Margin="256,227,0,0" VerticalAlignment="Top">
         </CheckBox>
     </Grid>
 </Page>

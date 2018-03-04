@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Data.SqlClient;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Net.Mail;
+using System.Net;
 
 namespace Shebist
 {
@@ -30,6 +32,8 @@ namespace Shebist
 
         string cd = Directory.GetCurrentDirectory();
         BinaryFormatter formatter = new BinaryFormatter();
+        SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+
 
         static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
         static string parentDirectory = myDirectory.Parent.FullName;
@@ -43,7 +47,7 @@ namespace Shebist
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Name, Password FROM UserDB WHERE Name = N'{LoginTextBox.Text}' AND Password = '{PasswordTextBox.Text}'", connection);
+                SqlCommand command = new SqlCommand($"SELECT Name, Password FROM UserDB WHERE Name = N'{LoginTextBox.Text}' AND Password = N'{PasswordTextBox.Text}'", connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.HasRows)
@@ -60,12 +64,13 @@ namespace Shebist
                 }
             }
             
-            if (RememberMeCheckBox.IsChecked == true)
-            {
                 using(FileStream fs = new FileStream($"{cd}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
                 {
                     formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
                 }
+
+            if (RememberMeCheckBox.IsChecked == true)
+            {
                 using (FileStream fs = new FileStream($"{cd}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
                 {
                     formatter.Serialize(fs, LoginTextBox.Text);
@@ -76,46 +81,11 @@ namespace Shebist
                 }
             }
         }
-        private void RegistrationButton_Click(object sender, RoutedEventArgs e)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Name, Password FROM UserDB WHERE Name = N'{LoginTextBox.Text}' AND Password = '{PasswordTextBox.Text}'", connection);
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    MessageBox.Show("Пользователь с такими данными уже существует");
-                    LoginTextBox.Text = "";
-                    PasswordTextBox.Text = "";
-                }
-                else
-                {
-                    SqlCommand command2 = new SqlCommand($"INSERT INTO UserDB (Name, Password) VALUES (N'{LoginTextBox.Text}', N'{PasswordTextBox.Text}')", connection);
-                    command.ExecuteNonQuery();
-                    MessageBox.Show("Вы зарегистрированы");
-                    AutorizationLabel.Content = "Авторизация";
-                    LoginButton.Content = "Войти";
-                    LoginButton.Click += LoginButton_Click;
-                    LoginButton.Click -= RegistrationButton_Click;
-                }
-            }
-        }
-
-        private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AutorizationLabel.Content = "Авторизация";
-            LoginButton.Content = "Войти";
-            LoginButton.Click += LoginButton_Click;
-            LoginButton.Click -= RegistrationButton_Click;
-        }
-
+        
         private void NoAccountYet_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AutorizationLabel.Content = "Регистрация";
-            LoginButton.Content = "Регистрация";
-            LoginButton.Click -= LoginButton_Click;
-            LoginButton.Click += RegistrationButton_Click;
+            RegistrationPage rp = new RegistrationPage();
+            this.NavigationService.Navigate(rp);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -127,19 +97,28 @@ namespace Shebist
                     RememberMeCheckBox.IsChecked = (bool)formatter.Deserialize(fs);
                 }
             }
-            if (File.Exists($"{cd}\\Data\\LoginTextBoxText"))
+
+            if(RememberMeCheckBox.IsChecked == true)
             {
-                using (FileStream fs = new FileStream($"{cd}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
+                if (File.Exists($"{cd}\\Data\\LoginTextBoxText"))
                 {
-                    LoginTextBox.Text = (string)formatter.Deserialize(fs);
+                    using (FileStream fs = new FileStream($"{cd}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
+                    {
+                        LoginTextBox.Text = (string)formatter.Deserialize(fs);
+                    }
+                }
+                if (File.Exists($"{cd}\\Data\\PasswordTextBoxText"))
+                {
+                    using (FileStream fs = new FileStream($"{cd}\\Data\\PasswordTextBoxText", FileMode.OpenOrCreate))
+                    {
+                        PasswordTextBox.Text = (string)formatter.Deserialize(fs);
+                    }
                 }
             }
-            if (File.Exists($"{cd}\\Data\\PasswordTextBoxText"))
+            else
             {
-                using (FileStream fs = new FileStream($"{cd}\\Data\\PasswordTextBoxText", FileMode.OpenOrCreate))
-                {
-                    PasswordTextBox.Text = (string)formatter.Deserialize(fs);
-                }
+                LoginTextBox.Text = "";
+                PasswordTextBox.Text = "";
             }
         }
     }
