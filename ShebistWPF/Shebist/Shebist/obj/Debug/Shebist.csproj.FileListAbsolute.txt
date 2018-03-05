@@ -30,3 +30,5 @@ D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\DataRecoveryPage.g.cs
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\DataRecoveryPage.baml
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\AccountPage.g.cs
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\AccountPage.baml
+D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\TopicEditorPage.g.cs
+D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\TopicEditorPage.baml

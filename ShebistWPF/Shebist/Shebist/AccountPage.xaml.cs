@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Data.SqlClient;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Net.Mail;
+using System.Net;
 
 namespace Shebist
 {
@@ -48,32 +50,97 @@ namespace Shebist
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {parentDirectory2}\UserDB.mdf;Integrated Security=True";
 
+        int userid;
+        string login, name, email, password;
         private void AccountPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists($"{myDirectory}\\Data\\LoginTextBoxText"))
+            if (File.Exists($"{myDirectory}\\Data\\userid"))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\userid", FileMode.OpenOrCreate))
                 {
-                    LoginTextBox.Text = (string)formatter.Deserialize(fs);
+                    userid = (int)formatter.Deserialize(fs);
                 }
 
-                using(SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT Name, Email, Password FROM UserDB WHERE Login = '{LoginTextBox.Text}'", connection);
+                    SqlCommand command = new SqlCommand($"SELECT Login, Name, Email, Password FROM UserDB WHERE Id = {userid}", connection);
                     SqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())
                     {
-                        NameTextBox.Text = (string)reader.GetValue(0);
-                        EmailTextBox.Text = (string)reader.GetValue(1);
-                        PasswordTextBox.Text = (string)reader.GetValue(2);
+                        login = LoginTextBox.Text = (string)reader.GetValue(0);
+                        name = NameTextBox.Text = (string)reader.GetValue(1);
+                        email = EmailTextBox.Text = (string)reader.GetValue(2);
+                        password = PasswordTextBox.Text = (string)reader.GetValue(3);
                     }
                     reader.Close();
                 }
             }
         }
 
+        SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+        MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
+        private void ChangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (LoginTextBox.Text == "" || NameTextBox.Text == "" || EmailTextBox.Text == "" || PasswordTextBox.Text == "")
+            {
+                MessageBox.Show($"Не все поля заполнены");
+            }
+            else
+            {
+                try
+                {
+                    MailAddress to = new MailAddress($"{EmailTextBox.Text}");
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        if(LoginTextBox.Text != login)
+                        {
+                            SqlCommand command1 = new SqlCommand($"UPDATE UserDB SET Login = N'{LoginTextBox.Text}'", connection);
+                            command1.ExecuteNonQuery();
+                        }
+                        if (NameTextBox.Text != name)
+                        {
+                            SqlCommand command2 = new SqlCommand($"UPDATE UserDB SET  Name = N'{NameTextBox.Text}'", connection);
+                            command2.ExecuteNonQuery();
+                        }
+                        if (EmailTextBox.Text != email)
+                        {
+                            SqlCommand command3 = new SqlCommand($"UPDATE UserDB SET Email = N'{EmailTextBox.Text}'", connection);
+                            command3.ExecuteNonQuery();
+                        }
+                        if (PasswordTextBox.Text != password)
+                        {
+                            SqlCommand command4 = new SqlCommand($"UPDATE UserDB SET Password = N'{PasswordTextBox.Text}'", connection);
+                            command4.ExecuteNonQuery();
+                        }
+                    }
+
+                    if(LoginTextBox.Text != login || NameTextBox.Text != name || EmailTextBox.Text != email || PasswordTextBox.Text != password)
+                    {
+                        MessageBox.Show("Данные изменены");
+                        MailMessage mailMessage = new MailMessage(from, to);
+                        mailMessage.Subject = "Изменение данных";
+                        mailMessage.Body = $"{NameTextBox.Text}, ваши новые данные:" +
+                            $"\nЛогин: {LoginTextBox.Text}" +
+                            $"\nИмя: {NameTextBox.Text}" +
+                            $"\nПароль: {PasswordTextBox.Text}";
+                        smtp.EnableSsl = true;
+                        smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
+                        smtp.Send(mailMessage);
+                    } 
+                }
+                catch (SqlException)
+                {
+                    MessageBox.Show("Пользователь с такими данными уже существует");
+                }
+                catch (FormatException)
+                {
+                    MessageBox.Show("Некорректная почта");
+                }
+            }
+        }
     }
 }

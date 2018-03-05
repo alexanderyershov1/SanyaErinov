@@ -41,17 +41,23 @@ namespace Shebist
         static string parentDirectory2 = myDirectory2.Parent.FullName;
 
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        int userid;
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Name, Email, Password FROM UserDB WHERE Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}' AND Password = N'{PasswordTextBox.Text}'", connection);
+                SqlCommand command = new SqlCommand($"SELECT Id, Name, Email, Password FROM UserDB WHERE Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}' AND Password = N'{PasswordTextBox.Text}'", connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.HasRows)
                 {
+                    while (reader.Read())
+                    {
+                        userid = (int)reader.GetValue(0);
+                    }
+
                     reader.Close();
                     MainPage mp = new MainPage();
                     this.NavigationService.Navigate(mp);
@@ -63,20 +69,16 @@ namespace Shebist
                     MessageBox.Show("Неверный логин или пароль");
                 }
             }
-            
-                using(FileStream fs = new FileStream($"{cd}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
-                {
-                    formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
-                }
 
-                using (FileStream fs = new FileStream($"{cd}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
-                {
-                    formatter.Serialize(fs, LoginTextBox.Text);
-                }
-                using (FileStream fs = new FileStream($"{cd}\\Data\\PasswordTextBoxText", FileMode.OpenOrCreate))
-                {
-                    formatter.Serialize(fs, PasswordTextBox.Text);
-                }
+            using (FileStream fs = new FileStream($"{cd}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
+            }
+
+            using (FileStream fs = new FileStream($"{cd}\\Data\\userid", FileMode.OpenOrCreate))
+            {
+                    formatter.Serialize(fs, userid);
+            }
         }
         
         private void NoAccountYet_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -95,27 +97,28 @@ namespace Shebist
                 }
             }
 
-            if(RememberMeCheckBox.IsChecked == true)
+            if (RememberMeCheckBox.IsChecked == true)
             {
-                if (File.Exists($"{cd}\\Data\\LoginTextBoxText"))
+                if (File.Exists($"{cd}\\Data\\userid"))
                 {
-                    using (FileStream fs = new FileStream($"{cd}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
+                    using (FileStream fs = new FileStream($"{cd}\\Data\\userid", FileMode.OpenOrCreate))
                     {
-                        LoginTextBox.Text = (string)formatter.Deserialize(fs);
+                        userid = (int)formatter.Deserialize(fs);
                     }
-                }
-                if (File.Exists($"{cd}\\Data\\PasswordTextBoxText"))
-                {
-                    using (FileStream fs = new FileStream($"{cd}\\Data\\PasswordTextBoxText", FileMode.OpenOrCreate))
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
                     {
-                        PasswordTextBox.Text = (string)formatter.Deserialize(fs);
+                        connection.Open();
+                        SqlCommand command = new SqlCommand($"SELECT Login, Password FROM UserDB WHERE Id = {userid}", connection);
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            LoginTextBox.Text = (string)reader.GetValue(0);
+                            PasswordTextBox.Text = (string)reader.GetValue(1);
+                        }
                     }
-                }
-            }
-            else
-            {
-                LoginTextBox.Text = "";
-                PasswordTextBox.Text = "";
+                }  
             }
         }
 

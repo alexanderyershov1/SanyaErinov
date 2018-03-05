@@ -28,10 +28,15 @@ namespace Shebist
         {
             InitializeComponent();
         }
+        
 
         string cd = Directory.GetCurrentDirectory();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-
+        char[] randomMassiv = { 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
+            'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N',
+            'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V',
+            'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+        Random random = new Random();
 
         static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
         static string parentDirectory = myDirectory.Parent.FullName;
@@ -41,6 +46,7 @@ namespace Shebist
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
 
         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
+        string randomCode;
         private void RegistrationButton_Click(object sender, RoutedEventArgs e)
         {
             if (LoginTextBox.Text == "" || NameTextBox.Text == "" || EmailTextBox.Text == "" || PasswordTextBox.Text == "")
@@ -49,8 +55,52 @@ namespace Shebist
             }
             else
             {
+
                 try
                 {
+                    MailAddress to = new MailAddress($"{EmailTextBox.Text}");
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        SqlCommand command = new SqlCommand($"SELECT Login, Email FROM UserDB WHERE Login = N'{LoginTextBox.Text}' OR Email = N'{EmailTextBox.Text}'", connection);
+                        SqlDataReader reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                            MessageBox.Show("Пользователь с такими данными уже существует");
+                        else
+                        {
+                            randomCode = $"{randomMassiv.ElementAt(random.Next(0, 61))}" +
+                        $"{randomMassiv.ElementAt(random.Next(0, 61))}" +
+                        $"{randomMassiv.ElementAt(random.Next(0, 61))}" +
+                        $"{randomMassiv.ElementAt(random.Next(0, 61))}" +
+                        $"{randomMassiv.ElementAt(random.Next(0, 61))}";
+
+                            MailMessage mailMessage = new MailMessage(from, to);
+                            mailMessage.Subject = "Подтверждение регистрации";
+                            mailMessage.Body = $"{NameTextBox.Text}, код для подтверждения регистрации: {randomCode}" +
+                                $"\n\nЕсли вы нигде не регистрировались, проигнорируйте это письмо.";
+                            smtp.EnableSsl = true;
+                            smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
+                            smtp.Send(mailMessage);
+                        }
+                    }
+                }
+                catch (FormatException)
+                {
+                    MessageBox.Show("Некорректная почта");
+                }
+            }
+        }
+
+        private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AuthorizationPage ap = new AuthorizationPage();
+            this.NavigationService.Navigate(ap);
+        }
+
+        private void ConfirmRegistrationTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ConfirmRegistrationTextBox.Text == randomCode)
+            {
                     MailAddress to = new MailAddress($"{EmailTextBox.Text}");
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
@@ -69,25 +119,13 @@ namespace Shebist
                     smtp.EnableSsl = true;
                     smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
                     smtp.Send(mailMessage);
-                }
-                catch (SqlException)
-                {
-                    MessageBox.Show("Пользователь с такими данными уже существует");
-                }
-                catch (FormatException)
-                {
-                    MessageBox.Show("Некорректная почта");
-                }     
-            }
-            AuthorizationPage ap = new AuthorizationPage();
-            this.NavigationService.Navigate(ap);
-        }
 
-        private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            AuthorizationPage ap = new AuthorizationPage();
-            this.NavigationService.Navigate(ap);
+                AuthorizationPage ap = new AuthorizationPage();
+                this.NavigationService.Navigate(ap);
+            }
         }
     }
 }
+    
+
 

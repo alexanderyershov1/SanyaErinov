@@ -36,16 +36,31 @@ namespace Shebist
 
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {parentDirectory2}\Topics.mdf;Integrated Security=True";
-        public int id, count = 0;
+        public string connectionString2 = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
+        {parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        public int userid, id, count = 0;
         public string russian, description, english, path, Section = "";
+        
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists($"{myDirectory}\\Data\\LoginTextBoxText"))
+            if (File.Exists($"{myDirectory}\\Data\\userid"))
             {
-                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\userid", FileMode.OpenOrCreate))
                 {
-                    AccountMenuItem.Header = (string)formatter.Deserialize(fs);
+                    userid = (int)formatter.Deserialize(fs);
+                }
+            }
+
+            using(SqlConnection connection = new SqlConnection(connectionString2))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand($"SELECT Name FROM UserDB WHERE Id = {userid}", connection);
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    AccountMenuItem.Header = reader.GetValue(0);
                 }
             }
         }
