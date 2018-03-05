@@ -78,7 +78,9 @@ namespace Shebist
                 {
                     MessageBox.Show("Некорректная почта");
                 }     
-            }       
+            }
+            AuthorizationPage ap = new AuthorizationPage();
+            this.NavigationService.Navigate(ap);
         }
 
         private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

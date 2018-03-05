@@ -69,8 +69,6 @@ namespace Shebist
                     formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
                 }
 
-            if (RememberMeCheckBox.IsChecked == true)
-            {
                 using (FileStream fs = new FileStream($"{cd}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
                 {
                     formatter.Serialize(fs, LoginTextBox.Text);
@@ -79,7 +77,6 @@ namespace Shebist
                 {
                     formatter.Serialize(fs, PasswordTextBox.Text);
                 }
-            }
         }
         
         private void NoAccountYet_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -120,6 +117,12 @@ namespace Shebist
                 LoginTextBox.Text = "";
                 PasswordTextBox.Text = "";
             }
+        }
+
+        private void DataRecoveryLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DataRecoveryPage drp = new DataRecoveryPage();
+            this.NavigationService.Navigate(drp);
         }
     }
 }

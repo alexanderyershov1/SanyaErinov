@@ -38,9 +38,16 @@ namespace Shebist
         {parentDirectory2}\Topics.mdf;Integrated Security=True";
         public int id, count = 0;
         public string russian, description, english, path, Section = "";
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            if (File.Exists($"{myDirectory}\\Data\\LoginTextBoxText"))
+            {
+                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\LoginTextBoxText", FileMode.OpenOrCreate))
+                {
+                    AccountMenuItem.Header = (string)formatter.Deserialize(fs);
+                }
+            }
         }
 
 
@@ -52,12 +59,6 @@ namespace Shebist
         bool isSoundEnabled = true;
 
         MediaPlayer player = new MediaPlayer();
-
-        private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            AuthorizationPage ap = new AuthorizationPage();
-            this.NavigationService.Navigate(ap);
-        }
 
         private void QueryRussianDescriptionEnglishPath()
         {
@@ -174,6 +175,12 @@ namespace Shebist
             ProgressBar.Value = 1;
             ProgressBar.Maximum = count;
             WordsCounterLabel.Content = "1/" + count;
+        }
+
+        private void AccountMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AccountPage ap = new AccountPage();
+            this.NavigationService.Navigate(ap);
         }
 
 

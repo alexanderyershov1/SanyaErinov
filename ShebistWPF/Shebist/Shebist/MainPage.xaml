@@ -14,18 +14,18 @@
                         Stretch="Fill"/>
         </Grid.Background>
 
-        <Menu VerticalAlignment="Top" Height="31" RenderTransformOrigin="0.5,0.5">
+        <Menu VerticalAlignment="Top" Height="31">
 
+            <MenuItem x:Name="AccountMenuItem"
+                      Click="AccountMenuItem_Click"
+                      Width="83"
+                      />
             <MenuItem Header="Настройки"
                       x:Name="SettingsMenuItem"
                       Click="SettingsMenuItem_Click" Width="83"
                       />
             <MenuItem Header="Редактор тем" Height="31" Width="104"
                      ></MenuItem>
-            <MenuItem Header="Выход"
-                      x:Name="ExitMenuItem"
-                      Click="ExitMenuItem_Click" Width="83"
-                      />
 
         </Menu>
 

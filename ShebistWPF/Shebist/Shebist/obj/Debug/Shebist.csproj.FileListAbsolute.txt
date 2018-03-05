@@ -26,3 +26,7 @@ D:\SanyaErinov\ShebistWPF\Shebist\Shebist\bin\Debug\UserDB.mdf
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\bin\Debug\UserDB_log.ldf
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\RegistrationPage.g.cs
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\RegistrationPage.baml
+D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\DataRecoveryPage.g.cs
+D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\DataRecoveryPage.baml
+D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\AccountPage.g.cs
+D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\AccountPage.baml

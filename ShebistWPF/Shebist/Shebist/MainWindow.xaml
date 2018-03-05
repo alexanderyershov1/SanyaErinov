@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Shebist"
         mc:Ignorable="d"
-        Title="Шебист" Height="545" Width="887" WindowStyle="ThreeDBorderWindow"
+        Title="Шебист" Height="545" Width="950" WindowStyle="ThreeDBorderWindow"
         Source="AuthorizationPage.xaml" ShowsNavigationUI="False"
                   Closed="NavigationWindow_Closed"
         >

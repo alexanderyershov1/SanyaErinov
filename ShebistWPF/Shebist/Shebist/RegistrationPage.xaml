@@ -10,25 +10,29 @@
 
     <Grid>
         <TextBox x:Name="LoginTextBox"
+                 MaxLength="50"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="23" Margin="341,112,339,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                 HorizontalAlignment="Center" Height="23" Margin="296,112,267,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <TextBox x:Name="PasswordTextBox"
+                 MaxLength="50"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="23" Margin="341,289,339,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                 HorizontalAlignment="Center" Height="23" Margin="296,289,267,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <TextBox x:Name="EmailTextBox"
+                 MaxLength="50"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="23" Margin="341,230,339,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                 HorizontalAlignment="Center" Height="23" Margin="296,230,267,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <TextBox x:Name="NameTextBox"
+                 MaxLength="50"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="23" Margin="341,171,339,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                 HorizontalAlignment="Center" Height="23" Margin="296,171,267,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <Label x:Name="LoginLabel" Content="Логин" HorizontalAlignment="Center" Margin="387,81,380,0" VerticalAlignment="Top"/>
-        <Label x:Name="PasswordLabel" Content="Пароль" HorizontalAlignment="Center" Margin="380,258,381,0" VerticalAlignment="Top"/>
-        <Label x:Name="RegistrationLabel" Content="Регистрация" HorizontalAlignment="Center" Margin="368,50,365,0" VerticalAlignment="Top"/>
-        <Button x:Name="LoginButton" Content="Регистрация" HorizontalAlignment="Center" Margin="382,326,381,0" VerticalAlignment="Top" Width="76" Click="RegistrationButton_Click"/>
+        <Label x:Name="PasswordLabel" Content="Пароль" HorizontalAlignment="Center" Margin="403,258,385,0" VerticalAlignment="Top" RenderTransformOrigin="0.843,0.538"/>
+        <Label x:Name="RegistrationLabel" FontSize="30" Content="Регистрация" HorizontalAlignment="Center" Margin="333,26,319,0" VerticalAlignment="Top" Width="187"/>
+        <Button x:Name="LoginButton" Content="Регистрация" HorizontalAlignment="Center" Margin="401,326,362,0" VerticalAlignment="Top" Width="76" Click="RegistrationButton_Click"/>
         <Label x:Name="AlreadyHaveAnAccountLabel"
             MouseLeftButtonDown="AlreadyHaveAnAccountLabel_MouseLeftButtonDown"
-            Content="Уже есть аккаунт?" HorizontalAlignment="Center" Margin="352,351,339,0" VerticalAlignment="Top"/>
-        <Label x:Name="EmailLabel" Content="Почта" HorizontalAlignment="Center" Margin="387,199,381,0" VerticalAlignment="Top" RenderTransformOrigin="0.163,0.577"/>
-        <Label x:Name="NameLabel" Content="Имя" HorizontalAlignment="Center" Margin="387,140,391,0" VerticalAlignment="Top"/>
+            Content="Уже есть аккаунт?" HorizontalAlignment="Center" Margin="383,361,348,0" VerticalAlignment="Top"/>
+        <Label x:Name="EmailLabel" Content="Почта" HorizontalAlignment="Center" Margin="411,199,385,0" VerticalAlignment="Top" RenderTransformOrigin="0.163,0.577"/>
+        <Label x:Name="NameLabel" Content="Имя" HorizontalAlignment="Center" Margin="411,140,395,0" VerticalAlignment="Top"/>
     </Grid>
 </Page>
