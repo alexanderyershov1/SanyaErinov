@@ -1,0 +1,163 @@
+﻿<Page x:Class="Shebist.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Shebist"
+      mc:Ignorable="d"
+      Title="Шебист" Loaded="Window_Loaded"
+      >
+
+    <Grid x:Name="Grid">
+        <Grid.Background>
+            <ImageBrush ImageSource="koshka-kot-britanskiy-seryy.jpg"
+                        Stretch="Fill"/>
+        </Grid.Background>
+
+        <Menu VerticalAlignment="Top" Height="31">
+
+            <MenuItem x:Name="AccountMenuItem"
+                      Click="AccountMenuItem_Click"
+                      Width="83"
+                      />
+            <MenuItem Header="Настройки"
+                      x:Name="SettingsMenuItem"
+                      Click="SettingsMenuItem_Click" Width="83"
+                      />
+            <MenuItem Header="Редактор тем" Height="31" Width="104"
+                     ></MenuItem>
+
+        </Menu>
+
+        <TextBox x:Name="ChoiceOfTopicTextBox"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Width="74"
+                 Height="21"
+                 Margin="365,95,415,364"
+                 TextWrapping="NoWrap"
+                 TextAlignment="Center"
+                 IsEnabled="True"
+                 KeyDown="ChoiceOfTopicTextBox_KeyDown"
+                 Visibility="Visible"
+                 Opacity="1"
+                 />
+
+
+        <TextBox x:Name="EnteringAWordTextBox"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Height="29"
+                 Margin="325,294,371,126" 
+                 TextWrapping="NoWrap"
+                 TextAlignment="Center"
+                 Width="150"
+                 IsEnabled ="False"
+                 Visibility="Visible"
+                 TextChanged="EnteringAWordTextBox_TextChanged"
+                 FontSize="14"/>
+
+        <TextBox x:Name="SearchByNumberTextBox"
+                 TextAlignment="Center"
+                 HorizontalAlignment="Center"
+                 Height="23"
+                 Margin="344,148,451,278"
+                 TextWrapping="NoWrap"
+                 VerticalAlignment="Center"
+                 Width="51"
+                 IsEnabled="False"
+                 Visibility="Visible"
+                 KeyDown="SearchByNumberTextBox_KeyDown"/>
+
+        <Label x:Name="ChoiceOfTopicLabel"
+               HorizontalContentAlignment="Center"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Content="Выберите тему"
+               IsEnabled="True"
+               Visibility="Visible"
+               Margin="348,66,406,397" Height="31" Width="100"
+              />
+
+        <Label x:Name="WordOutputLabel"
+               HorizontalAlignment="Center"
+               HorizontalContentAlignment="Center"
+               VerticalAlignment="Center"
+               Content="Вывод" Margin="209,216,275,190"
+               IsEnabled ="False"
+               Visibility="Visible"
+               FontSize="28" Width="362" Height="43"/>
+
+        <Label x:Name="DescriptionLabel"
+               HorizontalContentAlignment="Center"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Content="Описание"
+               Margin="360,259,421,161"
+               IsEnabled ="False"
+               Visibility="Visible"
+               FontSize="16" Height="29"/>
+
+        <Label x:Name="WordsCounterLabel"
+               Content="Счётчик слов"
+               HorizontalAlignment="Center"
+               Margin="407,148,330,278"
+               VerticalAlignment="Center"
+               IsEnabled="False"
+               Width="109"
+               Visibility="Visible" Height="23"/>
+
+        <Button x:Name="NextButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="▶"
+                Margin="510,294,297,126"
+                Width="39"
+                Height="29"
+                IsEnabled ="False"
+                Visibility="Visible"
+                Click="NextButton_Click"/>
+
+        <Button x:Name="BackButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="◀"
+                Margin="266,294,541,126"
+                Width="39"
+                Height="29"
+                IsEnabled ="False"
+                Visibility="Visible"
+                Click="BackButton_Click"/>
+
+        <Button x:Name="StartButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="Начать"
+                Margin="344,343,394,82"
+                Width="108"
+                Height="24"
+                IsEnabled ="False"
+                Visibility="Visible"
+                Click="StartButton_Click"/>
+
+        <Button x:Name="ToTheChoiceOfTopicButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="К выбору темы"
+                Margin="344,378,394,48"
+                Width="108"
+                Height="23"
+                IsEnabled ="False"
+                Visibility="Visible"
+                Click="ToTheChoiceOfTopicButton_Click"/>
+
+        <ProgressBar x:Name="ProgressBar"
+                     HorizontalAlignment="Center"
+                     Height="25"
+                     Margin="325,186,380,238"
+                     VerticalAlignment="Center"
+                     Width="141"
+                     IsEnabled="False"
+                     Visibility="Visible"/>
+    </Grid>
+</Page>

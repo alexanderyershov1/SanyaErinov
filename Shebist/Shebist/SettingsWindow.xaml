@@ -1,0 +1,53 @@
+﻿<Window x:Class="Shebist.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Shebist"
+        mc:Ignorable="d"
+        Title="Настройки" Height="300" Width="422">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Прозрачность">
+                <Grid>
+
+                    <Label x:Name="MainWindowOpacityLabel"
+                           HorizontalAlignment="Center"
+                           Margin="114,26,130,0" Content="Окно" Width="42"/>
+                    <Slider HorizontalAlignment="Center"
+                x:Name="MainWindowOpacitySlider"
+                Margin="22,57,42,157"
+                Width="222"
+                Minimum="0.0"
+                Maximum="1.0"
+                ValueChanged="MainWindowOpacitySlider_ValueChanged"/>
+                    <Label x:Name="NextBackButtonsOpacityLabel"
+                           HorizontalAlignment="Center"
+                           Margin="68,99,77,107" Content="Кнопки вперёд-назад" Width="141"/>
+                    <Slider HorizontalAlignment="Center"
+                x:Name="NextBackButtonsOpacitySlider"
+                Margin="22,134,42,80"
+                Width="222"
+                Minimum="0.0"
+                Maximum="1.0"
+                ValueChanged="NextBackButtonsOpacitySlider_ValueChanged"/>
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Цвет" Margin="-2,0,-12,0">
+                
+            </TabItem>
+            <TabItem Header="Шрифт" Margin="12,0,-12,0">
+
+            </TabItem>
+            <TabItem Header="Изображение" Margin="12,0,-12,0">
+
+            </TabItem>
+            <TabItem Header="Размер" Margin="12,0,-12,0">
+
+            </TabItem>
+        </TabControl>
+
+
+    </Grid>
+</Window>

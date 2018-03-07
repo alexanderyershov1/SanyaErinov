@@ -1,6 +1,0 @@
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\ExploreEnglish.csprojResolveAssemblyReference.cache
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\ExploreEnglish.Form1.resources
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\ExploreEnglish.Properties.Resources.resources
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\ExploreEnglish.SectionsList.resources
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\ExploreEnglish.csproj.GenerateResource.Cache
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\ExploreEnglish.csproj.CoreCompileInputs.cache
