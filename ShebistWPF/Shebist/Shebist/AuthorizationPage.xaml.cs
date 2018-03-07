@@ -28,6 +28,7 @@ namespace Shebist
         public AuthorizationPage()
         {
             InitializeComponent();
+            WrongDataLabel.Visibility = Visibility.Hidden;
         }
 
         string cd = Directory.GetCurrentDirectory();
@@ -48,7 +49,7 @@ namespace Shebist
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Id, Name, Email, Password FROM UserDB WHERE Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}' AND Password = N'{PasswordTextBox.Text}'", connection);
+                SqlCommand command = new SqlCommand($"SELECT Id, Name, Email, Password FROM UserDB WHERE (Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}') AND Password = N'{PasswordTextBox.Text} '", connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.HasRows)
@@ -66,7 +67,7 @@ namespace Shebist
                 else
                 {
                     reader.Close();
-                    MessageBox.Show("Неверный логин или пароль");
+                    WrongDataLabel.Visibility = Visibility.Visible;
                 }
             }
 
@@ -126,6 +127,16 @@ namespace Shebist
         {
             DataRecoveryPage drp = new DataRecoveryPage();
             this.NavigationService.Navigate(drp);
+        }
+
+        private void LoginTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            WrongDataLabel.Visibility = Visibility.Hidden;
+        }
+
+        private void PasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            WrongDataLabel.Visibility = Visibility.Hidden;
         }
     }
 }
