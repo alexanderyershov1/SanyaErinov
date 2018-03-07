@@ -65,7 +65,7 @@ namespace Shebist
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT Login, Email, Password FROM UserDB WHERE Id = {userid}", connection);
+                    SqlCommand command = new SqlCommand($"SELECT Login, Name, Email, Password FROM UserDB WHERE Id = {userid}", connection);
                     SqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())

@@ -38,7 +38,7 @@ namespace Shebist
         {parentDirectory2}\Topics.mdf;Integrated Security=True";
         public string connectionString2 = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {parentDirectory2}\UserDB.mdf;Integrated Security=True";
-        public int userid, id, count = 0;
+        public int userid, id = 1, count = 0;
         public string russian, description, english, path, Section = "";
         
 
@@ -110,22 +110,48 @@ namespace Shebist
         {
             if (e.Key == Key.Enter)
             {
-                switch (ChoiceOfTopicTextBox.Text.ToLower().Trim())
+                Section = ChoiceOfTopicTextBox.Text;
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    case "первая":
-                        Section = "First";
-                        break;
-                    default:
+                    connection.Open();
+                    SqlCommand command = new SqlCommand($"SELECT Russian, Description, English, Path FROM {Section} where Id = {id}", connection);
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+
+                            russian = (string)reader.GetValue(0);
+                            russian = russian.Trim();
+                            WordOutputLabel.Content = russian;
+
+                            description = (string)reader.GetValue(1);
+                            description = description.Trim();
+                            DescriptionLabel.Content = description;
+
+                            english = (string)reader.GetValue(2);
+                            english = english.Trim();
+                            path = (string)reader.GetValue(3);    
+                        }
+
+                        ChoiceOfTopicLabel.IsEnabled =
+                            ChoiceOfTopicTextBox.IsEnabled = false;
+                        ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
+                        StartButton.IsEnabled = ToTheChoiceOfTopicButton.IsEnabled = true;
+                        StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
+                        ChoiceOfTopicTextBox.Clear();
+                    }
+                    else
+                    {
                         ChoiceOfTopicTextBox.Clear();
                         return;
+                    }
+
                 }
 
-                ChoiceOfTopicLabel.IsEnabled =
-                ChoiceOfTopicTextBox.IsEnabled = false;
-                ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
-                StartButton.IsEnabled = ToTheChoiceOfTopicButton.IsEnabled = true;
-                StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
-                ChoiceOfTopicTextBox.Clear();
+                
             }
         }
 
