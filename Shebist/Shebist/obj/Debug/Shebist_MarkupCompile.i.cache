@@ -4,14 +4,14 @@
 winexe
 C#
 .cs
-D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\
 Shebist
 none
 false
 DEBUG;TRACE
-D:\SanyaErinov\ShebistWPF\Shebist\Shebist\App.xaml
+D:\SanyaErinov\Shebist\Shebist\App.xaml
 8983453127
-41481064629
+2-111805958
 161557337591
 131569487696
 AccountPage.xaml;AuthorizationPage.xaml;DataRecoveryPage.xaml;MainPage.xaml;MainWindow.xaml;RegistrationPage.xaml;SettingsWindow.xaml;TopicEditorPage.xaml;

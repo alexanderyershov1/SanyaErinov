@@ -17,6 +17,7 @@ using System.Data.SqlClient;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Net.Mail;
 using System.Net;
+using Microsoft.Win32;
 
 namespace Shebist
 {
@@ -78,6 +79,17 @@ namespace Shebist
                     reader.Close();
                 }
             }
+        }
+
+        private void DeleteAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("Вы действительно хотите удалить аккаунт?", "Подтверждение", MessageBoxButton.YesNo);
+            //using(SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    connection.Open();
+            //    SqlCommand command = new SqlCommand($"DELETE FROM UserDB WHERE Id = {userid}");
+                
+            //}
         }
 
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);

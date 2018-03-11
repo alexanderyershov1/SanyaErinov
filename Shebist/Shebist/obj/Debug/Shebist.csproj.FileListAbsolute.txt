@@ -32,8 +32,6 @@ D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\AccountPage.g.cs
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\AccountPage.baml
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\TopicEditorPage.g.cs
 D:\SanyaErinov\ShebistWPF\Shebist\Shebist\obj\Debug\TopicEditorPage.baml
-D:\SanyaErinov\Shebist\Shebist\bin\Debug\Topics.mdf
-D:\SanyaErinov\Shebist\Shebist\bin\Debug\Topics_log.ldf
 D:\SanyaErinov\Shebist\Shebist\bin\Debug\UserDB.mdf
 D:\SanyaErinov\Shebist\Shebist\bin\Debug\UserDB_log.ldf
 D:\SanyaErinov\Shebist\Shebist\bin\Debug\Shebist.exe.config

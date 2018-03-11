@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Data.SqlClient;
 
 namespace Shebist
 {
@@ -26,10 +27,12 @@ namespace Shebist
             InitializeComponent();
         }
 
-        private void NavigationWindow_Closed(object sender, EventArgs e)
-        {
-            
-        }
+        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
+        static string parentDirectory = myDirectory.Parent.FullName;
+        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
+        static string parentDirectory2 = myDirectory2.Parent.FullName;
+
+        public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
     }
 }
 

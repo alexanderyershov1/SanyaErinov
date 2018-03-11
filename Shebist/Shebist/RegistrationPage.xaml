@@ -14,39 +14,38 @@
                  MaxLength="50"
                  TextAlignment="Center"
                  HorizontalAlignment="Center" Height="22" Margin="297,70,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
-        <TextBox x:Name="PasswordTextBox"
-                 TextChanged="PasswordTextBox_TextChanged"
-                 MaxLength="50"
-                 TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="24" Margin="297,246,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <TextBox x:Name="EmailTextBox"
                  TextChanged="EmailTextBox_TextChanged"
                  MaxLength="50"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="22" Margin="297,188,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
+                 HorizontalAlignment="Center" Height="22" Margin="297,147,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <TextBox x:Name="NameTextBox"
                  TextChanged="NameTextBox_TextChanged"
                  MaxLength="50"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="24" Margin="297,128,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
+                 HorizontalAlignment="Center" Height="24" Margin="297,108,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
         <Label x:Name="LoginLabel" Content="Логин" HorizontalAlignment="Center" Margin="240,66,555,0" VerticalAlignment="Top"/>
-        <Label x:Name="PasswordLabel" Content="Пароль" HorizontalAlignment="Center" Margin="240,244,548,0" VerticalAlignment="Top" RenderTransformOrigin="0.843,0.538"/>
+        <Label x:Name="PasswordLabel" Content="Пароль" HorizontalAlignment="Center" Margin="233,183,555,0" VerticalAlignment="Top" RenderTransformOrigin="0.843,0.538"/>
         <Label x:Name="RegistrationLabel" FontSize="30" Content="Регистрация" HorizontalAlignment="Center" Margin="323,8,329,0" VerticalAlignment="Top" Width="187"/>
-        <Button x:Name="LoginButton" Content="Регистрация" HorizontalAlignment="Center" Margin="385,369,378,0" VerticalAlignment="Top" Width="76" Click="RegistrationButton_Click"/>
+        <Button x:Name="LoginButton" Content="Регистрация" HorizontalAlignment="Center" Margin="395,259,368,0" VerticalAlignment="Top" Width="76" Click="RegistrationButton_Click"/>
         <Label x:Name="AlreadyHaveAnAccountLabel"
             MouseLeftButtonDown="AlreadyHaveAnAccountLabel_MouseLeftButtonDown"
-            Content="Уже есть аккаунт?" HorizontalAlignment="Center" Margin="366,394,365,0" VerticalAlignment="Top"/>
-        <Label x:Name="EmailLabel" Content="Почта" HorizontalAlignment="Center" Margin="248,184,548,0" VerticalAlignment="Top" RenderTransformOrigin="0.163,0.577"/>
-        <Label x:Name="NameLabel" Content="Имя" HorizontalAlignment="Center" Margin="248,126,558,0" VerticalAlignment="Top"/>
+            Content="Уже есть аккаунт?" HorizontalAlignment="Center" Margin="376,284,355,0" VerticalAlignment="Top"/>
+        <Label x:Name="EmailLabel" Content="Почта" HorizontalAlignment="Center" Margin="241,143,555,0" VerticalAlignment="Top" RenderTransformOrigin="0.163,0.577"/>
+        <Label x:Name="NameLabel" Content="Имя" HorizontalAlignment="Center" Margin="251,106,555,0" VerticalAlignment="Top"/>
         <TextBox x:Name="ConfirmRegistrationTextBox"
                  TextChanged="ConfirmRegistrationTextBox_TextChanged"
             MaxLength="5"
             TextAlignment="Center"
-            HorizontalAlignment="Center" Height="23" Margin="288,335,275,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
-        <Label x:Name="ConfirmRegistrationLabel" Content="Введите код, отправленный на" HorizontalAlignment="Center" Margin="288,306,213,0" VerticalAlignment="Top" RenderTransformOrigin="0.843,0.538" Width="338"/>
-        <Label x:Name="CheckLoginLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="366,97,261,0" VerticalAlignment="Top" Width="212"/>
-        <Label x:Name="CheckEmailLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="364,216,296,0" VerticalAlignment="Top" Width="179"/>
-        <Label x:Name="CheckNameLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="366,157,261,0" VerticalAlignment="Top" Width="212"/>
-        <Label x:Name="CheckPasswordLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="366,275,261,0" VerticalAlignment="Top" Width="212"/>
+            HorizontalAlignment="Center" Height="23" Margin="297,341,266,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
+        <Label x:Name="ConfirmRegistrationLabel" Content="Введите код, отправленный на" HorizontalAlignment="Center" Margin="297,310,189,0" VerticalAlignment="Top" RenderTransformOrigin="0.843,0.538" Width="353"/>
+        <Label x:Name="CheckLoginLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="586,70,41,0" VerticalAlignment="Top" Width="212"/>
+        <Label x:Name="CheckEmailLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="586,143,73,0" VerticalAlignment="Top" Width="180"/>
+        <Label x:Name="CheckNameLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="586,108,41,0" VerticalAlignment="Top" Width="212"/>
+        <Label x:Name="CheckPasswordLabel" Foreground="Red" Content="Поле не заполнено" HorizontalAlignment="Center" Margin="586,183,41,0" VerticalAlignment="Top" Width="212"/>
+        <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged" HorizontalAlignment="Left" Margin="297,188,0,0" VerticalAlignment="Top" Width="276" Height="21"/>
+        <PasswordBox x:Name="ConfirmPasswordBox" PasswordChanged="ConfirmPasswordBox_PasswordChanged" HorizontalAlignment="Left" Margin="297,226,0,0" VerticalAlignment="Top" Width="276" Height="21"/>
+        <Label x:Name="ConfirmPasswordLabel" Content="Подтвердите пароль" HorizontalAlignment="Center" Margin="159,221,555,0" VerticalAlignment="Top" RenderTransformOrigin="0.843,0.538" Width="125"/>
+        <Label x:Name="CheckPasswordsLabel" Foreground="Red" Content="Пароли не совпадают" HorizontalAlignment="Center" Margin="586,221,41,0" VerticalAlignment="Top" Width="212"/>
     </Grid>
 </Page>

@@ -56,7 +56,8 @@ namespace Shebist
         {
             
             if(CheckLoginLabel.Content.ToString() == "Данный логин свободен" && CheckNameLabel.Visibility == Visibility.Hidden
-                && CheckEmailLabel.Content.ToString() == "Данная почта свободна" && CheckPasswordLabel.Visibility == Visibility.Hidden)
+                && CheckEmailLabel.Content.ToString() == "Данная почта свободна" && CheckPasswordLabel.Visibility == Visibility.Hidden
+                && CheckPasswordsLabel.Content.ToString() == "Пароли совпадают")
             {
                 randomCode = RandomString(5);
 
@@ -70,7 +71,7 @@ namespace Shebist
 
 
                 LoginLabel.Visibility = LoginTextBox.Visibility = NameLabel.Visibility = NameTextBox.Visibility =
-                    EmailLabel.Visibility = EmailTextBox.Visibility = PasswordLabel.Visibility = PasswordTextBox.Visibility =
+                    EmailLabel.Visibility = EmailTextBox.Visibility = PasswordLabel.Visibility = PasswordBox.Visibility =
                     CheckLoginLabel.Visibility = CheckEmailLabel.Visibility = Visibility.Hidden;
                 ConfirmRegistrationLabel.Visibility = ConfirmRegistrationTextBox.Visibility = Visibility.Visible;
                 ConfirmRegistrationLabel.Content = $"Введите код, отправленный на {EmailTextBox.Text}";
@@ -93,7 +94,7 @@ namespace Shebist
                     {
                         connection.Open();
                         SqlCommand command = new SqlCommand($"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}'," +
-                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordTextBox.Text}')", connection);
+                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}')", connection);
                         command.ExecuteNonQuery();
                         MessageBox.Show("Вы зарегистрированы");
 
@@ -140,14 +141,6 @@ namespace Shebist
                 CheckNameLabel.Visibility = Visibility.Hidden;
         }
 
-        private void PasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (PasswordTextBox.Text == "")
-                CheckPasswordLabel.Visibility = Visibility.Visible;
-            else
-                CheckPasswordLabel.Visibility = Visibility.Hidden;
-        }
-
         private void EmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (EmailTextBox.Text == "")
@@ -183,6 +176,28 @@ namespace Shebist
                     CheckEmailLabel.Content = "Некорректная почта";
                 }
                 
+            }
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (PasswordBox.Password == "")
+                CheckPasswordLabel.Visibility = Visibility.Visible;
+            else
+                CheckPasswordLabel.Visibility = Visibility.Hidden;
+        }
+
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if(PasswordBox.Password != "" && PasswordBox.Password == ConfirmPasswordBox.Password)
+            {
+                CheckPasswordsLabel.Foreground = Brushes.Green;
+                CheckPasswordsLabel.Content = "Пароли совпадают";
+            }
+            else
+            {
+                CheckPasswordsLabel.Foreground = Brushes.Red;
+                CheckPasswordsLabel.Content = "Пароли не совпадают";
             }
         }
     }

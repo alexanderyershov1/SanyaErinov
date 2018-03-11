@@ -14,7 +14,7 @@
                         Stretch="Fill"/>
         </Grid.Background>
 
-        <Menu VerticalAlignment="Top" Height="31">
+        <Menu x:Name="Menu" VerticalAlignment="Top" Height="31" MouseEnter="Menu_MouseEnter" MouseLeave="Menu_MouseLeave">
 
             <MenuItem x:Name="AccountMenuItem"
                       Click="AccountMenuItem_Click"
@@ -52,7 +52,7 @@
                  TextWrapping="NoWrap"
                  TextAlignment="Center"
                  Width="150"
-                 IsEnabled ="False"
+                 IsEnabled="True"
                  Visibility="Visible"
                  TextChanged="EnteringAWordTextBox_TextChanged"
                  FontSize="14"/>
@@ -65,7 +65,7 @@
                  TextWrapping="NoWrap"
                  VerticalAlignment="Center"
                  Width="51"
-                 IsEnabled="False"
+                 IsEnabled="True"
                  Visibility="Visible"
                  KeyDown="SearchByNumberTextBox_KeyDown"/>
 
@@ -84,7 +84,7 @@
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
                Content="Вывод" Margin="209,216,275,190"
-               IsEnabled ="False"
+               IsEnabled="True"
                Visibility="Visible"
                FontSize="28" Width="362" Height="43"/>
 
@@ -94,7 +94,7 @@
                VerticalAlignment="Center"
                Content="Описание"
                Margin="360,259,421,161"
-               IsEnabled ="False"
+               IsEnabled="True"
                Visibility="Visible"
                FontSize="16" Height="29"/>
 
@@ -103,7 +103,7 @@
                HorizontalAlignment="Center"
                Margin="407,148,330,278"
                VerticalAlignment="Center"
-               IsEnabled="False"
+               IsEnabled="True"
                Width="109"
                Visibility="Visible" Height="23"/>
 
@@ -114,7 +114,7 @@
                 Margin="510,294,297,126"
                 Width="39"
                 Height="29"
-                IsEnabled ="False"
+                IsEnabled="True"
                 Visibility="Visible"
                 Click="NextButton_Click"/>
 
@@ -125,7 +125,7 @@
                 Margin="266,294,541,126"
                 Width="39"
                 Height="29"
-                IsEnabled ="False"
+                IsEnabled="True"
                 Visibility="Visible"
                 Click="BackButton_Click"/>
 
@@ -136,7 +136,7 @@
                 Margin="344,343,394,82"
                 Width="108"
                 Height="24"
-                IsEnabled ="False"
+                IsEnabled="True"
                 Visibility="Visible"
                 Click="StartButton_Click"/>
 
@@ -147,7 +147,7 @@
                 Margin="344,378,394,48"
                 Width="108"
                 Height="23"
-                IsEnabled ="False"
+                IsEnabled="True"
                 Visibility="Visible"
                 Click="ToTheChoiceOfTopicButton_Click"/>
 
@@ -157,7 +157,7 @@
                      Margin="325,186,380,238"
                      VerticalAlignment="Center"
                      Width="141"
-                     IsEnabled="False"
+                     IsEnabled="True"
                      Visibility="Visible"/>
     </Grid>
 </Page>

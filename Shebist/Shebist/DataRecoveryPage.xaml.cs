@@ -27,6 +27,8 @@ namespace Shebist
         public DataRecoveryPage()
         {
             InitializeComponent();
+            ConfirmLabel.Visibility = Visibility.Hidden;
+            ConfirmTextBox.Visibility = Visibility.Hidden;
         }
 
         static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);

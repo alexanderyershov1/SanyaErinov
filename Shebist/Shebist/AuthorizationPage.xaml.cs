@@ -35,13 +35,12 @@ namespace Shebist
         BinaryFormatter formatter = new BinaryFormatter();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
-
         static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
         static string parentDirectory = myDirectory.Parent.FullName;
         static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
         static string parentDirectory2 = myDirectory2.Parent.FullName;
 
-        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
         int userid;
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -49,7 +48,7 @@ namespace Shebist
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Id, Name, Email, Password FROM UserDB WHERE (Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}') AND Password = N'{PasswordTextBox.Text} '", connection);
+                SqlCommand command = new SqlCommand($"SELECT Id, Name, Email, Password FROM UserDB WHERE (Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}') AND Password = N'{PasswordBox.Password} '", connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.HasRows)
@@ -69,8 +68,8 @@ namespace Shebist
                     reader.Close();
                     WrongDataLabel.Visibility = Visibility.Visible;
                 }
-            }
-
+            }     
+        
             using (FileStream fs = new FileStream($"{cd}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
@@ -116,9 +115,9 @@ namespace Shebist
                         while (reader.Read())
                         {
                             LoginTextBox.Text = (string)reader.GetValue(0);
-                            PasswordTextBox.Text = (string)reader.GetValue(1);
+                            PasswordBox.Password = (string)reader.GetValue(1);
                         }
-                    }
+                    }   
                 }  
             }
         }
@@ -134,9 +133,29 @@ namespace Shebist
             WrongDataLabel.Visibility = Visibility.Hidden;
         }
 
-        private void PasswordTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             WrongDataLabel.Visibility = Visibility.Hidden;
+        }
+
+        private void DataRecoveryLabel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DataRecoveryLabel.FontSize = 13;
+        }
+
+        private void DataRecoveryLabel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DataRecoveryLabel.FontSize = 12;
+        }
+
+        private void NoAccountYet_MouseEnter(object sender, MouseEventArgs e)
+        {
+            NoAccountYet.FontSize = 13;
+        }
+
+        private void NoAccountYet_MouseLeave(object sender, MouseEventArgs e)
+        {
+            NoAccountYet.FontSize = 12;
         }
     }
 }

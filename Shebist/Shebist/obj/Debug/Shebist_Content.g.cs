@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("topics.mdf")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("topics_log.ldf")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("userdb.mdf")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("userdb_log.ldf")]
 
