@@ -43,22 +43,20 @@ namespace Shebist
             this.NavigationService.Navigate(mp);
         }
 
-        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        static string parentDirectory = myDirectory.Parent.FullName;
-        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
-        static string parentDirectory2 = myDirectory2.Parent.FullName;
+        static string Debug = Directory.GetCurrentDirectory();
+        static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
 
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
-        {parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        {Shebist}\UserDB.mdf;Integrated Security=True";
 
         int userid;
         string login, name, email, password;
         private void AccountPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists($"{myDirectory}\\Data\\userid"))
+            if (File.Exists($"{Debug}\\Data\\userid"))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\userid", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
                 {
                     userid = (int)formatter.Deserialize(fs);
                 }
@@ -88,7 +86,7 @@ namespace Shebist
             //{
             //    connection.Open();
             //    SqlCommand command = new SqlCommand($"DELETE FROM UserDB WHERE Id = {userid}");
-                
+
             //}
         }
 
@@ -108,7 +106,7 @@ namespace Shebist
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        if(LoginTextBox.Text != login)
+                        if (LoginTextBox.Text != login)
                         {
                             SqlCommand command1 = new SqlCommand($"UPDATE UserDB SET Login = N'{LoginTextBox.Text}'", connection);
                             command1.ExecuteNonQuery();
@@ -130,7 +128,7 @@ namespace Shebist
                         }
                     }
 
-                    if(LoginTextBox.Text != login || NameTextBox.Text != name || EmailTextBox.Text != email || PasswordTextBox.Text != password)
+                    if (LoginTextBox.Text != login || NameTextBox.Text != name || EmailTextBox.Text != email || PasswordTextBox.Text != password)
                     {
                         MessageBox.Show("Данные изменены");
                         MailMessage mailMessage = new MailMessage(from, to);
@@ -142,7 +140,7 @@ namespace Shebist
                         smtp.EnableSsl = true;
                         smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
                         smtp.Send(mailMessage);
-                    } 
+                    }
                 }
                 catch (SqlException)
                 {

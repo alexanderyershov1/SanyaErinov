@@ -66,43 +66,42 @@ namespace Shebist
                     AccountMenuItem.Header = reader.GetValue(0);
                 }
 
-                //    reader.Close();
-                //    SqlCommand command2 = new SqlCommand($"SELECT " +
-                //        $"ChoiceOfTopicTextBoxVisibility FROM UserState WHERE Id = {userid}", connection);
+                reader.Close();
+                SqlCommand command2 = new SqlCommand($"SELECT " +
+                    $"ChoiceOfTopicTextBoxVisibility FROM UserState WHERE Id = {userid}", connection);
 
-                //    reader = command2.ExecuteReader();
+                reader = command2.ExecuteReader();
 
-                //    if (reader.HasRows)
-                //    {
-                //        while (reader.Read())
-                //        {
-                //            switch (reader.GetString(0))
-                //            {
-                //                case "Visible":
-                //                    ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
-                //                    break;
-                //                case "Hidden":
-                //                    ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
-                //                    break;
-                //            }
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        switch (reader.GetString(0))
+                        {
+                            case "Visible":
+                                ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
+                                break;
+                            case "Hidden":
+                                ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
+                                break;
+                        }
 
-                //        }
+                    }
 
-                //    }
-                //    else
-                //    {
-                //        reader.Close();
-                //        SqlCommand command3 = new SqlCommand($"INSERT INTO UserState (Id, " +
-                //            $" ChoiceOfTopicTextBoxVisibility) VALUES ({userid}," +
-                //            $" '{ChoiceOfTopicTextBox.Visibility.ToString()}')", connection);
-                //        command3.ExecuteNonQuery();
-                //    }
-                //}
+                }
+                else
+                {
+                    reader.Close();
+                    SqlCommand command3 = new SqlCommand($"INSERT INTO UserState (Id, " +
+                        $" ChoiceOfTopicTextBoxVisibility) VALUES ({userid}," +
+                        $" '{ChoiceOfTopicTextBox.Visibility.ToString()}')", connection);
+                    command3.ExecuteNonQuery();
+                }
             }
         }
 
 
-        bool isWordsCounterLabelEnabled = true;
+    bool isWordsCounterLabelEnabled = true;
         bool isPCMEnabled = true;
         bool isSearchByNumberTextBoxEnabled = true;
         bool isNextBackButtonsEnabled = true;
@@ -117,17 +116,17 @@ namespace Shebist
             {
                 connection.Open();
 
-                SqlCommand command2 = new SqlCommand($"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {id}", connection);
-                SqlDataReader reader2 = command2.ExecuteReader();
+                SqlCommand command = new SqlCommand($"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {id}", connection);
+                SqlDataReader reader = command.ExecuteReader();
 
-                if (reader2.HasRows)
+                if (reader.HasRows)
                 {
-                    while (reader2.Read())
+                    while (reader.Read())
                     {
-                        WordOutputLabel.Content = reader2.GetString(0).Trim();
-                        DescriptionLabel.Content = reader2.GetString(1).Trim();
-                        english = reader2.GetString(2).Trim();
-                        path = reader2.GetString(3).Trim();
+                        WordOutputLabel.Content = reader.GetString(0).Trim();
+                        DescriptionLabel.Content = reader.GetString(1).Trim();
+                        english = reader.GetString(2).Trim();
+                        path = reader.GetString(3).Trim();
                     }
                 }
             }
@@ -154,19 +153,19 @@ namespace Shebist
                             topicId = reader.GetInt32(0).ToString();
                         }
                         reader.Close();
-                        SqlCommand command2 = new SqlCommand($"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {id}", connection);
-                        SqlDataReader reader2 = command2.ExecuteReader();
+                        command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {id}";
+                        reader = command.ExecuteReader();
 
-                        if (reader2.HasRows)
+                        if (reader.HasRows)
                         {
-                            while (reader2.Read())
+                            while (reader.Read())
                             {
-                                WordOutputLabel.Content = reader2.GetString(0).Trim();
-                                DescriptionLabel.Content = reader2.GetString(1).Trim();
-                                english = reader2.GetString(2).Trim();
-                                path = reader2.GetString(3).Trim();
+                                WordOutputLabel.Content = reader.GetString(0).Trim();
+                                DescriptionLabel.Content = reader.GetString(1).Trim();
+                                english = reader.GetString(2).Trim();
+                                path = reader.GetString(3).Trim();
                             }
-                            reader2.Close();
+                            reader.Close();
 
                             ChoiceOfTopicLabel.IsEnabled =
                                 ChoiceOfTopicTextBox.IsEnabled = false;
@@ -175,8 +174,8 @@ namespace Shebist
                             StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
                             ChoiceOfTopicTextBox.Clear();
                             
-                            SqlCommand command3 = new SqlCommand($"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}", connection);
-                            command3.ExecuteNonQuery();
+                            command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
+                            command.ExecuteNonQuery();
                             
                         }
                         else
@@ -191,9 +190,7 @@ namespace Shebist
                         return;
                     }
 
-                }
-
-
+                }                
             }
         }
 

@@ -35,12 +35,9 @@ namespace Shebist
         BinaryFormatter formatter = new BinaryFormatter();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
-        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        static string parentDirectory = myDirectory.Parent.FullName;
-        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
-        static string parentDirectory2 = myDirectory2.Parent.FullName;
+        static string Shebist = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
 
-        static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
         int userid;
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -114,8 +111,8 @@ namespace Shebist
 
                         while (reader.Read())
                         {
-                            LoginTextBox.Text = (string)reader.GetValue(0);
-                            PasswordBox.Password = (string)reader.GetValue(1);
+                            LoginTextBox.Text = reader.GetString(0);
+                            PasswordBox.Password = reader.GetString(1);
                         }
                     }   
                 }  

@@ -70,6 +70,7 @@
                  KeyDown="SearchByNumberTextBox_KeyDown"/>
 
         <Label x:Name="ChoiceOfTopicLabel"
+               Foreground="White"
                HorizontalContentAlignment="Center"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
@@ -80,6 +81,7 @@
               />
 
         <Label x:Name="WordOutputLabel"
+               Foreground="White"
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
@@ -89,6 +91,7 @@
                FontSize="28" Width="362" Height="43"/>
 
         <Label x:Name="DescriptionLabel"
+               Foreground="White"
                HorizontalContentAlignment="Center"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
@@ -99,6 +102,7 @@
                FontSize="16" Height="29"/>
 
         <Label x:Name="WordsCounterLabel"
+               Foreground="White"
                Content="Счётчик слов"
                HorizontalAlignment="Center"
                Margin="407,148,330,278"

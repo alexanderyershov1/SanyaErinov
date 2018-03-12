@@ -31,14 +31,13 @@ namespace Shebist
             ConfirmTextBox.Visibility = Visibility.Hidden;
         }
 
-        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        static string parentDirectory = myDirectory.Parent.FullName;
-        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
-        static string parentDirectory2 = myDirectory2.Parent.FullName;
+        RegistrationPage rp = new RegistrationPage();
 
-        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        static string Shebist = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
 
-        
+        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
+
+
 
         private void BackLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -47,50 +46,63 @@ namespace Shebist
         }
 
         string login, name, password;
+
+        private void BackLabel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            BackLabel.FontSize = 12;
+        }
+
+        private void ConfirmTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(ConfirmTextBox.Text == randomeCode)
+            {
+                DataRecoveryPage2 drp2 = new DataRecoveryPage2();
+                this.NavigationService.Navigate(drp2);
+            }
+        }
+
+        private void BackLabel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            BackLabel.FontSize = 13;
+        }
+
+        string randomeCode;
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            if(EnterYourEmailTextBox.Text != "")
+            if (EnterYourEmailTextBox.Text != "")
             {
-                try
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    connection.Open();
+                    SqlCommand command = new SqlCommand($"SELECT Login, Name, Password FROM UserDB WHERE Email = N'{EnterYourEmailTextBox.Text}'", connection);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
                     {
-                        connection.Open();
-                        SqlCommand command = new SqlCommand($"SELECT Login, Name, Password FROM UserDB WHERE Email = N'{EnterYourEmailTextBox.Text}'", connection);
-                        SqlDataReader reader = command.ExecuteReader();
-                        if (reader.HasRows)
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                login = (string)reader.GetValue(0);
-                                name = (string)reader.GetValue(1);
-                                password = (string)reader.GetValue(2);
-                            }
+                            login = reader.GetString(0);
+                            name = reader.GetString(1);
+                            password = reader.GetString(2);
                         }
 
+                        randomeCode = rp.RandomString(5);
                         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
                         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
                         MailAddress to = new MailAddress($"{EnterYourEmailTextBox.Text}");
                         MailMessage mailMessage = new MailMessage(from, to);
                         mailMessage.Subject = "Восстановление данных";
-                        mailMessage.Body = $"{name}, ваши данные для входа:" +
-                            $"\nЛогин: {login}" +
-                            $"\nПароль: {password}";
+                        mailMessage.Body = $"{name}, ваш код для восстановления пароля: {randomeCode}";
                         smtp.EnableSsl = true;
                         smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
                         smtp.Send(mailMessage);
-                        MessageBox.Show("Данные для входа отправлены на вашу почту");
-                        AuthorizationPage ap = new AuthorizationPage();
-                        this.NavigationService.Navigate(ap);
+
+                        ConfirmLabel.Visibility = Visibility.Visible;
+                        ConfirmTextBox.Visibility = Visibility.Visible;
                     }
-                }
-                catch (SqlException)
-                {
-                    MessageBox.Show("Данная почта не найдена");
-                }
-                catch (FormatException)
-                {
-                    MessageBox.Show("Данная почта не найдена");
+                    else
+                    {
+                        MessageBox.Show("Данная почта не найдена");
+                    }
                 }
             }
         }

@@ -78,6 +78,9 @@
     <Compile Include="DataRecoveryPage.xaml.cs">
       <DependentUpon>DataRecoveryPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataRecoveryPage2.xaml.cs">
+      <DependentUpon>DataRecoveryPage2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -99,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DataRecoveryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataRecoveryPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,9 +6,9 @@
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d"
       Title="DataRecoveryPage"
-      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="545" Width="950">
+      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-    <Grid Height="545" Width="950">
+    <Grid>
 
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -17,21 +17,46 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <TextBox x:Name="EnterYourEmailTextBox" TextAlignment="Center" HorizontalAlignment="Center" Height="23" Margin="259,233,241,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="285"/>
-        <Label x:Name="EnterYourEmailLabel" Content="Введите вашу почту"  Foreground="White"  HorizontalAlignment="Center" Margin="326,202,339,207" VerticalAlignment="Center" RenderTransformOrigin="0.261,-0.301"/>
+        <TextBox x:Name="EnterYourEmailTextBox" TextAlignment="Center" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="23" Margin="249,239,252,173" TextWrapping="Wrap" Width="285"/>
+        <Label x:Name="EnterYourEmailLabel" Content="Введите вашу почту"  Foreground="White"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="326,202,339,207"  RenderTransformOrigin="0.261,-0.301"/>
         <Label x:Name="BackLabel"
-               Foreground="White" 
+               Foreground="White"
+               FontSize="12"
                MouseLeftButtonDown="BackLabel_MouseLeftButtonDown"
-               Content="Назад" HorizontalAlignment="Center" Margin="367,297,376,112" VerticalAlignment="Center" RenderTransformOrigin="0.261,-0.301"/>
+               MouseEnter="BackLabel_MouseEnter"
+               MouseLeave="BackLabel_MouseLeave"
+               Content="Назад"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="367,297,376,112"/>
+        
         <Button x:Name="OkButton"
                 Background="White"
                 Click="OkButton_Click"
-                Content="Ок" HorizontalAlignment="Center" Margin="352,272,359,143" VerticalAlignment="Center" Width="74"/>
-        <TextBox x:Name="ConfirmTextBox" MaxLength="5" TextAlignment="Center" HorizontalAlignment="Left" Height="24" Margin="342,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="284"/>
+                Content="Ок"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="352,272,359,143"
+                Width="74"/>
+        
+        <TextBox x:Name="ConfirmTextBox"
+                 TextChanged="ConfirmTextBox_TextChanged"
+                 MaxLength="5"
+                 TextAlignment="Center"
+                 HorizontalAlignment="Center"
+                 Height="24"
+                 Margin="260,361,242,0"
+                 TextWrapping="Wrap"
+                 VerticalAlignment="Center"
+                 Width="284"/>
+        
         <Label x:Name="ConfirmLabel"
-            Content="Введите код, отправленный на"
-                Foreground="White" 
-               HorizontalAlignment="Center" Margin="259,330,210,79" VerticalAlignment="Center" RenderTransformOrigin="0.261,-0.301" Width="316"/>
+               Content="Введите код, отправленный на"
+               Foreground="White" 
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="260,340,210,69"
+               Width="316"/>
 
 
     </Grid>

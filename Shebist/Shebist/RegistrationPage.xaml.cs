@@ -31,7 +31,6 @@ namespace Shebist
             ConfirmRegistrationTextBox.Visibility = Visibility.Hidden;
         }
         
-
         string cd = Directory.GetCurrentDirectory();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
@@ -42,13 +41,10 @@ namespace Shebist
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+        
+        static string Shebist = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
 
-        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        static string parentDirectory = myDirectory.Parent.FullName;
-        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
-        static string parentDirectory2 = myDirectory2.Parent.FullName;
-
-        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\UserDB.mdf;Integrated Security=True";
+        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
 
         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
         string randomCode;
@@ -68,11 +64,7 @@ namespace Shebist
                 smtp.EnableSsl = true;
                 smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
                 smtp.Send(mailMessage);
-
-
-                LoginLabel.Visibility = LoginTextBox.Visibility = NameLabel.Visibility = NameTextBox.Visibility =
-                    EmailLabel.Visibility = EmailTextBox.Visibility = PasswordLabel.Visibility = PasswordBox.Visibility =
-                    CheckLoginLabel.Visibility = CheckEmailLabel.Visibility = Visibility.Hidden;
+                
                 ConfirmRegistrationLabel.Visibility = ConfirmRegistrationTextBox.Visibility = Visibility.Visible;
                 ConfirmRegistrationLabel.Content = $"Введите код, отправленный на {EmailTextBox.Text}";
 
@@ -185,6 +177,17 @@ namespace Shebist
                 CheckPasswordLabel.Visibility = Visibility.Visible;
             else
                 CheckPasswordLabel.Visibility = Visibility.Hidden;
+
+            if (PasswordBox.Password != "" && PasswordBox.Password == ConfirmPasswordBox.Password)
+            {
+                CheckPasswordsLabel.Foreground = Brushes.Green;
+                CheckPasswordsLabel.Content = "Пароли совпадают";
+            }
+            else
+            {
+                CheckPasswordsLabel.Foreground = Brushes.Red;
+                CheckPasswordsLabel.Content = "Пароли не совпадают";
+            }
         }
 
         private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
@@ -199,6 +202,16 @@ namespace Shebist
                 CheckPasswordsLabel.Foreground = Brushes.Red;
                 CheckPasswordsLabel.Content = "Пароли не совпадают";
             }
+        }
+
+        private void AlreadyHaveAnAccountLabel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            AlreadyHaveAnAccountLabel.FontSize = 13;
+        }
+
+        private void AlreadyHaveAnAccountLabel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            AlreadyHaveAnAccountLabel.FontSize = 12;
         }
     }
 }

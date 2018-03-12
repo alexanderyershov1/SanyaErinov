@@ -41,7 +41,7 @@
                MouseEnter="DataRecoveryLabel_MouseEnter"
                MouseLeave="DataRecoveryLabel_MouseLeave"
             MouseLeftButtonDown="DataRecoveryLabel_MouseLeftButtonDown"
-            Content="Забыли логин или пароль?" HorizontalAlignment="Center" Margin="291,295,251,17" VerticalAlignment="Center"/>
+            Content="Забыли пароль?" HorizontalAlignment="Center" Margin="291,295,251,17" VerticalAlignment="Center"/>
         <Label x:Name="WrongDataLabel" Content="Неверный логин или пароль" Foreground="Red" HorizontalAlignment="Center" Margin="281,208,251,104" VerticalAlignment="Center"/>
         <PasswordBox x:Name="PasswordBox" HorizontalContentAlignment="Center" PasswordChanged="PasswordBox_PasswordChanged"  HorizontalAlignment="Center" Margin="305,154,275,164" VerticalAlignment="Center" Width="120" Height="20"/>
     </Grid>

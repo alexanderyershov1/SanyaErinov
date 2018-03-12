@@ -64,3 +64,5 @@ D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.csproj.GenerateResource.Cache
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.csproj.CoreCompileInputs.cache
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.exe
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.pdb
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\DataRecoveryPage2.g.cs
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\DataRecoveryPage2.baml
