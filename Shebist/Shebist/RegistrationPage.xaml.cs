@@ -31,7 +31,7 @@ namespace Shebist
             ConfirmRegistrationTextBox.Visibility = Visibility.Hidden;
         }
         
-        string cd = Directory.GetCurrentDirectory();
+        string Debug = Directory.GetCurrentDirectory();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
         Random random = new Random();
@@ -51,9 +51,11 @@ namespace Shebist
         private void RegistrationButton_Click(object sender, RoutedEventArgs e)
         {
             
-            if(CheckLoginLabel.Content.ToString() == "Данный логин свободен" && CheckNameLabel.Visibility == Visibility.Hidden
-                && CheckEmailLabel.Content.ToString() == "Данная почта свободна" && CheckPasswordLabel.Visibility == Visibility.Hidden
-                && CheckPasswordsLabel.Content.ToString() == "Пароли совпадают")
+            if(CheckLoginLabel.Content.ToString() == "✔" &&
+                CheckNameLabel.Content.ToString() == "✔" &&
+                CheckEmailLabel.Content.ToString() == "✔" &&
+                CheckPasswordLabel.Content.ToString() == "✔" &&
+                CheckPasswordsLabel.Content.ToString() == "✔")
             {
                 randomCode = RandomString(5);
 
@@ -102,7 +104,7 @@ namespace Shebist
             if(LoginTextBox.Text == "")
             {
                 CheckLoginLabel.Foreground = Brushes.Red;
-                CheckLoginLabel.Content = "Поле не заполнено";
+                CheckLoginLabel.Content = "✖";
             }
             else
             {
@@ -114,12 +116,12 @@ namespace Shebist
                     if (reader.HasRows)
                     {
                         CheckLoginLabel.Foreground = Brushes.Red;
-                        CheckLoginLabel.Content = "Данный логин уже занят";
+                        CheckLoginLabel.Content = "✖";
                     }
                     else
                     {
                         CheckLoginLabel.Foreground = Brushes.Green;
-                        CheckLoginLabel.Content = "Данный логин свободен";
+                        CheckLoginLabel.Content = "✔";
                     }
                 }
             }
@@ -128,9 +130,15 @@ namespace Shebist
         private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if(NameTextBox.Text == "")
-                CheckNameLabel.Visibility = Visibility.Visible;
+            {
+                CheckNameLabel.Foreground = Brushes.Red;
+                CheckNameLabel.Content = "✖";
+            }
             else
-                CheckNameLabel.Visibility = Visibility.Hidden;
+            {
+                CheckNameLabel.Foreground = Brushes.Green;
+                CheckNameLabel.Content = "✔";
+            }
         }
 
         private void EmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -138,7 +146,7 @@ namespace Shebist
             if (EmailTextBox.Text == "")
             {
                 CheckEmailLabel.Foreground = Brushes.Red;
-                CheckEmailLabel.Content = "Поле не заполнено";
+                CheckEmailLabel.Content = "✖";
             }
             else
             {
@@ -153,19 +161,19 @@ namespace Shebist
                         if (reader.HasRows)
                         {
                             CheckEmailLabel.Foreground = Brushes.Red;
-                            CheckEmailLabel.Content = "Данная почта уже занята";
+                            CheckEmailLabel.Content = "✖";
                         }
                         else
                         {
                             CheckEmailLabel.Foreground = Brushes.Green;
-                            CheckEmailLabel.Content = "Данная почта свободна";
+                            CheckEmailLabel.Content = "✔";
                         }
                     }
                 }
                 catch(FormatException)
                 {
                     CheckEmailLabel.Foreground = Brushes.Red;
-                    CheckEmailLabel.Content = "Некорректная почта";
+                    CheckEmailLabel.Content = "✖";
                 }
                 
             }
@@ -174,19 +182,25 @@ namespace Shebist
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (PasswordBox.Password == "")
-                CheckPasswordLabel.Visibility = Visibility.Visible;
+            {
+                CheckPasswordLabel.Foreground = Brushes.Red;
+                CheckPasswordLabel.Content = "✖";
+            }
             else
-                CheckPasswordLabel.Visibility = Visibility.Hidden;
+            {
+                CheckPasswordLabel.Foreground = Brushes.Green;
+                CheckPasswordLabel.Content = "✔";
+            }
 
             if (PasswordBox.Password != "" && PasswordBox.Password == ConfirmPasswordBox.Password)
             {
                 CheckPasswordsLabel.Foreground = Brushes.Green;
-                CheckPasswordsLabel.Content = "Пароли совпадают";
+                CheckPasswordsLabel.Content = "✔";
             }
             else
             {
                 CheckPasswordsLabel.Foreground = Brushes.Red;
-                CheckPasswordsLabel.Content = "Пароли не совпадают";
+                CheckPasswordsLabel.Content = "✖";
             }
         }
 
@@ -195,12 +209,12 @@ namespace Shebist
             if(PasswordBox.Password != "" && PasswordBox.Password == ConfirmPasswordBox.Password)
             {
                 CheckPasswordsLabel.Foreground = Brushes.Green;
-                CheckPasswordsLabel.Content = "Пароли совпадают";
+                CheckPasswordsLabel.Content = "✔";
             }
             else
             {
                 CheckPasswordsLabel.Foreground = Brushes.Red;
-                CheckPasswordsLabel.Content = "Пароли не совпадают";
+                CheckPasswordsLabel.Content = "✖";
             }
         }
 

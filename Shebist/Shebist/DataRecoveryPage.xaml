@@ -29,7 +29,7 @@
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Margin="367,297,376,112"/>
-        
+
         <Button x:Name="OkButton"
                 Background="White"
                 Click="OkButton_Click"
@@ -38,7 +38,7 @@
                 VerticalAlignment="Center"
                 Margin="352,272,359,143"
                 Width="74"/>
-        
+
         <TextBox x:Name="ConfirmTextBox"
                  TextChanged="ConfirmTextBox_TextChanged"
                  MaxLength="5"
@@ -49,14 +49,14 @@
                  TextWrapping="Wrap"
                  VerticalAlignment="Center"
                  Width="284"/>
-        
+
         <Label x:Name="ConfirmLabel"
                Content="Введите код, отправленный на"
                Foreground="White" 
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Margin="260,340,210,69"
-               Width="316"/>
+               Margin="212,340,209,69"
+               Width="365"/>
 
 
     </Grid>

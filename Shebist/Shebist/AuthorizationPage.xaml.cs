@@ -31,53 +31,53 @@ namespace Shebist
             WrongDataLabel.Visibility = Visibility.Hidden;
         }
 
-        string cd = Directory.GetCurrentDirectory();
+
         BinaryFormatter formatter = new BinaryFormatter();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
-        static string Shebist = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
-
+        static string Debug = Directory.GetCurrentDirectory();
+        static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
         static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
         int userid;
+        SqlCommand command = new SqlCommand();
+        SqlDataReader reader;
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using(SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Id, Name, Email, Password FROM UserDB WHERE (Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}') AND Password = N'{PasswordBox.Password} '", connection);
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = $"SELECT Id, Name, Email, Password FROM UserDB WHERE (Login = N'{LoginTextBox.Text}' OR Email = N'{LoginTextBox.Text}') AND Password = N'{PasswordBox.Password}'";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
 
                 if (reader.HasRows)
                 {
-                    while (reader.Read())
-                    {
-                        userid = (int)reader.GetValue(0);
-                    }
+                    reader.Read();
+                    userid = reader.GetInt32(0);
 
                     reader.Close();
                     MainPage mp = new MainPage();
                     this.NavigationService.Navigate(mp);
-
                 }
                 else
                 {
                     reader.Close();
                     WrongDataLabel.Visibility = Visibility.Visible;
                 }
-            }     
-        
-            using (FileStream fs = new FileStream($"{cd}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
+            }
+
+            using (FileStream fs = new FileStream($"{Debug}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
             }
 
-            using (FileStream fs = new FileStream($"{cd}\\Data\\userid", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
             {
-                    formatter.Serialize(fs, userid);
+                formatter.Serialize(fs, userid);
             }
         }
-        
+
         private void NoAccountYet_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             RegistrationPage rp = new RegistrationPage();
@@ -86,9 +86,9 @@ namespace Shebist
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists($"{cd}\\Data\\RememberMeCheckBoxIsChecked"))
+            if (File.Exists($"{Debug}\\Data\\RememberMeCheckBoxIsChecked"))
             {
-                using (FileStream fs = new FileStream($"{cd}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream($"{Debug}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
                 {
                     RememberMeCheckBox.IsChecked = (bool)formatter.Deserialize(fs);
                 }
@@ -96,9 +96,9 @@ namespace Shebist
 
             if (RememberMeCheckBox.IsChecked == true)
             {
-                if (File.Exists($"{cd}\\Data\\userid"))
+                if (File.Exists($"{Debug}\\Data\\userid"))
                 {
-                    using (FileStream fs = new FileStream($"{cd}\\Data\\userid", FileMode.OpenOrCreate))
+                    using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
                     {
                         userid = (int)formatter.Deserialize(fs);
                     }
@@ -106,16 +106,18 @@ namespace Shebist
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        SqlCommand command = new SqlCommand($"SELECT Login, Password FROM UserDB WHERE Id = {userid}", connection);
-                        SqlDataReader reader = command.ExecuteReader();
+                        command.CommandText = $"SELECT Login, Password FROM UserDB WHERE Id = {userid}";
+                        command.Connection = connection;
+                        reader = command.ExecuteReader();
 
-                        while (reader.Read())
+                        if (reader.HasRows)
                         {
+                            reader.Read();
                             LoginTextBox.Text = reader.GetString(0);
                             PasswordBox.Password = reader.GetString(1);
                         }
-                    }   
-                }  
+                    }
+                }
             }
         }
 

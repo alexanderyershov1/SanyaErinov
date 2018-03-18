@@ -26,9 +26,12 @@ namespace Shebist
     /// </summary>
     public partial class AccountPage : Page
     {
-        public AccountPage()
+        int userid;
+        string login, name, email, password;
+        public AccountPage(int userid)
         {
             InitializeComponent();
+            this.userid = userid;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -49,33 +52,22 @@ namespace Shebist
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {Shebist}\UserDB.mdf;Integrated Security=True";
 
-        int userid;
-        string login, name, email, password;
         private void AccountPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists($"{Debug}\\Data\\userid"))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
-                {
-                    userid = (int)formatter.Deserialize(fs);
-                }
+                connection.Open();
+                SqlCommand command = new SqlCommand($"SELECT Login, Name, Email, Password FROM UserDB WHERE Id = {userid}", connection);
+                SqlDataReader reader = command.ExecuteReader();
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                while (reader.Read())
                 {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT Login, Name, Email, Password FROM UserDB WHERE Id = {userid}", connection);
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        login = LoginTextBox.Text = (string)reader.GetValue(0);
-                        name = NameTextBox.Text = (string)reader.GetValue(1);
-                        email = EmailTextBox.Text = (string)reader.GetValue(2);
-                        password = PasswordTextBox.Text = (string)reader.GetValue(3);
-                    }
-                    reader.Close();
+                    login = LoginTextBox.Text = reader.GetString(0);
+                    name = NameTextBox.Text = reader.GetString(1);
+                    email = EmailTextBox.Text = reader.GetString(2);
+                    password = PasswordTextBox.Text = reader.GetString(3);
                 }
+                reader.Close();
             }
         }
 

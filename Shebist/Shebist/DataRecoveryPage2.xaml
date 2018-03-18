@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d"
-      Title="DataRecoveryPage2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      Title="DataRecoveryPage2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="Page_Loaded">
 
     <Grid>
         <Grid.Background>
@@ -15,6 +15,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <PasswordBox x:Name="NewPasswordBox"
+                     HorizontalContentAlignment="Center"
                      PasswordChanged="NewPasswordBox_PasswordChanged"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
@@ -22,6 +23,7 @@
                      Width="146"/>
 
         <PasswordBox x:Name="AgainPasswordBox"
+                     HorizontalContentAlignment="Center"
                      PasswordChanged="AgainPasswordBox_PasswordChanged"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
@@ -41,6 +43,7 @@
                Margin="125,123,121,151"/>
 
         <Button Content="Изменить"
+                Click="ChangeButton_Click"
                 x:Name="ChangeButton"
                 Background="White"
                 HorizontalAlignment="Center"

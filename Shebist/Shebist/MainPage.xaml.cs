@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
+using System.Data;
 
 namespace Shebist
 {
@@ -34,79 +35,77 @@ namespace Shebist
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
-        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        static string parentDirectory = myDirectory.Parent.FullName;
-        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
-        static string parentDirectory2 = myDirectory2.Parent.FullName;
+        static string Debug = Directory.GetCurrentDirectory();
+        static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
 
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
-        {parentDirectory2}\UserDB.mdf;Integrated Security=True";
-        public int userid, id = 1, count = 0;
+        {Shebist}\UserDB.mdf;Integrated Security=True";
+        public int userid, idofword, numberofword = 1, count = 0;
         public string english, path, Section = "";
-
+        SqlCommand command = new SqlCommand();
+        SqlDataReader reader;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (File.Exists($"{myDirectory}\\Data\\userid"))
+            if (File.Exists($"{Debug}\\Data\\userid"))
             {
-                using (FileStream fs = new FileStream($"{myDirectory}\\Data\\userid", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
                 {
                     userid = (int)formatter.Deserialize(fs);
                 }
             }
-
+            
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Name FROM UserDB WHERE Id = {userid}", connection);
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = $"SELECT Name FROM UserDB WHERE Id = {userid}";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
 
-                while (reader.Read())
-                {
-                    AccountMenuItem.Header = reader.GetValue(0);
-                }
-
+                reader.Read();
+                AccountMenuItem.Header = reader.GetValue(0);
                 reader.Close();
-                SqlCommand command2 = new SqlCommand($"SELECT " +
-                    $"ChoiceOfTopicTextBoxVisibility FROM UserState WHERE Id = {userid}", connection);
 
-                reader = command2.ExecuteReader();
+                //reader.Close();
 
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        switch (reader.GetString(0))
-                        {
-                            case "Visible":
-                                ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
-                                break;
-                            case "Hidden":
-                                ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
-                                break;
-                        }
+                //command.CommandText = $"SELECT " +
+                //    $"ChoiceOfTopicTextBoxVisibility FROM UserState WHERE Id = {userid}";
+                //command.Connection = connection;
 
-                    }
+                //reader = command.ExecuteReader();
 
-                }
-                else
-                {
-                    reader.Close();
-                    SqlCommand command3 = new SqlCommand($"INSERT INTO UserState (Id, " +
-                        $" ChoiceOfTopicTextBoxVisibility) VALUES ({userid}," +
-                        $" '{ChoiceOfTopicTextBox.Visibility.ToString()}')", connection);
-                    command3.ExecuteNonQuery();
-                }
+                //if (reader.HasRows)
+                //{
+                //    reader.Read();
+                //    switch (reader.GetString(0))
+                //    {
+                //        case "Visible":
+                //            ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
+                //            break;
+                //        case "Hidden":
+                //            ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
+                //            break;
+                //    }
+                //}
+                //else
+                //{
+                //    reader.Close();
+                //    command.CommandText = $"INSERT INTO UserState (Id, " +
+                //        $" ChoiceOfTopicTextBoxVisibility) VALUES ({userid}," +
+                //        $" '{ChoiceOfTopicTextBox.Visibility.ToString()}')";
+                //    command.Connection = connection;
+                //    command.ExecuteNonQuery();
+                //}
             }
         }
 
 
-    bool isWordsCounterLabelEnabled = true;
-        bool isPCMEnabled = true;
-        bool isSearchByNumberTextBoxEnabled = true;
-        bool isNextBackButtonsEnabled = true;
-        bool isProgressBarEnabled = true;
-        bool isSoundEnabled = true;
+        bool isWordsCounterLabelVisible = true,
+        isPCMEnabled = true,
+        isSearchByNumberTextBoxVisible = true,
+        isNextBackButtonsVisible = true,
+        isProgressBarVisible = true,
+        isSoundEnabled = true;
 
         MediaPlayer player = new MediaPlayer();
 
@@ -116,18 +115,18 @@ namespace Shebist
             {
                 connection.Open();
 
-                SqlCommand command = new SqlCommand($"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {id}", connection);
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {idofword}";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
 
                 if (reader.HasRows)
                 {
-                    while (reader.Read())
-                    {
-                        WordOutputLabel.Content = reader.GetString(0).Trim();
-                        DescriptionLabel.Content = reader.GetString(1).Trim();
-                        english = reader.GetString(2).Trim();
-                        path = reader.GetString(3).Trim();
-                    }
+                    reader.Read();
+                    WordOutputLabel.Content = reader.GetString(0).Trim();
+                    DescriptionLabel.Content = reader.GetString(1).Trim();
+                    english = reader.GetString(2).Trim();
+                    path = reader.GetString(3).Trim();
+
                 }
             }
         }
@@ -143,40 +142,42 @@ namespace Shebist
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT Id FROM Topics WHERE UserId = {userid} AND Name = '{ChoiceOfTopicTextBox.Text}'", connection);
-                    SqlDataReader reader = command.ExecuteReader();
+                    command.CommandText = $"SELECT Id FROM Topics WHERE UserId = {userid} AND Name = '{ChoiceOfTopicTextBox.Text}'";
+                    command.Connection = connection;
+                    reader = command.ExecuteReader();
 
                     if (reader.HasRows)
                     {
-                        while (reader.Read())
-                        {
-                            topicId = reader.GetInt32(0).ToString();
-                        }
+                        reader.Read();
+                        topicId = reader.GetInt32(0).ToString();
                         reader.Close();
-                        command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {id}";
+
+                        command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
+                        reader = command.ExecuteReader();
+                        reader.Read();
+                        idofword = reader.GetInt32(0);
+                        reader.Close();
+
+                        command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {idofword}";
                         reader = command.ExecuteReader();
 
                         if (reader.HasRows)
                         {
-                            while (reader.Read())
-                            {
-                                WordOutputLabel.Content = reader.GetString(0).Trim();
-                                DescriptionLabel.Content = reader.GetString(1).Trim();
-                                english = reader.GetString(2).Trim();
-                                path = reader.GetString(3).Trim();
-                            }
+                            reader.Read();
+                            WordOutputLabel.Content = reader.GetString(0).Trim();
+                            DescriptionLabel.Content = reader.GetString(1).Trim();
+                            english = reader.GetString(2).Trim();
+                            path = reader.GetString(3).Trim();
+
                             reader.Close();
 
-                            ChoiceOfTopicLabel.IsEnabled =
-                                ChoiceOfTopicTextBox.IsEnabled = false;
                             ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
-                            StartButton.IsEnabled = ToTheChoiceOfTopicButton.IsEnabled = true;
                             StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
                             ChoiceOfTopicTextBox.Clear();
-                            
+
                             command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
                             command.ExecuteNonQuery();
-                            
+
                         }
                         else
                         {
@@ -189,9 +190,14 @@ namespace Shebist
                         ChoiceOfTopicTextBox.Clear();
                         return;
                     }
-
-                }                
+                }
             }
+        }
+
+        private void TopicEditorMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            TopicEditorPage tpe = new TopicEditorPage(userid);
+            this.NavigationService.Navigate(tpe);
         }
 
         private void SettingsMenuItem_Click(object sender, EventArgs e)
@@ -202,54 +208,53 @@ namespace Shebist
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            EnteringAWordTextBox.IsEnabled = DescriptionLabel.IsEnabled = true;
             EnteringAWordTextBox.Visibility = DescriptionLabel.Visibility = Visibility.Visible;
             StartButton.Content = "Снова";
 
-            if (isSearchByNumberTextBoxEnabled)
+            if (isSearchByNumberTextBoxVisible)
             {
-                SearchByNumberTextBox.IsEnabled = true;
                 SearchByNumberTextBox.Visibility = Visibility.Visible;
             }
 
-            WordOutputLabel.IsEnabled = true;
             WordOutputLabel.Visibility = Visibility.Visible;
 
-            if (isWordsCounterLabelEnabled)
+            if (isWordsCounterLabelVisible)
             {
-                WordsCounterLabel.IsEnabled = true;
                 WordsCounterLabel.Visibility = Visibility.Visible;
             }
 
-            if (isNextBackButtonsEnabled)
+            if (isNextBackButtonsVisible)
             {
-                NextButton.IsEnabled = BackButton.IsEnabled = true;
                 NextButton.Visibility = BackButton.Visibility = Visibility.Visible;
             }
 
-            if (isProgressBarEnabled)
+            if (isProgressBarVisible)
             {
-                ProgressBar.IsEnabled = true;
                 ProgressBar.Visibility = Visibility.Visible;
             }
 
-            id = 1;
+            numberofword = 1;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                id = 1;
-                SqlCommand command = new SqlCommand($"SELECT COUNT(*) FROM [{topicId}]", connection);
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = $"SELECT COUNT(*) FROM [{topicId}]";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
 
-                if (reader.HasRows) // если есть данные
+                if (reader.HasRows)
                 {
-                    while (reader.Read()) // построчно считываем данные
-                    {
-                        count = reader.GetInt32(0);
-                    }
+                    reader.Read();
+                    count = reader.GetInt32(0);
+                    reader.Close();
                 }
-            }
 
+                command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
+                reader.Read();
+                idofword = reader.GetInt32(0);
+            }
+            
             QueryRussianDescriptionEnglishPath();
 
             ProgressBar.Value = 1;
@@ -269,7 +274,7 @@ namespace Shebist
 
         private void AccountMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            AccountPage ap = new AccountPage();
+            AccountPage ap = new AccountPage(userid);
             this.NavigationService.Navigate(ap);
         }
 
@@ -281,27 +286,36 @@ namespace Shebist
             {
                 if (isSoundEnabled)
                 {
-                    if (File.Exists(Directory.GetCurrentDirectory() + path))
+                    if (File.Exists(Debug + path))
                     {
-                        player.Open(new Uri(Directory.GetCurrentDirectory() + path, UriKind.Absolute));
+                        player.Open(new Uri(Debug + path, UriKind.Absolute));
                         player.Play();
                     }
                 }
                 EnteringAWordTextBox.Clear();
-                if (id < count)
+                if (numberofword < count)
                 {
-                    id++;
+                    numberofword++;
+                    using(SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id > {idofword}";
+                        command.Connection = connection;
+                        reader = command.ExecuteReader();
+                        reader.Read();
+                        idofword = reader.GetInt32(0);
+                    }
                     QueryRussianDescriptionEnglishPath();
 
-                    ProgressBar.Value = id;
-                    WordsCounterLabel.Content = id + "/" + count;
+                    ProgressBar.Value = numberofword;
+                    WordsCounterLabel.Content = numberofword + "/" + count;
                 }
                 else
                 {
                     WordOutputLabel.Content = "Выполнено";
                     DescriptionLabel.Content = "";
-                    ProgressBar.Value = id;
-                    WordsCounterLabel.Content = id + "/" + count;
+                    ProgressBar.Value = numberofword;
+                    WordsCounterLabel.Content = numberofword + "/" + count;
                 }
             }
         }
@@ -309,23 +323,13 @@ namespace Shebist
         //клик но кнопке ToTheChoiceOfTopicButton
         private void ToTheChoiceOfTopicButton_Click(object sender, EventArgs e)
         {
-            ChoiceOfTopicLabel.IsEnabled = ChoiceOfTopicTextBox.IsEnabled = true;
             ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
-
-            WordsCounterLabel.IsEnabled = SearchByNumberTextBox.IsEnabled =
-            ToTheChoiceOfTopicButton.IsEnabled =
-            BackButton.IsEnabled = NextButton.IsEnabled =
-            EnteringAWordTextBox.IsEnabled = WordOutputLabel.IsEnabled =
-            ProgressBar.IsEnabled = DescriptionLabel.IsEnabled =
-            StartButton.IsEnabled
-             = false;
-
 
             StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility =
             BackButton.Visibility = NextButton.Visibility =
             EnteringAWordTextBox.Visibility = WordOutputLabel.Visibility =
             ProgressBar.Visibility = SearchByNumberTextBox.Visibility
-            = DescriptionLabel.Visibility = Visibility.Hidden;
+            = DescriptionLabel.Visibility = WordsCounterLabel.Visibility = Visibility.Hidden;
 
             StartButton.Content = "Начать";
         }
@@ -333,51 +337,90 @@ namespace Shebist
         //клик по кнопке NextButton
         private void NextButton_Click(object sender, EventArgs e)
         {
-            if (id < count)
-            {
-                id++;
+            if (numberofword < count)
+            {   
+                numberofword++;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id > {idofword}";
+                    command.Connection = connection;
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    idofword = reader.GetInt32(0);
+                }
                 QueryRussianDescriptionEnglishPath();
 
-                ProgressBar.Value = id;
-                WordsCounterLabel.Content = id + "/" + count;
+                ProgressBar.Value = numberofword;
+                WordsCounterLabel.Content = numberofword + "/" + count;
             }
-            else if (id == count)
+            else if (numberofword == count)
             {
-                id = 1;
+                numberofword = 1;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
+                    command.Connection = connection;
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    idofword = reader.GetInt32(0);
+                }
                 QueryRussianDescriptionEnglishPath();
 
-                ProgressBar.Value = id;
-                WordsCounterLabel.Content = id + "/" + count;
+                ProgressBar.Value = numberofword;
+                WordsCounterLabel.Content = numberofword + "/" + count;
             }
         }
 
         //клик по кнопке BackButton
         private void BackButton_Click(object sender, EventArgs e)
         {
-            if (id == 1)
+            if (numberofword == 1)
             {
-                id = count;
+                numberofword = count;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT MAX(Id) FROM [{topicId}]";
+                    command.Connection = connection;
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    idofword = reader.GetInt32(0);
+                }
+
                 QueryRussianDescriptionEnglishPath();
-                ProgressBar.Value = id;
-                WordsCounterLabel.Content = "1/" + count;
+                ProgressBar.Value = numberofword;
+                WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else if (WordOutputLabel.Content.ToString() == "Выполнено")
             {
                 QueryRussianDescriptionEnglishPath();
 
-                DescriptionLabel.IsEnabled = true;
                 DescriptionLabel.Visibility = Visibility.Visible;
-                ProgressBar.Value = id;
-                WordsCounterLabel.Content = id + "/" + count;
+                ProgressBar.Value = numberofword;
+                WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else
             {
-                id--;
-                QueryRussianDescriptionEnglishPath();
-                ProgressBar.Value = id;
-                WordsCounterLabel.Content = id + "/" + count;
-            }
+                numberofword--;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id < {idofword}";
+                    command.Connection = connection;
+                    reader = command.ExecuteReader();
 
+                    while (reader.Read())
+                    {
+                        idofword = reader.GetInt32(0);
+                    }
+                }
+
+                QueryRussianDescriptionEnglishPath();
+                ProgressBar.Value = numberofword;
+                WordsCounterLabel.Content = numberofword + "/" + count;
+            }
         }
 
         //переход к слову по номеру
@@ -387,14 +430,32 @@ namespace Shebist
             {
                 try
                 {
-                    id = Int32.Parse(SearchByNumberTextBox.Text);
-                    if (id >= 1 && id <= count)
+                    numberofword = Int32.Parse(SearchByNumberTextBox.Text);
+                    if (numberofword >= 1 && numberofword <= count)
                     {
+                        using(SqlConnection connection = new SqlConnection(connectionString))
+                        {
+                            connection.Open();
+                            command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
+                            command.Connection = connection;
+                            reader = command.ExecuteReader();
+                            reader.Read();
+                            idofword = reader.GetInt32(0);
+                            reader.Close();
+                            command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id > {idofword}";
+                            for(int i = 1; i < numberofword; i++)
+                            {
+                                reader = command.ExecuteReader();
+                                reader.Read();
+                                idofword = reader.GetInt32(0);
+                                reader.Close();
+                            }
+                        }
                         QueryRussianDescriptionEnglishPath();
 
                         SearchByNumberTextBox.Clear();
-                        WordsCounterLabel.Content = id + "/" + count;
-                        ProgressBar.Value = id;
+                        WordsCounterLabel.Content = numberofword + "/" + count;
+                        ProgressBar.Value = numberofword;
                     }
                     else
                     {

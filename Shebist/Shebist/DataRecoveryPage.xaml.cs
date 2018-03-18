@@ -16,6 +16,7 @@ using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Shebist
 {
@@ -32,20 +33,19 @@ namespace Shebist
         }
 
         RegistrationPage rp = new RegistrationPage();
-
+        BinaryFormatter formatter = new BinaryFormatter();
+        static string Debug = Directory.GetCurrentDirectory();
         static string Shebist = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
-
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
-
-
-
+        
         private void BackLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             AuthorizationPage ap = new AuthorizationPage();
             this.NavigationService.Navigate(ap);
         }
 
-        string login, name, password;
+        string name;
+        int userid;
 
         private void BackLabel_MouseLeave(object sender, MouseEventArgs e)
         {
@@ -56,6 +56,11 @@ namespace Shebist
         {
             if(ConfirmTextBox.Text == randomeCode)
             {
+                using(FileStream fs = new FileStream($"{Debug}\\Data\\useridforrecovery", FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(fs, userid);
+                }
+
                 DataRecoveryPage2 drp2 = new DataRecoveryPage2();
                 this.NavigationService.Navigate(drp2);
             }
@@ -74,15 +79,14 @@ namespace Shebist
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT Login, Name, Password FROM UserDB WHERE Email = N'{EnterYourEmailTextBox.Text}'", connection);
+                    SqlCommand command = new SqlCommand($"SELECT Id, Name FROM UserDB WHERE Email = N'{EnterYourEmailTextBox.Text}'", connection);
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            login = reader.GetString(0);
+                            userid = reader.GetInt32(0);
                             name = reader.GetString(1);
-                            password = reader.GetString(2);
                         }
 
                         randomeCode = rp.RandomString(5);
@@ -90,13 +94,14 @@ namespace Shebist
                         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
                         MailAddress to = new MailAddress($"{EnterYourEmailTextBox.Text}");
                         MailMessage mailMessage = new MailMessage(from, to);
-                        mailMessage.Subject = "Восстановление данных";
+                        mailMessage.Subject = "Восстановление пароля";
                         mailMessage.Body = $"{name}, ваш код для восстановления пароля: {randomeCode}";
                         smtp.EnableSsl = true;
                         smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
                         smtp.Send(mailMessage);
 
                         ConfirmLabel.Visibility = Visibility.Visible;
+                        ConfirmLabel.Content = $"Введите код, отправленный на {EnterYourEmailTextBox.Text}";
                         ConfirmTextBox.Visibility = Visibility.Visible;
                     }
                     else

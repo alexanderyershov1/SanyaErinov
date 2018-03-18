@@ -24,7 +24,7 @@
                       x:Name="SettingsMenuItem"
                       Click="SettingsMenuItem_Click" Width="83"
                       />
-            <MenuItem Header="Редактор тем" Height="31" Width="104"
+            <MenuItem x:Name="TopicEditorMenuItem" Click="TopicEditorMenuItem_Click" Header="Редактор тем" Height="31" Width="104"
                      ></MenuItem>
 
         </Menu>

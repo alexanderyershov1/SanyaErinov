@@ -20,11 +20,6 @@ namespace Shebist
     public partial class SettingsWindow : Window
     {
         MainPage mp;
-        public SettingsWindow()
-        {
-
-        }
-
         public SettingsWindow(MainPage mp)
         {
             InitializeComponent();

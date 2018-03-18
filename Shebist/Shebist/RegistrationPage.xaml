@@ -127,7 +127,7 @@
 
         <Label x:Name="CheckLoginLabel"
                Foreground="Red"
-               Content="Поле не заполнено"
+               Content="✖"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Margin="586,87,41,313"
@@ -135,7 +135,7 @@
 
         <Label x:Name="CheckEmailLabel"
                Foreground="Red"
-               Content="Поле не заполнено"
+               Content="✖"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Margin="586,171,73,229"
@@ -143,7 +143,7 @@
 
         <Label x:Name="CheckNameLabel"
                Foreground="Red"
-               Content="Поле не заполнено"
+               Content="✖"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Margin="586,127,41,273"
@@ -151,7 +151,7 @@
 
         <Label x:Name="CheckPasswordLabel"
                Foreground="Red"
-               Content="Поле не заполнено"
+               Content="✖"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Margin="586,207,41,193"
@@ -185,7 +185,7 @@
 
         <Label x:Name="CheckPasswordsLabel"
                Foreground="Red"
-               Content="Пароли не совпадают"
+               Content="✖"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Margin="586,238,42,162"
