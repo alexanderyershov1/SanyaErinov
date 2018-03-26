@@ -2,20 +2,21 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Красав-ва</title>
+	<title>Онипедия</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
+	<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
 </head>
 <body>
 	<div class="header">
 		<div class="Oval"/>
 		<div class="Onypedia">Онипедия</div>
 		<div class="buttons">
-		<div class="button1"><span>Кнопка1</span></span></div>
-		<div class="button2"><span>Кнопка1</span></span></div>
-		<div class="button3"><span>Кнопка1</span></span></div>
-		<div class="button4"><span>Кнопка1</span></span></div>
-		<div class="button5"><span>Кнопка1</span></span></div>
-		<div class="button6"><span>Кнопка1</span></span></div>
+		<div class="button1"><span class="span1">Кнопка1</span></span></div>
+		<div class="button2"><span class="span2">Кнопка1</span></span></div>
+		<div class="button3"><span class="span3">Кнопка1</span></span></div>
+		<div class="button4"><span class="span4">Кнопка1</span></span></div>
+		<div class="button5"><span class="span5">Кнопка1</span></span></div>
+		<div class="button6"><span class="span6">Кнопка1</span></span></div>
 		</div>
 		<span class="htext1">Первая строка текста</span>
 		<span class="htext2">Вторая строка текста</span>
@@ -36,7 +37,7 @@
 	</div>
 
 	<div class="footer">
-		<a class="wiki">Ссылка на статью в википедии</a>
+		<a class="wiki" href="https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0" target="window">Ссылка на статью в википедии</a>
 		<span class="text2">Вторая строка текста</span>
 		<span class="text3">Третья строка текста</span>
 		<span class="kop">Копирайт</span>
@@ -55,8 +56,8 @@
 		состояла из слов "самая лучшая с.." и была в своеобразном<br>
 		стиле, оправдывающем название сайта.<br>
 		</p>
-		<img src="87062.jpg" width="754px" height="350px">
-		<div class="window">
+		<img src="crypto-world-754x350.jpg">
+		<div id="window" class="window fixed">
 			<h2>Текст</h2>
 			<div class="Oval"/>
 			<p class="description">Чтобы узнать, какие статьи<br>
@@ -66,6 +67,21 @@
 			 блоги вроде айтишного Хабра и<br>
 			 новомодного Medium</p>
 		</div>
+
+		<script>
+			$(document).ready(function(){
+				$("#window").removeClass("fixed");
+			
+				$(window).scroll(function(){
+					if($(this).scrollTop() > 120){
+						$("#window").addClass("fixed");
+					}
+					else{
+					$("#window").removeClass("fixed");	
+					}
+				});
+			});
+        </script>
 	</div>
 </body>
 </html>
