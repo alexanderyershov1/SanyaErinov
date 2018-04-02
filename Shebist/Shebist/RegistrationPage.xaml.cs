@@ -33,6 +33,8 @@ namespace Shebist
         
         string Debug = Directory.GetCurrentDirectory();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+        SqlCommand command = new SqlCommand();
+        SqlDataReader reader;
 
         Random random = new Random();
         public string RandomString(int length)
@@ -108,12 +110,7 @@ namespace Shebist
             }
             else
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand($"SELECT Login FROM UserDB WHERE Login = N'{LoginTextBox.Text}'", connection);
-                    SqlDataReader reader = command.ExecuteReader();
-                    if (reader.HasRows)
+                    if (logins.Contains(LoginTextBox.Text))
                     {
                         CheckLoginLabel.Foreground = Brushes.Red;
                         CheckLoginLabel.Content = "✖";
@@ -123,7 +120,6 @@ namespace Shebist
                         CheckLoginLabel.Foreground = Brushes.Green;
                         CheckLoginLabel.Content = "✔";
                     }
-                }
             }
         }
 
@@ -153,12 +149,7 @@ namespace Shebist
                 try
                 {
                     to = new MailAddress($"{EmailTextBox.Text}");
-                    using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        SqlCommand command = new SqlCommand($"SELECT Email FROM UserDB WHERE Email = N'{EmailTextBox.Text}'", connection);
-                        SqlDataReader reader = command.ExecuteReader();
-                        if (reader.HasRows)
+                        if (emails.Contains(EmailTextBox.Text))
                         {
                             CheckEmailLabel.Foreground = Brushes.Red;
                             CheckEmailLabel.Content = "✖";
@@ -168,7 +159,7 @@ namespace Shebist
                             CheckEmailLabel.Foreground = Brushes.Green;
                             CheckEmailLabel.Content = "✔";
                         }
-                    }
+                    
                 }
                 catch(FormatException)
                 {
@@ -226,6 +217,38 @@ namespace Shebist
         private void AlreadyHaveAnAccountLabel_MouseLeave(object sender, MouseEventArgs e)
         {
             AlreadyHaveAnAccountLabel.FontSize = 12;
+        }
+
+        string[] logins, emails;
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = "SELECT COUNT(*) FROM UserDB";
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    logins = new string[reader.GetInt32(0)];
+                    emails = new string[reader.GetInt32(0)];
+
+                }
+                reader.Close();
+
+                command.CommandText = $"SELECT Login, Email FROM UserDB";
+                reader = command.ExecuteReader();
+                int n = 0;
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        logins[n] = reader.GetString(0);
+                        emails[n++] = reader.GetString(1);
+                    }
+                }
+            }
         }
     }
 }

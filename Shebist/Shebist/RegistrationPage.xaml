@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d" 
       Background="White"
-      Title="RegistrationPage">
+      Title="RegistrationPage"
+      Loaded="Page_Loaded">
 
     <Grid>
         <Grid.Background>

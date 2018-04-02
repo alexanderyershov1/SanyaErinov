@@ -40,10 +40,11 @@ namespace Shebist
 
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {Shebist}\UserDB.mdf;Integrated Security=True";
-        public int userid, idofword, numberofword = 1, count = 0;
+        public int userid, idofword, index = 0, numberofword = 1, count = 0;
         public string english, path, Section = "";
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
+        string[] russianArray, descriptionArray, englishArray, pathArray;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -54,7 +55,7 @@ namespace Shebist
                     userid = (int)formatter.Deserialize(fs);
                 }
             }
-            
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -142,7 +143,7 @@ namespace Shebist
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    command.CommandText = $"SELECT Id FROM Topics WHERE UserId = {userid} AND Name = '{ChoiceOfTopicTextBox.Text}'";
+                    command.CommandText = $"SELECT Id FROM Topics WHERE UserId = {userid} AND Name = N'{ChoiceOfTopicTextBox.Text}'";
                     command.Connection = connection;
                     reader = command.ExecuteReader();
 
@@ -152,38 +153,43 @@ namespace Shebist
                         topicId = reader.GetInt32(0).ToString();
                         reader.Close();
 
-                        command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
-                        reader = command.ExecuteReader();
-                        reader.Read();
-                        idofword = reader.GetInt32(0);
-                        reader.Close();
-
-                        command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {idofword}";
+                        command.CommandText = $"SELECT COUNT(*) FROM [{topicId}]";
                         reader = command.ExecuteReader();
 
                         if (reader.HasRows)
                         {
                             reader.Read();
-                            WordOutputLabel.Content = reader.GetString(0).Trim();
-                            DescriptionLabel.Content = reader.GetString(1).Trim();
-                            english = reader.GetString(2).Trim();
-                            path = reader.GetString(3).Trim();
-
+                            russianArray = new string[reader.GetInt32(0)];
+                            descriptionArray = new string[reader.GetInt32(0)];
+                            englishArray = new string[reader.GetInt32(0)];
+                            pathArray = new string[reader.GetInt32(0)];
                             reader.Close();
-
-                            ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
-                            StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
-                            ChoiceOfTopicTextBox.Clear();
-
-                            command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
-                            command.ExecuteNonQuery();
-
                         }
-                        else
+
+                        command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}]";
+                        reader = command.ExecuteReader();
+                        if (reader.HasRows)
                         {
-                            ChoiceOfTopicTextBox.Clear();
-                            return;
+
+                            while (reader.Read())
+                            {
+                                russianArray[index] = reader.GetString(0).Trim();
+                                descriptionArray[index] = reader.GetString(1).Trim();
+                                englishArray[index] = reader.GetString(2).Trim();
+                                pathArray[index++] = reader.GetString(3).Trim();
+                            }
+                            reader.Close();
                         }
+
+                        
+
+                        ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
+                        StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
+                        ChoiceOfTopicTextBox.Clear();
+
+                        command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
+                        command.ExecuteNonQuery();
+
                     }
                     else
                     {
@@ -193,6 +199,7 @@ namespace Shebist
                 }
             }
         }
+
 
         private void TopicEditorMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -233,30 +240,13 @@ namespace Shebist
                 ProgressBar.Visibility = Visibility.Visible;
             }
 
+            index = 0;
+            count = russianArray.Length;
             numberofword = 1;
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                command.CommandText = $"SELECT COUNT(*) FROM [{topicId}]";
-                command.Connection = connection;
-                reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    count = reader.GetInt32(0);
-                    reader.Close();
-                }
-
-                command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
-                command.Connection = connection;
-                reader = command.ExecuteReader();
-                reader.Read();
-                idofword = reader.GetInt32(0);
-            }
-            
-            QueryRussianDescriptionEnglishPath();
-
+            WordOutputLabel.Content = russianArray[0];
+            DescriptionLabel.Content = descriptionArray[0];
+            english = englishArray[0];
+            path = pathArray[0];
             ProgressBar.Value = 1;
             ProgressBar.Maximum = count;
             WordsCounterLabel.Content = "1/" + count;
@@ -282,13 +272,13 @@ namespace Shebist
         //при изменении текста EnteringAWordTextBox 
         private void EnteringAWordTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (EnteringAWordTextBox.Text == english.Trim())
+            if (EnteringAWordTextBox.Text == englishArray[index])
             {
                 if (isSoundEnabled)
                 {
-                    if (File.Exists(Debug + path))
+                    if (File.Exists(path))
                     {
-                        player.Open(new Uri(Debug + path, UriKind.Absolute));
+                        player.Open(new Uri(path, UriKind.Absolute));
                         player.Play();
                     }
                 }
@@ -296,16 +286,10 @@ namespace Shebist
                 if (numberofword < count)
                 {
                     numberofword++;
-                    using(SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id > {idofword}";
-                        command.Connection = connection;
-                        reader = command.ExecuteReader();
-                        reader.Read();
-                        idofword = reader.GetInt32(0);
-                    }
-                    QueryRussianDescriptionEnglishPath();
+                    WordOutputLabel.Content = russianArray[++index];
+                    DescriptionLabel.Content = descriptionArray[index];
+                    english = englishArray[index];
+                    path = pathArray[index];
 
                     ProgressBar.Value = numberofword;
                     WordsCounterLabel.Content = numberofword + "/" + count;
@@ -338,35 +322,24 @@ namespace Shebist
         private void NextButton_Click(object sender, EventArgs e)
         {
             if (numberofword < count)
-            {   
+            {
                 numberofword++;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id > {idofword}";
-                    command.Connection = connection;
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    idofword = reader.GetInt32(0);
-                }
-                QueryRussianDescriptionEnglishPath();
+                WordOutputLabel.Content = russianArray[++index];
+                DescriptionLabel.Content = descriptionArray[index];
+                english = englishArray[index];
+                path = pathArray[index];
 
                 ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else if (numberofword == count)
             {
+                index = 0;
                 numberofword = 1;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
-                    command.Connection = connection;
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    idofword = reader.GetInt32(0);
-                }
-                QueryRussianDescriptionEnglishPath();
+                WordOutputLabel.Content = russianArray[0];
+                DescriptionLabel.Content = descriptionArray[0];
+                english = englishArray[0];
+                path = pathArray[0];
 
                 ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
@@ -378,24 +351,21 @@ namespace Shebist
         {
             if (numberofword == 1)
             {
+                index = russianArray.Length - 1;
                 numberofword = count;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.CommandText = $"SELECT MAX(Id) FROM [{topicId}]";
-                    command.Connection = connection;
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    idofword = reader.GetInt32(0);
-                }
-
-                QueryRussianDescriptionEnglishPath();
+                WordOutputLabel.Content = russianArray[index];
+                DescriptionLabel.Content = descriptionArray[index];
+                english = englishArray[index];
+                path = pathArray[index];
                 ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else if (WordOutputLabel.Content.ToString() == "Выполнено")
             {
-                QueryRussianDescriptionEnglishPath();
+                WordOutputLabel.Content = russianArray[index];
+                DescriptionLabel.Content = descriptionArray[index];
+                english = englishArray[index];
+                path = pathArray[index];
 
                 DescriptionLabel.Visibility = Visibility.Visible;
                 ProgressBar.Value = numberofword;
@@ -404,20 +374,10 @@ namespace Shebist
             else
             {
                 numberofword--;
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id < {idofword}";
-                    command.Connection = connection;
-                    reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        idofword = reader.GetInt32(0);
-                    }
-                }
-
-                QueryRussianDescriptionEnglishPath();
+                WordOutputLabel.Content = russianArray[--index];
+                DescriptionLabel.Content = descriptionArray[index];
+                english = englishArray[index];
+                path = pathArray[index];
                 ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
@@ -433,26 +393,11 @@ namespace Shebist
                     numberofword = Int32.Parse(SearchByNumberTextBox.Text);
                     if (numberofword >= 1 && numberofword <= count)
                     {
-                        using(SqlConnection connection = new SqlConnection(connectionString))
-                        {
-                            connection.Open();
-                            command.CommandText = $"SELECT MIN(Id) FROM [{topicId}]";
-                            command.Connection = connection;
-                            reader = command.ExecuteReader();
-                            reader.Read();
-                            idofword = reader.GetInt32(0);
-                            reader.Close();
-                            command.CommandText = $"SELECT Id FROM [{topicId}] WHERE Id > {idofword}";
-                            for(int i = 1; i < numberofword; i++)
-                            {
-                                reader = command.ExecuteReader();
-                                reader.Read();
-                                idofword = reader.GetInt32(0);
-                                reader.Close();
-                            }
-                        }
-                        QueryRussianDescriptionEnglishPath();
-
+                        index = numberofword - 1;
+                        WordOutputLabel.Content = russianArray[index];
+                        DescriptionLabel.Content = descriptionArray[index];
+                        english = englishArray[index];
+                        path = pathArray[index];
                         SearchByNumberTextBox.Clear();
                         WordsCounterLabel.Content = numberofword + "/" + count;
                         ProgressBar.Value = numberofword;

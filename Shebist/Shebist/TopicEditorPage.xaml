@@ -5,16 +5,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d" 
-      Title="TopicEditorPage">
-    <Grid Background="White" Margin="0,0,0,-201">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="15*"/>
-            <ColumnDefinition Width="262*"/>
-        </Grid.ColumnDefinitions>
-        <TabControl Margin="0,-40,0,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
+      Title="TopicEditorPage"
+      Loaded="Page_Loaded">
+    <Grid Margin="0,0,0,-201">
+        <TabControl Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,146">
             <TabItem x:Name="CreateTabItem" Header="Создать тему" Loaded="CreateTabItem_Loaded">
                 <Grid HorizontalAlignment="Center"
                            VerticalAlignment="Center">
+                    <Button Content="Назад" Width="75" Margin="144,12,177,168" Click="Button_Click"/>
                     <DataGrid x:Name="ExistingTopicsDataGrid" Margin="224,22,26,17" IsReadOnly="True"/>
                     <Label Content="✖"
                            Foreground="Red"
@@ -66,27 +64,53 @@
                             VerticalAlignment="Center"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="EditTabItem" Header="Редактировать тему">
+            <TabItem x:Name="EditTabItem" Header="Редактировать тему" Loaded="EditTabItem_Loaded">
                 <Grid>
-                    <DataGrid x:Name="ExistingTopicsDataGrid2" Margin="10,47,469,479" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="69" Height="100"/>
-                    <TextBox x:Name="ChooseTopicTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="92" Margin="94,47,362,561"/>
-                    <TextBox x:Name="InputRussianTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="227,98,244,510" Width="77"/>
-                    <TextBox x:Name="InputDecriptionTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="227,129,244,479" Width="77"/>
-                    <TextBox x:Name="InputEnglishTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="227,160,244,448" Width="77"/>
-                    <TextBox x:Name="InputPathTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="255,194,216,414" Width="77"/>
-                    <Label Content="Русское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="98,90,362,510"/>
-                    <Label Content="Описание" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="98,129,385,471"/>
-                    <Label Content="Английское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="97,160,341,440"/>
-                    <Label Content="Путь к файлу озвучки" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="98,186,321,414"/>
+                    <DataGrid x:Name="WordsDataGrid" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="191" Margin="679,150,115,285"/>
+                    <Label Content="Выберите тему" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="134,6,321,594"/>
+                    <Label x:Name="TopicNameLabel" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="745,119,239,481"/>
+                    <DataGrid x:Name="ExistingTopicsDataGrid2" Margin="10,37,423,489" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="115" Height="100"/>
+                    <TextBox x:Name="ChooseTopicTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="92" TextChanged="ChooseTopicTextBox_TextChanged" Margin="358,37,544,571"/>
+                    <Label x:Name="CheckTopicLabel" Content="✖" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="232,30,296,571" Height="25"/>
+                    <Button x:Name="ChooseTopicButton" Click="ChooseTopicButton_Click" Content="Ок" Margin="166,67,350,539" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
+                    <TabControl x:Name="CreateEditTabControl" IsEnabled="False" Margin="286,180,358,246" Width="350" Height="200">
+                        <TabItem Header="Изменить">
+                            <Grid Margin="0,0,0,-79">
+                                <Button x:Name="UpButton" Click="UpButton_Click" Content="↑" Margin="255,31,21,202" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68"/>
+                                <Button x:Name="DownButton" Click="DownButton_Click" Content="↓" RenderTransformOrigin="5.067,-0.8" Margin="255,59,21,174" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68"/>
+                                <Button x:Name="ChangeButton" Click="ChangeButton_Click" Content="Изменить" Margin="256,88,21,145" HorizontalAlignment="Center" VerticalAlignment="Center" Width="67" Height="18"/>
+                                <Button x:Name="DeleteButton" Click="DeleteButton_Click" Content="Удалить" Margin="256,114,21,119" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="1.097,0.6" Width="67" Height="18"/>
+                                <TextBox x:Name="InputRussianTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="164,31,104,202"/>
+                                <TextBox x:Name="InputDescriptionTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="164,59,104,174"/>
+                                <TextBox x:Name="InputEnglishTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" RenderTransformOrigin="0.909,0.537" Margin="164,88,104,145"/>
+                                <TextBox x:Name="InputPathTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="77" Margin="164,114,103,119" Height="18"/>
+                                <Label Content="Русское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="60,23,196,202"/>
+                                <Label Content="Описание" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="83,51,196,174"/>
+                                <Label Content="Английское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="38,80,196,145"/>
+                                <Label Content="Путь к файлу озвучки" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="19,106,196,119" RenderTransformOrigin="0.339,0.577"/>
+
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Добавить">
+                            <Grid>
+                                <Button x:Name="AddButton" Click="AddButton_Click" Content="Добавить"  Margin="254,34,22,120" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68" Height="18"/>
+                                <TextBox x:Name="InputRussianTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,34,114,120"/>
+                                <TextBox x:Name="InputDescriptionTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,61,114,93"/>
+                                <TextBox x:Name="InputEnglishTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,88,114,66"/>
+                                <TextBox x:Name="InputPathTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="154,112,114,42"/>
+                                <Label Content="Русское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="52,26,204,120" RenderTransformOrigin="0.989,0.5"/>
+                                <Label Content="Описание" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="75,49,204,97"/>
+                                <Label Content="Английское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,80,204,66"/>
+                                <Label Content="Путь к файлу озвучки" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="11,104,204,42"/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+
                 </Grid>
             </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <Label x:Name="BackLabel" MouseLeftButtonDown="BackLabel_MouseLeftButtonDown" Content="Назад"></Label>
-                </TabItem.Header>
-            </TabItem>
-            <TextBox x:Name="ChooseTopicTextBox_Copy" HorizontalAlignment="Center" VerticalAlignment="Center" Width="92"/>
-            <Label Content="Русское слово" Height="26" Width="94"/>
+
+
+
         </TabControl>
     </Grid>
 </Page>
