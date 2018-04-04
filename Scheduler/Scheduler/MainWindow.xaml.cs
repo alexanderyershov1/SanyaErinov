@@ -27,28 +27,26 @@ namespace Scheduler
         {
             InitializeComponent();
         }
-       
-        static System.IO.DirectoryInfo myDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-        static string parentDirectory = myDirectory.Parent.FullName;
-        static System.IO.DirectoryInfo myDirectory2 = new DirectoryInfo(parentDirectory);
-        static string parentDirectory2 = myDirectory2.Parent.FullName;
 
-        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={parentDirectory2}\Database1.mdf;Integrated Security=True";
+        static string Scheduler = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
+        string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Scheduler}\Database1.mdf;Integrated Security=True";
+        SqlCommand command = new SqlCommand();
+        SqlDataReader reader;
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'", connection);
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
 
-                if (reader.HasRows) // если есть данные
+                reader.Read();
+                if (reader.HasRows)
                 {
-                    while (reader.Read()) // построчно считываем данные
-                    {
-                        TextBox.Text = (string)reader.GetValue(0);
-                    }
+                    TextBox.Text = reader.GetString(0);
+
                 }
                 else TextBox.Clear();
 
@@ -61,55 +59,113 @@ namespace Scheduler
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand($"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'", connection);
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
 
                 if (reader.HasRows)
                 {
                     reader.Close();
-                    SqlCommand command2 = new SqlCommand($"UPDATE Notes SET Note = N'{TextBox.Text}' WHERE Date = '{DatePicker.SelectedDate.ToString()}'", connection);
-                    command2.ExecuteNonQuery();
+                    command.CommandText = $"UPDATE Notes SET Note = N'{TextBox.Text}' WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
+                    command.ExecuteNonQuery();
 
                 }
                 else
                 {
                     reader.Close();
-                    SqlCommand command3 = new SqlCommand($"INSERT INTO Notes (Date, Note) VALUES('{DatePicker.SelectedDate.ToString()}', N'{TextBox.Text}')", connection);
-                    command3.ExecuteNonQuery();
+                    command.CommandText = $"INSERT INTO Notes (Date, Note) VALUES('{DatePicker.SelectedDate.ToString()}', N'{TextBox.Text}')";
+                    command.ExecuteNonQuery();
                 }
 
                 reader.Close();
             }
+            
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
+
+        string day, month, year;
+
+        private void FontSizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (FontSizeTextBox.Text != "")
+                TextBox.FontSize = Int32.Parse(FontSizeTextBox.Text);
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
-           
-            using (FileStream fs = new FileStream("DatePickerSelectedDate", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream("Data\\TextBoxFontFamily", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(fs, DatePicker.SelectedDate);
+                formatter.Serialize(fs, TextBox.FontFamily.ToString());
             }
-            using (FileStream fs = new FileStream("TextBoxText", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream("Data\\TextBoxFontSize", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(fs, TextBox.Text);
+                formatter.Serialize(fs, TextBox.FontSize);
+            }
+            using (FileStream fs = new FileStream("Data\\FontSizeTextBoxText", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, FontSizeTextBox.Text);
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void ArialComboBoxItem_Selected(object sender, RoutedEventArgs e)
         {
-            if (File.Exists("DatePickerSelectedDate"))
+            TextBox.FontFamily  = new FontFamily("Arial");
+        }
+
+        private void TimesNewRomanComboBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+            TextBox.FontFamily = new FontFamily("Times New Roman");
+        }
+
+        private void CalibriComboBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+            TextBox.FontFamily = new FontFamily("Calibri");
+        }
+
+        private void FontSizeTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !(Char.IsDigit(e.Text, 0));
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {  
+            if (File.Exists("Data\\TextBoxFontFamily"))
             {
-                using (FileStream fs = new FileStream("DatePickerSelectedDate", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream("Data\\TextBoxFontFamily", FileMode.OpenOrCreate))
                 {
-                    DatePicker.SelectedDate = (DateTime)formatter.Deserialize(fs);
+                    TextBox.FontFamily = new FontFamily((string)formatter.Deserialize(fs));
                 }
             }
-            if (File.Exists("TextBoxText"))
+            if (File.Exists("Data\\TextBoxFontSize"))
             {
-                using (FileStream fs = new FileStream("TextBoxText", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream("Data\\TextBoxFontSize", FileMode.OpenOrCreate))
                 {
-                    TextBox.Text = (string)formatter.Deserialize(fs);
+                    TextBox.FontSize = (double)formatter.Deserialize(fs);
+                }
+            }
+            if (File.Exists("Data\\FontSizeTextBoxText"))
+            {
+                using (FileStream fs = new FileStream("Data\\FontSizeTextBoxText", FileMode.OpenOrCreate))
+                {
+                    FontSizeTextBox.Text = (string)formatter.Deserialize(fs);
+                }
+            }
+
+            TextBox.Text = DateTime.Today.ToString();
+            DatePicker.SelectedDate = Convert.ToDateTime(TextBox.Text);
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand($"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'", connection);
+                command.Connection = connection;
+                SqlDataReader reader = command.ExecuteReader();
+
+                reader.Read();
+                if (reader.HasRows)
+                {
+                    TextBox.Text = reader.GetString(0);
                 }
             }
         }

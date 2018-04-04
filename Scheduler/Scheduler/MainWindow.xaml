@@ -5,21 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Scheduler"
         mc:Ignorable="d"
-        Title="MainWindow" Height="415" Width="525"
-        Closed="Window_Closed"
-        Loaded="Window_Loaded">
-    <Grid Margin="0,0,0,57">
+        Title="Планировщик" Height="551" Width="525"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="polygon-shape-abstract-design-wallpaper-43815328.jpg" Stretch="Fill"/>
+        </Grid.Background>
         <DatePicker x:Name="DatePicker"
+                    SelectedDateFormat="Long"
                     HorizontalAlignment="Left"
-                    Margin="184,10,0,0"
+                    Margin="23,68,0,0"
                     VerticalAlignment="Top"
-                    SelectedDateChanged="DatePicker_SelectedDateChanged"
+                    SelectedDateChanged="DatePicker_SelectedDateChanged" Width="112"
                     />
-        <TextBox HorizontalAlignment="Left"
+        <TextBox HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+                 FontFamily="Times New Roman"
                  VerticalScrollBarVisibility="Visible"
                  AcceptsReturn="True"
                  TextChanged="TextBox_TextChanged"
-                 x:Name="TextBox" Height="284" Margin="30,52,0,-24" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="458"/>
+                 x:Name="TextBox" Height="284" Margin="23,73,10,-30" TextWrapping="Wrap"/>
+        <Label Content="Шрифт" HorizontalAlignment="Left" Height="25" Margin="23,110,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="FontSizeTextBox" MaxLength="4" TextChanged="FontSizeTextBox_TextChanged" HorizontalAlignment="Left" Height="24" Margin="77,113,0,0" TextWrapping="Wrap" PreviewTextInput="FontSizeTextBox_PreviewTextInput" VerticalAlignment="Top" Width="58"/>
+        <ComboBox HorizontalAlignment="Left" Margin="156,113,0,0" VerticalAlignment="Top" Width="149" SelectedItem="CalibriComboBoxItem" Height="24">
+            <ComboBoxItem x:Name="ArialComboBoxItem" Selected="ArialComboBoxItem_Selected">
+                <TextBlock Text="Arial"/>
+            </ComboBoxItem>
+            <ComboBoxItem x:Name="TimesNewRomanComboBoxItem" Selected="TimesNewRomanComboBoxItem_Selected">
+                <TextBlock Text="Times New Roman"/>
+            </ComboBoxItem>
+            <ComboBoxItem x:Name="CalibriComboBoxItem" Selected="CalibriComboBoxItem_Selected">
+                <TextBlock Text="Calibri"/>
+            </ComboBoxItem>
+        </ComboBox>
 
     </Grid>
 </Window>
