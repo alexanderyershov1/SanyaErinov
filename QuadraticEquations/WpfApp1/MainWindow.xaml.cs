@@ -28,11 +28,20 @@ namespace WpfApp1
         double a, b, c, x1, x2, d;
         private void SolveButton_Click(object sender, RoutedEventArgs e)
         {
+
             SolveTextBox.Clear();
-            a = Double.Parse(aTextBox.Text);
-            b = Double.Parse(bTextBox.Text);
-            c = Double.Parse(cTextBox.Text) - Double.Parse(resultTextBox.Text);
-            d = Math.Pow(a, 2) - 4 * a * c;
+            try
+            {
+                a = Double.Parse(aTextBox.Text);
+                b = Double.Parse(bTextBox.Text);
+                c = Double.Parse(cTextBox.Text) - Double.Parse(resultTextBox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Введите числа");
+                return;
+            }
+            d = Math.Pow(b, 2) - 4 * a * c;
             SolveTextBox.Text += $"D = {b}² - 4 * {a} * {c} = {d}\n";
             if (d > 0)
             {
