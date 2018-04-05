@@ -24,7 +24,6 @@
                  FontFamily="Times New Roman"
                  VerticalScrollBarVisibility="Visible"
                  AcceptsReturn="True"
-                 TextChanged="TextBox_TextChanged"
                  x:Name="TextBox" Height="284" Margin="23,73,10,-30" TextWrapping="Wrap"/>
         <Label Content="Шрифт" HorizontalAlignment="Left" Height="25" Margin="23,110,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="FontSizeTextBox" MaxLength="4" TextChanged="FontSizeTextBox_TextChanged" HorizontalAlignment="Left" Height="24" Margin="77,113,0,0" TextWrapping="Wrap" PreviewTextInput="FontSizeTextBox_PreviewTextInput" VerticalAlignment="Top" Width="58"/>

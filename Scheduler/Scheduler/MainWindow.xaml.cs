@@ -32,14 +32,34 @@ namespace Scheduler
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Scheduler}\Database1.mdf;Integrated Security=True";
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
+        DateTime currentDate;
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
                 command.Connection = connection;
+                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{currentDate.ToString()}'";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    reader.Close();
+                    command.CommandText = $"UPDATE Notes SET Note = N'{TextBox.Text}' WHERE Date = '{currentDate.ToString()}'";
+                    command.ExecuteNonQuery();
+
+                }
+                else
+                {
+                    reader.Close();
+                    command.CommandText = $"INSERT INTO Notes (Date, Note) VALUES('{currentDate.ToString()}', N'{TextBox.Text}')";
+                    command.ExecuteNonQuery();
+                }
+
+                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
                 reader = command.ExecuteReader();
 
                 reader.Read();
@@ -52,39 +72,10 @@ namespace Scheduler
 
                 reader.Close();
             }
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
-                command.Connection = connection;
-                reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    reader.Close();
-                    command.CommandText = $"UPDATE Notes SET Note = N'{TextBox.Text}' WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
-                    command.ExecuteNonQuery();
-
-                }
-                else
-                {
-                    reader.Close();
-                    command.CommandText = $"INSERT INTO Notes (Date, Note) VALUES('{DatePicker.SelectedDate.ToString()}', N'{TextBox.Text}')";
-                    command.ExecuteNonQuery();
-                }
-
-                reader.Close();
-            }
-            
+            currentDate = Convert.ToDateTime(DatePicker.SelectedDate);
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
-
-        string day, month, year;
 
         private void FontSizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -105,6 +96,27 @@ namespace Scheduler
             using (FileStream fs = new FileStream("Data\\FontSizeTextBoxText", FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, FontSizeTextBox.Text);
+            }
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                command.CommandText = $"SELECT Note FROM Notes WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    reader.Close();
+                    command.CommandText = $"UPDATE Notes SET Note = N'{TextBox.Text}' WHERE Date = '{DatePicker.SelectedDate.ToString()}'";
+                    command.ExecuteNonQuery();
+
+                }
+                else
+                {
+                    reader.Close();
+                    command.CommandText = $"INSERT INTO Notes (Date, Note) VALUES('{DatePicker.SelectedDate.ToString()}', N'{TextBox.Text}')";
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
@@ -152,8 +164,8 @@ namespace Scheduler
                 }
             }
 
-            TextBox.Text = DateTime.Today.ToString();
-            DatePicker.SelectedDate = Convert.ToDateTime(TextBox.Text);
+            DatePicker.SelectedDate = DateTime.Today;
+            currentDate = DateTime.Today;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
