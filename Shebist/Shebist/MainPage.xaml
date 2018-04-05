@@ -45,6 +45,7 @@
 
 
         <TextBox x:Name="EnteringAWordTextBox"
+                 KeyDown="EnteringAWordTextBox_KeyDown"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  Height="29"
@@ -85,10 +86,10 @@
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
-               Content="Вывод" Margin="209,216,275,190"
+               Content="Вывод" Margin="135,238,182,212"
                IsEnabled="True"
                Visibility="Visible"
-               FontSize="28" Width="362" Height="43"/>
+               FontSize="28" Width="547" Height="44"/>
 
         <Label x:Name="DescriptionLabel"
                Foreground="White"
@@ -163,5 +164,17 @@
                      Width="141"
                      IsEnabled="True"
                      Visibility="Visible"/>
+        <Button x:Name="MainWordsButton"
+                Click="MainWordsButton_Click"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="Основные слова"
+                Margin="370,128,421,342"
+                Width="73"
+                Height="24"
+                FontSize="9"    
+                IsEnabled="True"
+                Visibility="Visible"
+            />
     </Grid>
 </Page>

@@ -41,7 +41,7 @@ namespace Shebist
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {Shebist}\UserDB.mdf;Integrated Security=True";
         public int userid, idofword, index = 0, numberofword = 1, count = 0;
-        public string english, path, Section = "";
+        public string english, path, Section = "", topicId;
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
         string[] russianArray, descriptionArray, englishArray, pathArray;
@@ -108,32 +108,78 @@ namespace Shebist
         isProgressBarVisible = true,
         isSoundEnabled = true;
 
+        private void EnteringAWordTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                EnteringAWordTextBox.Clear();
+                WordOutputLabel.Content = englishArray[index];
+                if (isSoundEnabled)
+                {
+                    if (File.Exists(path))
+                    {
+                        player.Open(new Uri(path, UriKind.Absolute));
+                        player.Play();
+                    }
+                }
+            }  
+        }
+
         MediaPlayer player = new MediaPlayer();
 
-        private void QueryRussianDescriptionEnglishPath()
+        private void MainWordsButton_Click(object sender, RoutedEventArgs e)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-
-                command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] where Id = {idofword}";
+                command.CommandText = $"SELECT COUNT(*) FROM MainWords";
                 command.Connection = connection;
                 reader = command.ExecuteReader();
 
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    WordOutputLabel.Content = reader.GetString(0).Trim();
-                    DescriptionLabel.Content = reader.GetString(1).Trim();
-                    english = reader.GetString(2).Trim();
-                    path = reader.GetString(3).Trim();
+                    russianArray = new string[reader.GetInt32(0)];
+                    descriptionArray = new string[reader.GetInt32(0)];
+                    englishArray = new string[reader.GetInt32(0)];
+                    pathArray = new string[reader.GetInt32(0)];
+                    reader.Close();
 
+                    command.CommandText = $"SELECT Russian, Description, English, Path FROM MainWords";
+                    reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+
+                        while (reader.Read())
+                        {
+                            russianArray[index] = reader.GetString(0).Trim();
+                            descriptionArray[index] = reader.GetString(1).Trim();
+                            englishArray[index] = reader.GetString(2).Trim();
+                            pathArray[index++] = Debug + "\\MainWordsSounds" + reader.GetString(3).Trim();
+                        }
+                        reader.Close();
+                    }
+
+
+
+                    ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = MainWordsButton.Visibility = Visibility.Hidden;
+                    StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
+                    ChoiceOfTopicTextBox.Clear();
+
+                    command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
+                    command.ExecuteNonQuery();
+
+                }
+                else
+                {
+                    ChoiceOfTopicTextBox.Clear();
+                    return;
                 }
             }
         }
 
         //Нажатие Enter в поле выбора темы
-        string topicId;
+
         private void ChoiceOfTopicTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -181,7 +227,7 @@ namespace Shebist
                             reader.Close();
                         }
 
-                        
+
 
                         ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
                         StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
@@ -307,7 +353,7 @@ namespace Shebist
         //клик но кнопке ToTheChoiceOfTopicButton
         private void ToTheChoiceOfTopicButton_Click(object sender, EventArgs e)
         {
-            ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
+            ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = MainWordsButton.Visibility = Visibility.Visible;
 
             StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility =
             BackButton.Visibility = NextButton.Visibility =
@@ -316,6 +362,7 @@ namespace Shebist
             = DescriptionLabel.Visibility = WordsCounterLabel.Visibility = Visibility.Hidden;
 
             StartButton.Content = "Начать";
+            index = 0;
         }
 
         //клик по кнопке NextButton

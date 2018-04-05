@@ -57,8 +57,7 @@ namespace Shebist
                     userid = reader.GetInt32(0);
 
                     reader.Close();
-                    MainPage mp = new MainPage();
-                    this.NavigationService.Navigate(mp);
+                    this.NavigationService.Navigate(new MainPage());
                 }
                 else
                 {

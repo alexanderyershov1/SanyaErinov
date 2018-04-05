@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d" 
       Title="TopicEditorPage"
-      Loaded="Page_Loaded">
+      Loaded="Page_Loaded"
+      >
     <Grid Margin="0,0,0,-201">
         <TabControl Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,146">
             <TabItem x:Name="CreateTabItem" Header="Создать тему" Loaded="CreateTabItem_Loaded">
@@ -80,10 +81,10 @@
                                 <Button x:Name="DownButton" Click="DownButton_Click" Content="↓" RenderTransformOrigin="5.067,-0.8" Margin="255,59,21,174" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68"/>
                                 <Button x:Name="ChangeButton" Click="ChangeButton_Click" Content="Изменить" Margin="256,88,21,145" HorizontalAlignment="Center" VerticalAlignment="Center" Width="67" Height="18"/>
                                 <Button x:Name="DeleteButton" Click="DeleteButton_Click" Content="Удалить" Margin="256,114,21,119" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="1.097,0.6" Width="67" Height="18"/>
-                                <TextBox x:Name="InputRussianTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="164,31,104,202"/>
-                                <TextBox x:Name="InputDescriptionTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="164,59,104,174"/>
-                                <TextBox x:Name="InputEnglishTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" RenderTransformOrigin="0.909,0.537" Margin="164,88,104,145"/>
-                                <TextBox x:Name="InputPathTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="77" Margin="164,114,103,119" Height="18"/>
+                                <TextBox x:Name="InputRussianTextBox" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="164,31,104,202"/>
+                                <TextBox x:Name="InputDescriptionTextBox" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="164,59,104,174"/>
+                                <TextBox x:Name="InputEnglishTextBox" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" RenderTransformOrigin="0.909,0.537" Margin="164,88,104,145"/>
+                                <TextBox x:Name="InputPathTextBox" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="77" Margin="164,114,103,119" Height="18"/>
                                 <Label Content="Русское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="60,23,196,202"/>
                                 <Label Content="Описание" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="83,51,196,174"/>
                                 <Label Content="Английское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="38,80,196,145"/>
@@ -94,10 +95,10 @@
                         <TabItem Header="Добавить">
                             <Grid>
                                 <Button x:Name="AddButton" Click="AddButton_Click" Content="Добавить"  Margin="254,34,22,120" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68" Height="18"/>
-                                <TextBox x:Name="InputRussianTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,34,114,120"/>
-                                <TextBox x:Name="InputDescriptionTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,61,114,93"/>
-                                <TextBox x:Name="InputEnglishTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,88,114,66"/>
-                                <TextBox x:Name="InputPathTextBox2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="154,112,114,42"/>
+                                <TextBox x:Name="InputRussianTextBox2" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,34,114,120"/>
+                                <TextBox x:Name="InputDescriptionTextBox2" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,61,114,93"/>
+                                <TextBox x:Name="InputEnglishTextBox2" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="154,88,114,66"/>
+                                <TextBox x:Name="InputPathTextBox2" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="154,112,114,42"/>
                                 <Label Content="Русское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="52,26,204,120" RenderTransformOrigin="0.989,0.5"/>
                                 <Label Content="Описание" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="75,49,204,97"/>
                                 <Label Content="Английское слово" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="30,80,204,66"/>
