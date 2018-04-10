@@ -32,9 +32,9 @@
         <TextBox x:Name="ChoiceOfTopicTextBox"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
-                 Width="74"
+                 Width="83"
                  Height="21"
-                 Margin="365,95,415,364"
+                 Margin="372,102,413,371"
                  TextWrapping="NoWrap"
                  TextAlignment="Center"
                  IsEnabled="True"
@@ -48,6 +48,7 @@
                  KeyDown="EnteringAWordTextBox_KeyDown"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
+                 FontWeight="Bold"
                  Height="29"
                  Margin="325,294,371,126" 
                  TextWrapping="NoWrap"
@@ -60,6 +61,7 @@
 
         <TextBox x:Name="SearchByNumberTextBox"
                  TextAlignment="Center"
+                 FontWeight="Bold"
                  HorizontalAlignment="Center"
                  Height="23"
                  Margin="344,148,451,278"
@@ -72,13 +74,14 @@
 
         <Label x:Name="ChoiceOfTopicLabel"
                Foreground="White"
+               FontWeight="Bold"
                HorizontalContentAlignment="Center"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Content="Выберите тему"
                IsEnabled="True"
                Visibility="Visible"
-               Margin="348,66,406,397" Height="31" Width="100"
+               Margin="363,66,405,397" Height="31" Width="100"
               />
 
         <Label x:Name="WordOutputLabel"
@@ -89,6 +92,7 @@
                Content="Вывод" Margin="135,238,182,212"
                IsEnabled="True"
                Visibility="Visible"
+               FontWeight="Bold"
                FontSize="28" Width="547" Height="44"/>
 
         <Label x:Name="DescriptionLabel"
@@ -100,10 +104,12 @@
                Margin="360,259,421,161"
                IsEnabled="True"
                Visibility="Visible"
+               FontWeight="Bold"
                FontSize="16" Height="29"/>
 
         <Label x:Name="WordsCounterLabel"
                Foreground="White"
+               FontWeight="Bold"
                Content="Счётчик слов"
                HorizontalAlignment="Center"
                Margin="407,148,330,278"
@@ -116,9 +122,9 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Content="▶"
-                Margin="510,294,297,126"
-                Width="39"
-                Height="29"
+                Margin="504,316,322,148"
+                Width="38"
+                Height="30"
                 IsEnabled="True"
                 Visibility="Visible"
                 Click="NextButton_Click"/>
@@ -127,15 +133,16 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Content="◀"
-                Margin="266,294,541,126"
+                Margin="279,316,546,148"
                 Width="39"
-                Height="29"
+                Height="30"
                 IsEnabled="True"
                 Visibility="Visible"
                 Click="BackButton_Click"/>
 
         <Button x:Name="StartButton"
                 HorizontalAlignment="Center"
+                FontWeight="Bold"
                 VerticalAlignment="Center"
                 Content="Начать"
                 Margin="344,343,394,82"
@@ -147,6 +154,7 @@
 
         <Button x:Name="ToTheChoiceOfTopicButton"
                 HorizontalAlignment="Center"
+                FontWeight="Bold"
                 VerticalAlignment="Center"
                 Content="К выбору темы"
                 Margin="344,378,394,48"
@@ -168,13 +176,21 @@
                 Click="MainWordsButton_Click"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                FontWeight="Bold"
                 Content="Основные слова"
-                Margin="370,128,421,342"
-                Width="73"
+                Margin="372,128,413,342"
+                Width="83"
                 Height="24"
                 FontSize="9"    
                 IsEnabled="True"
                 Visibility="Visible"
             />
+        <Button x:Name="MixButton"
+                Content="Перемешать"
+                HorizontalAlignment="Center"
+                Margin="137,321,656,153"
+                VerticalAlignment="Center"
+                Width="75"
+                Click="MixButton_Click"/>
     </Grid>
 </Page>

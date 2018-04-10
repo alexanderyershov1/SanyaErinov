@@ -35,16 +35,16 @@ namespace Shebist
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
-        static string Debug = Directory.GetCurrentDirectory();
-        static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
+        static string Debug = Directory.GetCurrentDirectory(),
+        Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
 
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
-        {Shebist}\UserDB.mdf;Integrated Security=True";
-        public int userid, idofword, index = 0, numberofword = 1, count = 0;
-        public string english, path, Section = "", topicId;
+        {Shebist}\UserDB.mdf;Integrated Security=True", english, path, Section = "", topicId;
+        public int userid, index = 0, numberofword = 1, count = 0;
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
         string[] russianArray, descriptionArray, englishArray, pathArray;
+        Random rand = new Random();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -108,9 +108,47 @@ namespace Shebist
         isProgressBarVisible = true,
         isSoundEnabled = true;
 
+        private void MixButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<int> indices = new List<int>(russianArray.Length);
+            for (int i = 0; i < russianArray.Length; i++)
+            {
+                indices.Add(i);
+            }
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}] ORDER BY Id";
+                command.Connection = connection;
+                reader = command.ExecuteReader();
+                int randomIndex;
+                int element;
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        
+                            element = rand.Next(0, indices.Count - 1);
+                            randomIndex = indices.ElementAt(element);
+                            russianArray[randomIndex] = reader.GetString(0).Trim();
+                            descriptionArray[randomIndex] = reader.GetString(1).Trim();
+                            englishArray[randomIndex] = reader.GetString(2).Trim();
+                            pathArray[randomIndex] = Debug + "\\MainWordsSounds" + reader.GetString(3).Trim();
+                            indices.RemoveAt(element);
+                        
+                    }
+                    reader.Close();
+                }
+                WordOutputLabel.Content = russianArray[index];
+                DescriptionLabel.Content = descriptionArray[index];
+                english = englishArray[index];
+                path = pathArray[index];
+            }
+        }
+
         private void EnteringAWordTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 EnteringAWordTextBox.Clear();
                 WordOutputLabel.Content = englishArray[index];
@@ -122,13 +160,14 @@ namespace Shebist
                         player.Play();
                     }
                 }
-            }  
+            }
         }
 
         MediaPlayer player = new MediaPlayer();
 
         private void MainWordsButton_Click(object sender, RoutedEventArgs e)
         {
+            topicId = "MainWords";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -169,11 +208,6 @@ namespace Shebist
                     command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
                     command.ExecuteNonQuery();
 
-                }
-                else
-                {
-                    ChoiceOfTopicTextBox.Clear();
-                    return;
                 }
             }
         }

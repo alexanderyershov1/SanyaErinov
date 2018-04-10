@@ -67,14 +67,14 @@
             </TabItem>
             <TabItem x:Name="EditTabItem" Header="Редактировать тему" Loaded="EditTabItem_Loaded">
                 <Grid>
-                    <DataGrid x:Name="WordsDataGrid" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="191" Margin="679,150,115,285"/>
-                    <Label Content="Выберите тему" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="134,6,321,594"/>
+                    <DataGrid x:Name="WordsDataGrid" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="512" Height="200" Margin="426,196,56,230"/>
+                    <Label Content="Выберите тему" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="198,37,703,563" RenderTransformOrigin="0.509,0.872"/>
                     <Label x:Name="TopicNameLabel" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="745,119,239,481"/>
-                    <DataGrid x:Name="ExistingTopicsDataGrid2" Margin="10,37,423,489" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="115" Height="100"/>
-                    <TextBox x:Name="ChooseTopicTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="92" TextChanged="ChooseTopicTextBox_TextChanged" Margin="358,37,544,571"/>
-                    <Label x:Name="CheckTopicLabel" Content="✖" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="232,30,296,571" Height="25"/>
-                    <Button x:Name="ChooseTopicButton" Click="ChooseTopicButton_Click" Content="Ок" Margin="166,67,350,539" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32"/>
-                    <TabControl x:Name="CreateEditTabControl" IsEnabled="False" Margin="286,180,358,246" Width="350" Height="200">
+                    <DataGrid x:Name="ExistingTopicsDataGrid2" Margin="46,37,833,459" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="115" Height="130"/>
+                    <TextBox x:Name="ChooseTopicTextBox" HorizontalAlignment="Center" VerticalAlignment="Center" Width="92" TextChanged="ChooseTopicTextBox_TextChanged" Margin="199,68,703,540" RenderTransformOrigin="0.489,1.335"/>
+                    <Label x:Name="CheckTopicLabel" Content="✖" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="296,61,678,540" Height="25" RenderTransformOrigin="4.35,0.52"/>
+                    <Button x:Name="ChooseTopicButton" Click="ChooseTopicButton_Click" Content="Ок" Margin="227,91,735,515" HorizontalAlignment="Center" VerticalAlignment="Center" Width="32" RenderTransformOrigin="-0.062,0.5"/>
+                    <TabControl x:Name="CreateEditTabControl" IsEnabled="False" Margin="46,196,598,230" Width="350" Height="200">
                         <TabItem Header="Изменить">
                             <Grid Margin="0,0,0,-79">
                                 <Button x:Name="UpButton" Click="UpButton_Click" Content="↑" Margin="255,31,21,202" HorizontalAlignment="Center" VerticalAlignment="Center" Width="68"/>
