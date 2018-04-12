@@ -89,9 +89,45 @@ namespace Shebist
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        SqlCommand command = new SqlCommand($"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}'," +
-                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}')", connection);
+                        command.Connection = connection;
+                        command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}'," +
+                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}')";
                         command.ExecuteNonQuery();
+                    command.CommandText = $"SELECT Id FROM UserDB WHERE Login = {this.LoginTextBox.Text}";
+                    reader = command.ExecuteReader();
+                    reader.Read();
+                    int id = reader.GetInt32(0);
+                    reader.Close();
+                    command.CommandText = $"INSERT INTO UserState (Id, ChoiceOfTopicTextBoxVisibility," +
+                        $"ChoiceOfTopicLabelVisibility," +
+                        $"MainWordsButtonVisibility," +
+                        $"SearchByNumberTextBoxVisibility," +
+                        $"WordsCounterLabelVisibility," +
+                        $"WordsCounterLabelContent," +
+                        $"WordOutputLabelVisibility," +
+                        $"WordOutputLabelContent," +
+                        $"DescriptionLabelVisibility," +
+                        $"DescriptionLabelContent," +
+                        $"EnteringAWordTextBoxVisibility," +
+                        $"BackNextButtonsVisibility," +
+                        $"MixButtonVisibility," +
+                        $"StartButtonVisibility," +
+                        $"ToTheChoiceOfTopicButtonVisibility)" +
+                        $"VALUES ({id},'Visible'," +
+                        $"'Visible'," +
+                        $"'Visible'," +
+                        $"'Hidden'," +
+                        $"'Hidden'," +
+                        $"''," +
+                        $"'Hidden'," +
+                        $"''," +
+                        $"'Hidden'," +
+                        $"''," +
+                        $"'Hidden'," +
+                        $"'Hidden'," +
+                        $"'Hidden'," +
+                        $"'Hidden'," +
+                        $"'Hidden'";
                         MessageBox.Show("Вы зарегистрированы");
 
                     }

@@ -29,7 +29,7 @@ namespace Shebist
         {
             InitializeComponent();
             Menu.Opacity = 0;
-            NextButton.Visibility = BackButton.Visibility = ProgressBar.Visibility = SearchByNumberTextBox.Visibility =
+            NextButton.Visibility = BackButton.Visibility = SearchByNumberTextBox.Visibility =
                 WordOutputLabel.Visibility = WordsCounterLabel.Visibility = EnteringAWordTextBox.Visibility =
                 StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = DescriptionLabel.Visibility = Visibility.Hidden;
         }
@@ -46,6 +46,41 @@ namespace Shebist
         string[] russianArray, descriptionArray, englishArray, pathArray;
         Random rand = new Random();
 
+        void SaveUserState()
+        {
+            string indicies = "";
+            if(indiciesForSave.Count != 0)
+            {
+                for(int i = 0; i < indiciesForSave.Count; i++)
+                {
+                    indicies += indiciesForSave.ElementAt(i) + ";";
+                }
+            }
+           using(SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}'," +
+                        $"ChoiceOfTopicLabelVisibility = '{ChoiceOfTopicLabel.Visibility.ToString()}'," +
+                        $"MainWordsButtonVisibility = '{MainWordsButton.Visibility.ToString()}'," +
+                        $"SearchByNumberTextBoxVisibility = '{SearchByNumberTextBox.Visibility.ToString()}'," +
+                        $"WordsCounterLabelVisibility = '{WordsCounterLabel.Visibility.ToString()}'," +
+                        $"WordsCounterLabelContent = N'{WordsCounterLabel.Content.ToString()}'," +
+                        $"WordOutputLabelVisibility = '{WordOutputLabel.Visibility.ToString()}'," +
+                        $"WordOutputLabelContent = N'{WordOutputLabel.Content.ToString()}'," +
+                        $"DescriptionLabelVisibility = '{DescriptionLabel.Visibility.ToString()}'," +
+                        $"DescriptionLabelContent = N'{DescriptionLabel.Content.ToString()}'," +
+                        $"EnteringAWordTextBoxVisibility = '{EnteringAWordTextBox.Visibility.ToString()}'," +
+                        $"BackNextButtonsVisibility = '{BackButton.Visibility.ToString()}'," +
+                        $"MixButtonVisibility = '{MixButton.Visibility.ToString()}'," +
+                        $"StartButtonVisibility = '{StartButton.Visibility.ToString()}'," +
+                        $"ToTheChoiceOfTopicButtonVisibility = '{ToTheChoiceOfTopicButton.Visibility.ToString()}'," +
+                        $"Indicies = '{indicies}'," +
+                        $"TopicId = '{topicId}'";
+                command.ExecuteNonQuery();
+            }
+        }
+        
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (File.Exists($"{Debug}\\Data\\userid"))
@@ -67,49 +102,191 @@ namespace Shebist
                 AccountMenuItem.Header = reader.GetValue(0);
                 reader.Close();
 
-                //reader.Close();
+                reader.Close();
 
-                //command.CommandText = $"SELECT " +
-                //    $"ChoiceOfTopicTextBoxVisibility FROM UserState WHERE Id = {userid}";
-                //command.Connection = connection;
+                command.CommandText = $"SELECT " +
+                    $"ChoiceOfTopicTextBoxVisibility," +
+                        $"ChoiceOfTopicLabelVisibility," +
+                        $"MainWordsButtonVisibility," +
+                        $"SearchByNumberTextBoxVisibility," +
+                        $"WordsCounterLabelVisibility," +
+                        $"WordsCounterLabelContent," +
+                        $"WordOutputLabelVisibility," +
+                        $"WordOutputLabelContent," +
+                        $"DescriptionLabelVisibility," +
+                        $"DescriptionLabelContent," +
+                        $"EnteringAWordTextBoxVisibility," +
+                        $"BackNextButtonsVisibility," +
+                        $"MixButtonVisibility," +
+                        $"StartButtonVisibility," +
+                        $"ToTheChoiceOfTopicButtonVisibility," +
+                        $"TopicId," +
+                        $"Indicies FROM UserState WHERE Id = {userid}";
 
-                //reader = command.ExecuteReader();
+                reader = command.ExecuteReader();
 
-                //if (reader.HasRows)
-                //{
-                //    reader.Read();
-                //    switch (reader.GetString(0))
-                //    {
-                //        case "Visible":
-                //            ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
-                //            break;
-                //        case "Hidden":
-                //            ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
-                //            break;
-                //    }
-                //}
-                //else
-                //{
-                //    reader.Close();
-                //    command.CommandText = $"INSERT INTO UserState (Id, " +
-                //        $" ChoiceOfTopicTextBoxVisibility) VALUES ({userid}," +
-                //        $" '{ChoiceOfTopicTextBox.Visibility.ToString()}')";
-                //    command.Connection = connection;
-                //    command.ExecuteNonQuery();
-                //}
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    switch (reader.GetString(0))
+                    {
+                        case "Visible":
+                            ChoiceOfTopicTextBox.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(1))
+                    {
+                        case "Visible":
+                            ChoiceOfTopicLabel.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            ChoiceOfTopicLabel.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(2))
+                    {
+                        case "Visible":
+                            MainWordsButton.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            MainWordsButton.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(3))
+                    {
+                        case "Visible":
+                            SearchByNumberTextBox.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            SearchByNumberTextBox.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(4))
+                    {
+                        case "Visible":
+                            WordsCounterLabel.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            WordsCounterLabel.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    WordsCounterLabel.Content = reader.GetString(5);
+                    switch (reader.GetString(6))
+                    {
+                        case "Visible":
+                            WordOutputLabel.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            WordOutputLabel.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    WordOutputLabel.Content = reader.GetString(7);
+                    switch (reader.GetString(8))
+                    {
+                        case "Visible":
+                            DescriptionLabel.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            DescriptionLabel.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    DescriptionLabel.Content = reader.GetString(9);
+                    switch (reader.GetString(10))
+                    {
+                        case "Visible":
+                            EnteringAWordTextBox.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            EnteringAWordTextBox.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(11))
+                    {
+                        case "Visible":
+                            BackButton.Visibility = NextButton.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            BackButton.Visibility = NextButton.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(12))
+                    {
+                        case "Visible":
+                            MixButton.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            MixButton.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(13))
+                    {
+                        case "Visible":
+                            StartButton.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            StartButton.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    switch (reader.GetString(14))
+                    {
+                        case "Visible":
+                            ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
+                            break;
+                        case "Hidden":
+                            ToTheChoiceOfTopicButton.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                    topicId = reader.GetString(15);
+                    int startIndex = 0, length = 0;
+                    indiciesForSave.Clear();
+                    for (int i = 0; i < reader.GetString(16).Trim().Length; i++)
+                    {
+
+                        if (reader.GetString(16).Trim().ElementAt(i) == ';')
+                        {
+                            indiciesForSave.Add(Int32.Parse(reader.GetString(16).Trim().Substring(startIndex, length)));
+                            startIndex = i + 1;
+                            length = 0;
+                        }
+                        else length++;
+                    }
+                    string str = "";
+                    for(int i = 0; i < indiciesForSave.Count; i++)
+                    {
+                        str += indiciesForSave.ElementAt(i) + " ";
+                    }
+                    MessageBox.Show(str);
+                    russianArray = new string[indiciesForSave.Count];
+                    descriptionArray = new string[indiciesForSave.Count];
+                    englishArray = new string[indiciesForSave.Count];
+                    pathArray = new string[indiciesForSave.Count];
+                    reader.Close();
+                    command.CommandText = $"SELECT Russian, Description, English, Path FROM [{topicId}]";
+                    reader = command.ExecuteReader();
+                    int index = 0;
+                    while (reader.Read())
+                    {
+                        russianArray[indiciesForSave.ElementAt(index)] = reader.GetString(0).Trim();
+                        descriptionArray[indiciesForSave.ElementAt(index)] = reader.GetString(1).Trim();
+                        englishArray[indiciesForSave.ElementAt(index)] = reader.GetString(2).Trim();
+                        pathArray[indiciesForSave.ElementAt(index++)] = reader.GetString(3).Trim();
+                    }
+                }
             }
         }
 
 
         bool isWordsCounterLabelVisible = true,
-        isPCMEnabled = true,
         isSearchByNumberTextBoxVisible = true,
         isNextBackButtonsVisible = true,
-        isProgressBarVisible = true,
         isSoundEnabled = true;
 
         private void MixButton_Click(object sender, RoutedEventArgs e)
         {
+            indiciesForSave.Clear();
             List<int> indices = new List<int>(russianArray.Length);
             for (int i = 0; i < russianArray.Length; i++)
             {
@@ -127,15 +304,14 @@ namespace Shebist
                 {
                     while (reader.Read())
                     {
-                        
-                            element = rand.Next(0, indices.Count - 1);
-                            randomIndex = indices.ElementAt(element);
-                            russianArray[randomIndex] = reader.GetString(0).Trim();
-                            descriptionArray[randomIndex] = reader.GetString(1).Trim();
-                            englishArray[randomIndex] = reader.GetString(2).Trim();
-                            pathArray[randomIndex] = Debug + "\\MainWordsSounds" + reader.GetString(3).Trim();
-                            indices.RemoveAt(element);
-                        
+                        element = rand.Next(0, indices.Count - 1);
+                        randomIndex = indices.ElementAt(element);
+                        indiciesForSave.Add(randomIndex);
+                        russianArray[randomIndex] = reader.GetString(0).Trim();
+                        descriptionArray[randomIndex] = reader.GetString(1).Trim();
+                        englishArray[randomIndex] = reader.GetString(2).Trim();
+                        pathArray[randomIndex] = Debug + "\\MainWordsSounds" + reader.GetString(3).Trim();
+                        indices.RemoveAt(element);
                     }
                     reader.Close();
                 }
@@ -164,7 +340,7 @@ namespace Shebist
         }
 
         MediaPlayer player = new MediaPlayer();
-
+        List<int> indiciesForSave = new List<int>();
         private void MainWordsButton_Click(object sender, RoutedEventArgs e)
         {
             topicId = "MainWords";
@@ -182,6 +358,7 @@ namespace Shebist
                     descriptionArray = new string[reader.GetInt32(0)];
                     englishArray = new string[reader.GetInt32(0)];
                     pathArray = new string[reader.GetInt32(0)];
+                    indiciesForSave = new List<int>(reader.GetInt32(0));
                     reader.Close();
 
                     command.CommandText = $"SELECT Russian, Description, English, Path FROM MainWords";
@@ -191,23 +368,19 @@ namespace Shebist
 
                         while (reader.Read())
                         {
+                            indiciesForSave.Add(index);
                             russianArray[index] = reader.GetString(0).Trim();
                             descriptionArray[index] = reader.GetString(1).Trim();
                             englishArray[index] = reader.GetString(2).Trim();
                             pathArray[index++] = Debug + "\\MainWordsSounds" + reader.GetString(3).Trim();
+                            
                         }
                         reader.Close();
                     }
 
-
-
                     ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = MainWordsButton.Visibility = Visibility.Hidden;
                     StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
                     ChoiceOfTopicTextBox.Clear();
-
-                    command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
-                    command.ExecuteNonQuery();
-
                 }
             }
         }
@@ -266,10 +439,6 @@ namespace Shebist
                         ChoiceOfTopicLabel.Visibility = ChoiceOfTopicTextBox.Visibility = Visibility.Hidden;
                         StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility = Visibility.Visible;
                         ChoiceOfTopicTextBox.Clear();
-
-                        command.CommandText = $"UPDATE UserState SET ChoiceOfTopicTextBoxVisibility = '{ChoiceOfTopicTextBox.Visibility.ToString()}' WHERE Id = {userid}";
-                        command.ExecuteNonQuery();
-
                     }
                     else
                     {
@@ -285,6 +454,7 @@ namespace Shebist
         {
             TopicEditorPage tpe = new TopicEditorPage(userid);
             this.NavigationService.Navigate(tpe);
+            SaveUserState();
         }
 
         private void SettingsMenuItem_Click(object sender, EventArgs e)
@@ -315,11 +485,6 @@ namespace Shebist
                 NextButton.Visibility = BackButton.Visibility = Visibility.Visible;
             }
 
-            if (isProgressBarVisible)
-            {
-                ProgressBar.Visibility = Visibility.Visible;
-            }
-
             index = 0;
             count = russianArray.Length;
             numberofword = 1;
@@ -327,8 +492,6 @@ namespace Shebist
             DescriptionLabel.Content = descriptionArray[0];
             english = englishArray[0];
             path = pathArray[0];
-            ProgressBar.Value = 1;
-            ProgressBar.Maximum = count;
             WordsCounterLabel.Content = "1/" + count;
         }
 
@@ -346,6 +509,7 @@ namespace Shebist
         {
             AccountPage ap = new AccountPage(userid);
             this.NavigationService.Navigate(ap);
+            SaveUserState();
         }
 
 
@@ -370,15 +534,12 @@ namespace Shebist
                     DescriptionLabel.Content = descriptionArray[index];
                     english = englishArray[index];
                     path = pathArray[index];
-
-                    ProgressBar.Value = numberofword;
                     WordsCounterLabel.Content = numberofword + "/" + count;
                 }
                 else
                 {
                     WordOutputLabel.Content = "Выполнено";
                     DescriptionLabel.Content = "";
-                    ProgressBar.Value = numberofword;
                     WordsCounterLabel.Content = numberofword + "/" + count;
                 }
             }
@@ -392,11 +553,12 @@ namespace Shebist
             StartButton.Visibility = ToTheChoiceOfTopicButton.Visibility =
             BackButton.Visibility = NextButton.Visibility =
             EnteringAWordTextBox.Visibility = WordOutputLabel.Visibility =
-            ProgressBar.Visibility = SearchByNumberTextBox.Visibility
+            SearchByNumberTextBox.Visibility
             = DescriptionLabel.Visibility = WordsCounterLabel.Visibility = Visibility.Hidden;
 
             StartButton.Content = "Начать";
             index = 0;
+            indiciesForSave.Clear();
         }
 
         //клик по кнопке NextButton
@@ -409,8 +571,6 @@ namespace Shebist
                 DescriptionLabel.Content = descriptionArray[index];
                 english = englishArray[index];
                 path = pathArray[index];
-
-                ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else if (numberofword == count)
@@ -421,8 +581,6 @@ namespace Shebist
                 DescriptionLabel.Content = descriptionArray[0];
                 english = englishArray[0];
                 path = pathArray[0];
-
-                ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
         }
@@ -438,7 +596,6 @@ namespace Shebist
                 DescriptionLabel.Content = descriptionArray[index];
                 english = englishArray[index];
                 path = pathArray[index];
-                ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else if (WordOutputLabel.Content.ToString() == "Выполнено")
@@ -449,7 +606,6 @@ namespace Shebist
                 path = pathArray[index];
 
                 DescriptionLabel.Visibility = Visibility.Visible;
-                ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
             else
@@ -459,7 +615,6 @@ namespace Shebist
                 DescriptionLabel.Content = descriptionArray[index];
                 english = englishArray[index];
                 path = pathArray[index];
-                ProgressBar.Value = numberofword;
                 WordsCounterLabel.Content = numberofword + "/" + count;
             }
         }
@@ -481,7 +636,6 @@ namespace Shebist
                         path = pathArray[index];
                         SearchByNumberTextBox.Clear();
                         WordsCounterLabel.Content = numberofword + "/" + count;
-                        ProgressBar.Value = numberofword;
                     }
                     else
                     {

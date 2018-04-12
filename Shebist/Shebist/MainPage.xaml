@@ -8,7 +8,7 @@
       Title="Шебист" Loaded="Window_Loaded"
       >
 
-    <Grid x:Name="Grid">
+    <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="koshka-kot-britanskiy-seryy.jpg"
                         Stretch="Fill"/>
@@ -63,8 +63,8 @@
                  TextAlignment="Center"
                  FontWeight="Bold"
                  HorizontalAlignment="Center"
-                 Height="23"
-                 Margin="344,148,451,278"
+                 Height="22"
+                 Margin="336,210,481,262"
                  TextWrapping="NoWrap"
                  VerticalAlignment="Center"
                  Width="51"
@@ -112,7 +112,7 @@
                FontWeight="Bold"
                Content="Счётчик слов"
                HorizontalAlignment="Center"
-               Margin="407,148,330,278"
+               Margin="392,209,367,262"
                VerticalAlignment="Center"
                IsEnabled="True"
                Width="109"
@@ -163,15 +163,6 @@
                 IsEnabled="True"
                 Visibility="Visible"
                 Click="ToTheChoiceOfTopicButton_Click"/>
-
-        <ProgressBar x:Name="ProgressBar"
-                     HorizontalAlignment="Center"
-                     Height="25"
-                     Margin="325,186,380,238"
-                     VerticalAlignment="Center"
-                     Width="141"
-                     IsEnabled="True"
-                     Visibility="Visible"/>
         <Button x:Name="MainWordsButton"
                 Click="MainWordsButton_Click"
                 HorizontalAlignment="Center"
