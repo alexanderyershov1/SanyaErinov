@@ -8,13 +8,10 @@
       Title="Шебист" Loaded="Window_Loaded"
       >
 
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="koshka-kot-britanskiy-seryy.jpg"
-                        Stretch="Fill"/>
-        </Grid.Background>
-
-        <Menu x:Name="Menu" VerticalAlignment="Top" Height="31" MouseEnter="Menu_MouseEnter" MouseLeave="Menu_MouseLeave">
+    <Grid Background="White" Width="1366" Height="728">
+        <Menu x:Name="Menu" VerticalAlignment="Top" Height="31"
+              MouseEnter="Menu_MouseEnter" MouseLeave="Menu_MouseLeave"
+              Background="Black" Foreground="White" FontWeight="Bold">
 
             <MenuItem x:Name="AccountMenuItem"
                       Click="AccountMenuItem_Click"
@@ -28,52 +25,66 @@
                      ></MenuItem>
 
         </Menu>
+        <Grid Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Rectangle Fill="White" Width="700" Height="400" Margin="30,82,32,18" RadiusX="25" RadiusY="25" Stroke="Black" StrokeThickness="5"></Rectangle>
+            <Image x:Name="NextButton" MouseEnter="NextButton_MouseEnter" MouseLeave="NextButton_MouseLeave" MouseLeftButtonDown="NextButton_MouseLeftButtonDown" Source="rightArrow.png" Height="30px" Width="30px" Margin="540,359,313,144" RenderTransformOrigin="1.167,-0.067"/>
+            <Image x:Name="BackButton" MouseLeftButtonDown="BackButton_MouseLeftButtonDown" MouseEnter="BackButton_MouseEnter" MouseLeave="BackButton_MouseLeave" Source="leftArrow.png" Height="30px" Width="30px" Margin="330,359,523,144"/>
+            <Image x:Name="StartButton" MouseLeftButtonDown="StartButton_MouseLeftButtonDown" Source="again.png"  Height="30px" Width="30px" Margin="394,408,459,95"/>
+            <Image x:Name="ToTheChoiceOfTopicButton" Source="stop.png" MouseLeftButtonDown="ToTheChoiceOfTopicButton_MouseLeftButtonDown" Height="30px" Width="30px" Margin="472,408,381,95" RenderTransformOrigin="0.278,0.578"/>
+            <Image x:Name="MixButton" MouseLeftButtonDown="MixButton_MouseLeftButtonDown" Source="shuffle.png" Height="30px" Width="30px" Margin="432,408,421,95" RenderTransformOrigin="-0.45,0.5"/>
 
-        <TextBox x:Name="ChoiceOfTopicTextBox"
+
+            <TextBox x:Name="ChoiceOfTopicTextBox"
+                 BorderThickness="0"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
-                 Width="83"
-                 Height="21"
-                 Margin="372,102,413,371"
+                 Width="84"
+                 Height="22"
                  TextWrapping="NoWrap"
                  TextAlignment="Center"
                  IsEnabled="True"
                  KeyDown="ChoiceOfTopicTextBox_KeyDown"
                  Visibility="Visible"
-                 Opacity="1"
+                 Opacity="1" Margin="342,143,336,322"
                  />
+            <Line x:Name="ChoiceOfTopicLine" X1="0" Y1="100" X2="84" Y2="100" Stroke="Black" StrokeThickness="2" Margin="403,87,397,107" Panel.ZIndex="2"/>
 
 
-        <TextBox x:Name="EnteringAWordTextBox"
+            <TextBox x:Name="EnteringAWordTextBox"
+                 Background="White"
+                 BorderThickness="0"   
                  KeyDown="EnteringAWordTextBox_KeyDown"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  FontWeight="Bold"
-                 Height="29"
-                 Margin="325,294,371,126" 
+                 Height="30"
                  TextWrapping="NoWrap"
                  TextAlignment="Center"
                  Width="150"
                  IsEnabled="True"
                  Visibility="Visible"
+                 Foreground="Black"
                  TextChanged="EnteringAWordTextBox_TextChanged"
-                 FontSize="14"/>
+                 FontSize="16" Margin="313,336,299,121"/>
+            <Line x:Name="EnteringAWordLine" X1="0" Y1="100" X2="150" Y2="100" Stroke="Black" StrokeThickness="2" Margin="374,288,359,144" Panel.ZIndex="2"/>
 
-        <TextBox x:Name="SearchByNumberTextBox"
-                 TextAlignment="Center"
+            <TextBox x:Name="SearchByNumberTextBox"
+                     BorderThickness="0"
+                     Text="1"
+                     FontSize="20"
+                 TextAlignment="Right"
                  FontWeight="Bold"
                  HorizontalAlignment="Center"
                  Height="22"
-                 Margin="336,210,481,262"
                  TextWrapping="NoWrap"
                  VerticalAlignment="Center"
-                 Width="51"
+                 Width="52"
                  IsEnabled="True"
                  Visibility="Visible"
-                 KeyDown="SearchByNumberTextBox_KeyDown"/>
+                 KeyDown="SearchByNumberTextBox_KeyDown" Margin="314,233,396,245" />
 
-        <Label x:Name="ChoiceOfTopicLabel"
-               Foreground="White"
+            <Label x:Name="ChoiceOfTopicLabel"
+               Foreground="Black"
                FontWeight="Bold"
                HorizontalContentAlignment="Center"
                HorizontalAlignment="Center"
@@ -81,107 +92,63 @@
                Content="Выберите тему"
                IsEnabled="True"
                Visibility="Visible"
-               Margin="363,66,405,397" Height="31" Width="100"
+               Height="32" Width="100" Margin="334,118,328,350"
               />
 
-        <Label x:Name="WordOutputLabel"
-               Foreground="White"
+            <Label x:Name="WordOutputLabel"
+               Foreground="Black"
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
-               Content="Вывод" Margin="135,238,182,212"
+               Content="Вывод"
                IsEnabled="True"
                Visibility="Visible"
                FontWeight="Bold"
-               FontSize="28" Width="547" Height="44"/>
+               FontSize="28" Width="500" Height="48" Margin="192,272,191,213"/>
 
-        <Label x:Name="DescriptionLabel"
-               Foreground="White"
+            <Label x:Name="DescriptionLabel"
+               Foreground="Black"
                HorizontalContentAlignment="Center"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Content="Описание"
-               Margin="360,259,421,161"
                IsEnabled="True"
                Visibility="Visible"
                FontWeight="Bold"
-               FontSize="16" Height="29"/>
+               FontSize="16" Height="34" Margin="202,320,191,179" Width="490"/>
 
-        <Label x:Name="WordsCounterLabel"
-               Foreground="White"
+            <Label x:Name="WordsCounterLabel"
+               Foreground="Black"
+                   FontSize="20"
                FontWeight="Bold"
-               Content="Счётчик слов"
+               Content="/100"
                HorizontalAlignment="Center"
-               Margin="392,209,367,262"
                VerticalAlignment="Center"
                IsEnabled="True"
-               Width="109"
-               Visibility="Visible" Height="23"/>
+               Width="108"
+               Visibility="Visible" Height="37" Margin="361,228,293,235"/>
 
-        <Button x:Name="NextButton"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="▶"
-                Margin="504,316,322,148"
-                Width="38"
-                Height="30"
-                IsEnabled="True"
-                Visibility="Visible"
-                Click="NextButton_Click"/>
 
-        <Button x:Name="BackButton"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Content="◀"
-                Margin="279,316,546,148"
-                Width="39"
-                Height="30"
-                IsEnabled="True"
-                Visibility="Visible"
-                Click="BackButton_Click"/>
 
-        <Button x:Name="StartButton"
-                HorizontalAlignment="Center"
-                FontWeight="Bold"
-                VerticalAlignment="Center"
-                Content="Начать"
-                Margin="344,343,394,82"
-                Width="108"
-                Height="24"
-                IsEnabled="True"
-                Visibility="Visible"
-                Click="StartButton_Click"/>
 
-        <Button x:Name="ToTheChoiceOfTopicButton"
-                HorizontalAlignment="Center"
-                FontWeight="Bold"
-                VerticalAlignment="Center"
-                Content="К выбору темы"
-                Margin="344,378,394,48"
-                Width="108"
-                Height="23"
-                IsEnabled="True"
-                Visibility="Visible"
-                Click="ToTheChoiceOfTopicButton_Click"/>
-        <Button x:Name="MainWordsButton"
+            <Button x:Name="MainWordsButton"
                 Click="MainWordsButton_Click"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontWeight="Bold"
                 Content="Основные слова"
-                Margin="372,128,413,342"
-                Width="83"
+                Width="84"
                 Height="24"
+                Background="White"
+                BorderBrush="Black"
                 FontSize="9"    
                 IsEnabled="True"
-                Visibility="Visible"
-            />
-        <Button x:Name="MixButton"
-                Content="Перемешать"
-                HorizontalAlignment="Center"
-                Margin="137,321,656,153"
-                VerticalAlignment="Center"
-                Width="75"
-                Click="MixButton_Click"/>
+                Visibility="Visible" Margin="342,170,336,293"
+                
+                />
+            
+
+
+        </Grid>
     </Grid>
 </Page>

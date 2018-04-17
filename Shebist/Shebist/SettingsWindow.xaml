@@ -35,17 +35,18 @@
 
             </TabItem>
             <TabItem Header="Цвет" Margin="-2,0,-12,0">
-                
+
             </TabItem>
             <TabItem Header="Шрифт" Margin="12,0,-12,0">
 
             </TabItem>
             <TabItem Header="Изображение" Margin="12,0,-12,0">
-
+                <Button x:Name="BackgroundButton" Click="BackgroundButton_Click" Content="Фон" Margin="53,80,278,111" HorizontalAlignment="Center" Width="77"/>
             </TabItem>
             <TabItem Header="Размер" Margin="12,0,-12,0">
 
             </TabItem>
+
         </TabControl>
 
 

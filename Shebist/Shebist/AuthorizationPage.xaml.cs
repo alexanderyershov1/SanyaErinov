@@ -31,6 +31,15 @@ namespace Shebist
             WrongDataLabel.Visibility = Visibility.Hidden;
         }
 
+        public AuthorizationPage(string login, string password)
+        {
+            InitializeComponent();
+            WrongDataLabel.Visibility = Visibility.Hidden;
+            LoginTextBox.Text = login;
+            PasswordBox.Password = password;
+        }
+
+
 
         BinaryFormatter formatter = new BinaryFormatter();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);

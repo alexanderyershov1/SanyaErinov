@@ -180,6 +180,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="rightArrow.png" />
+    <Resource Include="leftArrow.png" />
+    <Resource Include="start.png" />
+    <Resource Include="shuffle.png" />
+    <Resource Include="again.png" />
+    <Resource Include="stop.png" />
     <Content Include="UserDB.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

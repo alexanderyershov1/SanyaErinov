@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Shebist
 {
@@ -36,6 +37,16 @@ namespace Shebist
         private void NextBackButtonsOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             mp.NextButton.Opacity = mp.BackButton.Opacity = NextBackButtonsOpacitySlider.Value;
+        }
+
+        private void BackgroundButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            string fileName = ofd.FileName;
+            ImageBrush background = new ImageBrush();
+            background.ImageSource = new BitmapImage(new Uri(fileName));
+            mp.Background = background;
         }
     }
 }

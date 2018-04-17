@@ -93,46 +93,19 @@ namespace Shebist
                         command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}'," +
                             $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}')";
                         command.ExecuteNonQuery();
-                    command.CommandText = $"SELECT Id FROM UserDB WHERE Login = {this.LoginTextBox.Text}";
+                    command.CommandText = $"SELECT Id FROM UserDB WHERE Login = N'{this.LoginTextBox.Text}'";
                     reader = command.ExecuteReader();
                     reader.Read();
                     int id = reader.GetInt32(0);
                     reader.Close();
-                    command.CommandText = $"INSERT INTO UserState (Id, ChoiceOfTopicTextBoxVisibility," +
-                        $"ChoiceOfTopicLabelVisibility," +
-                        $"MainWordsButtonVisibility," +
-                        $"SearchByNumberTextBoxVisibility," +
-                        $"WordsCounterLabelVisibility," +
-                        $"WordsCounterLabelContent," +
-                        $"WordOutputLabelVisibility," +
-                        $"WordOutputLabelContent," +
-                        $"DescriptionLabelVisibility," +
-                        $"DescriptionLabelContent," +
-                        $"EnteringAWordTextBoxVisibility," +
-                        $"BackNextButtonsVisibility," +
-                        $"MixButtonVisibility," +
-                        $"StartButtonVisibility," +
-                        $"ToTheChoiceOfTopicButtonVisibility)" +
-                        $"VALUES ({id},'Visible'," +
-                        $"'Visible'," +
-                        $"'Visible'," +
-                        $"'Hidden'," +
-                        $"'Hidden'," +
-                        $"''," +
-                        $"'Hidden'," +
-                        $"''," +
-                        $"'Hidden'," +
-                        $"''," +
-                        $"'Hidden'," +
-                        $"'Hidden'," +
-                        $"'Hidden'," +
-                        $"'Hidden'," +
-                        $"'Hidden'";
+                    command.CommandText = $"INSERT INTO UserState (Id, ChoiceOfTopicElementsVisibility," +
+                        $"EnteringAWordElementsVisibility, TopicId, MassivIndex, Indicies)" +
+                        $"VALUES ({id},'Visible', 'Hidden', ' ', 0, ' ')";
+                    command.ExecuteNonQuery();
                         MessageBox.Show("Вы зарегистрированы");
-
                     }
 
-                AuthorizationPage ap = new AuthorizationPage();
+                AuthorizationPage ap = new AuthorizationPage(LoginTextBox.Text, PasswordBox.Password);
                 this.NavigationService.Navigate(ap);
             }
         }
