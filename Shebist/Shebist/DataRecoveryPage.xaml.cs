@@ -28,8 +28,7 @@ namespace Shebist
         public DataRecoveryPage()
         {
             InitializeComponent();
-            ConfirmLabel.Visibility = Visibility.Hidden;
-            ConfirmTextBox.Visibility = Visibility.Hidden;
+            ConfirmGrid.Visibility = Visibility.Hidden;
         }
 
         RegistrationPage rp = new RegistrationPage();

@@ -7,42 +7,43 @@
       mc:Ignorable="d"
       Title="AuthorizationPage" Loaded="Page_Loaded">
 
-    <Grid>
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="Black" Offset="0"/>
-                <GradientStop Color="#FFBC7AFF" Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
+    <Grid Background="White">
 
 
         <TextBox x:Name="LoginTextBox"
+                 FontWeight="Bold"
+                 Foreground="Gray"
                  TextChanged="LoginTextBox_TextChanged"
                  TextAlignment="Center"
-                 HorizontalAlignment="Center" Height="22" Margin="305,96,275,220" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
-        <Label x:Name="LoginLabel" Foreground="White" Content="Логин" HorizontalAlignment="Center" Margin="341,65,315,247" VerticalAlignment="Center"/>
-        <Label x:Name="PasswordLabel" Foreground="White"  Content="Пароль" HorizontalAlignment="Center" Margin="334,123,315,189" VerticalAlignment="Center"/>
-        <Label x:Name="AutorizationLabel" Foreground="White" Content="Авторизация" FontSize="30" HorizontalAlignment="Center" Margin="270,10,241,278" VerticalAlignment="Center"/>
-        <Button x:Name="LoginButton" Background="White" Content="Войти" HorizontalAlignment="Center" Margin="326,239,298,79" VerticalAlignment="Center" Width="76" Click="LoginButton_Click"/>
+                 BorderThickness="0"
+                 HorizontalAlignment="Center" Height="22" Margin="314,90,284,233" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
+        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="314,111,284,233" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label x:Name="LoginLabel" FontSize="16" FontWeight="Bold" Foreground="Black" Content="Логин" HorizontalAlignment="Center" Margin="339,54,321,260" VerticalAlignment="Center"/>
+        <Label x:Name="PasswordLabel" FontWeight="Bold" FontSize="16" Foreground="Black"  Content="Пароль" HorizontalAlignment="Center" Margin="334,123,315,189" VerticalAlignment="Center"/>
+        <Button x:Name="LoginButton" BorderBrush="Black" BorderThickness="2" FontWeight="Bold" Background="White" Content="Войти" HorizontalAlignment="Center" Margin="334,225,308,98" VerticalAlignment="Center" Width="76" Click="LoginButton_Click"/>
         <Label x:Name="NoAccountYet"
                FontSize="12"
                MouseEnter="NoAccountYet_MouseEnter"
                MouseLeave="NoAccountYet_MouseLeave"
-                   Foreground="White"
+               FontWeight="Bold"
+                   Foreground="Black"
                MouseLeftButtonDown="NoAccountYet_MouseLeftButtonDown"
-               Content="Ещё нет аккаунта?" HorizontalAlignment="Center" Margin="315,264,275,48" VerticalAlignment="Center"/>
+               Content="Ещё нет аккаунта?" HorizontalAlignment="Center" Margin="322,279,279,40" VerticalAlignment="Center"/>
         <CheckBox x:Name="RememberMeCheckBox"
-                      Foreground="White"
-                  Content="Запомнить меня" HorizontalAlignment="Center" Margin="305,188,284,135" VerticalAlignment="Center">
+                      Foreground="Black"
+                  FontWeight="Bold"
+                  Content="Запомнить меня" HorizontalAlignment="Center" Margin="314,198,243,132" VerticalAlignment="Center" Width="161">
         </CheckBox>
         <Label x:Name="DataRecoveryLabel"
-                   Foreground="White"
+                   Foreground="Black"
+               FontWeight="Bold"
                FontSize="12"
                MouseEnter="DataRecoveryLabel_MouseEnter"
                MouseLeave="DataRecoveryLabel_MouseLeave"
             MouseLeftButtonDown="DataRecoveryLabel_MouseLeftButtonDown"
-            Content="Забыли пароль?" HorizontalAlignment="Center" Margin="291,295,251,17" VerticalAlignment="Center"/>
-        <Label x:Name="WrongDataLabel" Content="Неверный логин или пароль" Foreground="Red" HorizontalAlignment="Center" Margin="281,208,251,104" VerticalAlignment="Center"/>
-        <PasswordBox x:Name="PasswordBox" HorizontalContentAlignment="Center" PasswordChanged="PasswordBox_PasswordChanged"  HorizontalAlignment="Center" Margin="305,154,275,164" VerticalAlignment="Center" Width="120" Height="20"/>
+            Content="Забыли пароль?" HorizontalAlignment="Center" Margin="327,310,285,9" VerticalAlignment="Center"/>
+        <Label x:Name="WrongDataLabel" FontWeight="Bold" Content="Неверный логин или пароль" Foreground="Red" HorizontalAlignment="Center" Margin="285,252,253,67" VerticalAlignment="Center"/>
+        <PasswordBox x:Name="PasswordBox" Foreground="Gray" BorderThickness="0" HorizontalContentAlignment="Center" PasswordChanged="PasswordBox_PasswordChanged"  HorizontalAlignment="Center" Margin="305,154,275,164" VerticalAlignment="Center" Width="120" Height="20"/>
+        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="314,178,284,167" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Page>

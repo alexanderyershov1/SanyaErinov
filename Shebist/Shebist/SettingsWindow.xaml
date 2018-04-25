@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Настройки" Height="300" Width="422">
     <Grid>
-        <TabControl>
+        <TabControl x:Name="TabControl">
             <TabItem Header="Прозрачность">
                 <Grid>
 

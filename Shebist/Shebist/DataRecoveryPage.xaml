@@ -8,19 +8,14 @@
       Title="DataRecoveryPage"
       HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-    <Grid>
+    <Grid Background="White">
 
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="Black" Offset="0"/>
-                <GradientStop Color="#FFBC7AFF" Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-
-        <TextBox x:Name="EnterYourEmailTextBox" TextAlignment="Center" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="23" Margin="249,239,252,173" TextWrapping="Wrap" Width="285"/>
-        <Label x:Name="EnterYourEmailLabel" Content="Введите вашу почту"  Foreground="White"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="326,202,339,207"  RenderTransformOrigin="0.261,-0.301"/>
+        <TextBox x:Name="EnterYourEmailTextBox" BorderThickness="0" TextAlignment="Center" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="23" Margin="249,239,252,173" TextWrapping="Wrap" Width="285"/>
+        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="285" Y2="0" Margin="336,261,339,173" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label x:Name="EnterYourEmailLabel" Content="Введите вашу почту"  Foreground="Black" FontWeight="Bold"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="326,202,339,207"  RenderTransformOrigin="0.261,-0.301"/>
         <Label x:Name="BackLabel"
-               Foreground="White"
+               Foreground="Black"
+               FontWeight="Bold"
                FontSize="12"
                MouseLeftButtonDown="BackLabel_MouseLeftButtonDown"
                MouseEnter="BackLabel_MouseEnter"
@@ -31,6 +26,8 @@
                Margin="367,297,376,112"/>
 
         <Button x:Name="OkButton"
+                BorderBrush="Black"
+                FontWeight="Bold"
                 Background="White"
                 Click="OkButton_Click"
                 Content="Ок"
@@ -38,25 +35,30 @@
                 VerticalAlignment="Center"
                 Margin="352,272,359,143"
                 Width="74"/>
-
-        <TextBox x:Name="ConfirmTextBox"
+        <Grid x:Name="ConfirmGrid">
+            <TextBox x:Name="ConfirmTextBox"
                  TextChanged="ConfirmTextBox_TextChanged"
                  MaxLength="5"
+                 BorderThickness="0"
                  TextAlignment="Center"
                  HorizontalAlignment="Center"
                  Height="24"
                  Margin="260,361,242,0"
                  TextWrapping="Wrap"
                  VerticalAlignment="Center"
-                 Width="284"/>
+                 Width="285"/>
 
-        <Label x:Name="ConfirmLabel"
+            <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="285" Y2="0" Margin="346,409,328,25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <Label x:Name="ConfirmLabel"
                Content="Введите код, отправленный на"
-               Foreground="White" 
+               Foreground="Black"
+               FontWeight="Bold"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Margin="212,340,209,69"
-               Width="365"/>
+               Margin="347,342,0,67"
+               Width="613"/>
+        </Grid>
 
 
     </Grid>

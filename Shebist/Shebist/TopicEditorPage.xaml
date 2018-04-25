@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       Title="TopicEditorPage"
       Loaded="Page_Loaded"
-      >
+      MinWidth="1366" MinHeight="728">
     <Grid Margin="0,0,0,-201">
         <TabControl Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,146">
             <TabItem x:Name="CreateTabItem" Header="Создать тему" Loaded="CreateTabItem_Loaded">

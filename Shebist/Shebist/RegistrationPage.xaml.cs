@@ -27,8 +27,7 @@ namespace Shebist
         public RegistrationPage()
         {
             InitializeComponent();
-            ConfirmRegistrationLabel.Visibility = Visibility.Hidden;
-            ConfirmRegistrationTextBox.Visibility = Visibility.Hidden;
+            ConfrimRegistrationGrid.Visibility = Visibility.Hidden;
         }
         
         string Debug = Directory.GetCurrentDirectory();
@@ -68,8 +67,8 @@ namespace Shebist
                 smtp.EnableSsl = true;
                 smtp.Credentials = new NetworkCredential("alexanderyershov1@gmail.com", "Death4000$");
                 smtp.Send(mailMessage);
-                
-                ConfirmRegistrationLabel.Visibility = ConfirmRegistrationTextBox.Visibility = Visibility.Visible;
+
+                ConfrimRegistrationGrid.Visibility = Visibility.Visible;
                 ConfirmRegistrationLabel.Content = $"Введите код, отправленный на {EmailTextBox.Text}";
 
             }
@@ -90,18 +89,11 @@ namespace Shebist
                     {
                         connection.Open();
                         command.Connection = connection;
-                        command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password) VALUES (N'{this.LoginTextBox.Text}'," +
-                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}')";
+                        command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password, ChoiceOfTopicElementsVisibility," +
+                        $"EnteringAWordElementsVisibility, TopicId, MassivIndex, Indicies) VALUES (N'{this.LoginTextBox.Text}'," +
+                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}'," +
+                            $" 'Visible', 'Hidden', ' ', 0, ' ')";
                         command.ExecuteNonQuery();
-                    command.CommandText = $"SELECT Id FROM UserDB WHERE Login = N'{this.LoginTextBox.Text}'";
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    int id = reader.GetInt32(0);
-                    reader.Close();
-                    command.CommandText = $"INSERT INTO UserState (Id, ChoiceOfTopicElementsVisibility," +
-                        $"EnteringAWordElementsVisibility, TopicId, MassivIndex, Indicies)" +
-                        $"VALUES ({id},'Visible', 'Hidden', ' ', 0, ' ')";
-                    command.ExecuteNonQuery();
                         MessageBox.Show("Вы зарегистрированы");
                     }
 
