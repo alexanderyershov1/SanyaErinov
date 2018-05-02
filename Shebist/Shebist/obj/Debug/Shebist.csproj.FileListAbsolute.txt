@@ -66,3 +66,4 @@ D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.exe
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.pdb
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\DataRecoveryPage2.g.cs
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\DataRecoveryPage2.baml
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\GeneratedInternalTypeHelper.g.cs

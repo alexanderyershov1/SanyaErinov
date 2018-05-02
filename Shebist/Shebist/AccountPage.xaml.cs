@@ -26,12 +26,11 @@ namespace Shebist
     /// </summary>
     public partial class AccountPage : Page
     {
-        int userid;
+        public int userid;
         string login, name, email, password;
-        public AccountPage(int userid)
+        public AccountPage()
         {
             InitializeComponent();
-            this.userid = userid;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -42,7 +41,7 @@ namespace Shebist
 
         private void BackMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            MainPage mp = new MainPage();
+            MainPage mp = new MainPage { userid = userid };
             this.NavigationService.Navigate(mp);
         }
 

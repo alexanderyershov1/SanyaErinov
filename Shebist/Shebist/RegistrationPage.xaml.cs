@@ -89,8 +89,8 @@ namespace Shebist
                     {
                         connection.Open();
                         command.Connection = connection;
-                        command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password, ChoiceOfTopicElementsVisibility," +
-                        $"EnteringAWordElementsVisibility, TopicId, MassivIndex, Indicies) VALUES (N'{this.LoginTextBox.Text}'," +
+                        command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password, ChoiceOfTopicGridVisibility," +
+                        $"EnteringAWordGridVisibility, TopicId, MassivIndex, Indicies) VALUES (N'{this.LoginTextBox.Text}'," +
                             $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}'," +
                             $" 'Visible', 'Hidden', ' ', 0, ' ')";
                         command.ExecuteNonQuery();

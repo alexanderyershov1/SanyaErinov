@@ -64,9 +64,17 @@ namespace Shebist
                 {
                     reader.Read();
                     userid = reader.GetInt32(0);
-
                     reader.Close();
-                    this.NavigationService.Navigate(new MainPage());
+
+                    if (RememberMeCheckBox.IsChecked == true)
+                    {
+                        using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
+                        {
+                            formatter.Serialize(fs, userid);
+                        }
+                    }
+
+                    this.NavigationService.Navigate(new MainPage { userid = userid });
                 }
                 else
                 {
@@ -78,11 +86,6 @@ namespace Shebist
             using (FileStream fs = new FileStream($"{Debug}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
             {
                 formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
-            }
-
-            using (FileStream fs = new FileStream($"{Debug}\\Data\\userid", FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, userid);
             }
         }
 

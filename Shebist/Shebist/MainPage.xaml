@@ -15,7 +15,7 @@
 
             <MenuItem x:Name="AccountMenuItem"
                       Click="AccountMenuItem_Click"
-                      Width="45"
+                      Width="62"
                       />
             <MenuItem Header="Настройки"
                       x:Name="SettingsMenuItem"
@@ -27,33 +27,8 @@
         </Menu>
         <Grid Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Rectangle Fill="White" Width="700" Height="400" Margin="92,119,92,36" RadiusX="25" RadiusY="25" Stroke="Black" StrokeThickness="5"></Rectangle>
-            
 
-            <TextBox x:Name="ChoiceOfTopicTextBox"
-                 BorderThickness="0"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 Width="84"
-                 Height="22"
-                 TextWrapping="NoWrap"
-                 TextAlignment="Center"
-                 IsEnabled="True"
-                 KeyDown="ChoiceOfTopicTextBox_KeyDown"
-                 Visibility="Visible"
-                 Opacity="1" Margin="342,143,336,322"
-                 />
-            <Line x:Name="ChoiceOfTopicLine" X1="0" Y1="100" X2="84" Y2="100" Stroke="Black"  StrokeThickness="2" Margin="403,98,390,356" Panel.ZIndex="2"/>
-            <Label x:Name="ChoiceOfTopicLabel"
-               Foreground="Black"
-               FontWeight="Bold"
-               HorizontalContentAlignment="Center"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Content="Тема"
-               Visibility="Visible"
-               Height="32" Width="100" Margin="334,118,328,350"
-              />
-            
+
             <Grid x:Name="EnteringAWordGrid">
                 <Image x:Name="NextButton" MouseLeftButtonUp="NextButton_MouseLeftButtonUp" MouseEnter="NextButton_MouseEnter" MouseLeave="NextButton_MouseLeave" MouseLeftButtonDown="NextButton_MouseLeftButtonDown" Source="rightArrow.png" Height="30px" Width="30px" Margin="546,372,308,153" RenderTransformOrigin="1.167,-0.067"/>
                 <Image x:Name="BackButton" MouseLeftButtonUp="BackButton_MouseLeftButtonUp"  MouseLeftButtonDown="BackButton_MouseLeftButtonDown" MouseEnter="BackButton_MouseEnter" MouseLeave="BackButton_MouseLeave" Source="leftArrow.png" Height="30px" Width="30px" Margin="322,370,532,155"/>
@@ -62,7 +37,7 @@
                 <Image x:Name="MixButton" MouseLeftButtonUp="MixButton_MouseLeftButtonUp" MouseEnter="MixButton_MouseEnter" MouseLeave="MixButton_MouseLeave" MouseLeftButtonDown="MixButton_MouseLeftButtonDown" Source="shuffle.png" Height="30px" Width="30px" Margin="432,408,421,95" RenderTransformOrigin="-0.45,0.5"/>
 
                 <TextBox x:Name="EnteringAWordTextBox"
-                 Background="White"
+                 Background="Transparent"
                  BorderThickness="0"   
                  KeyDown="EnteringAWordTextBox_KeyDown"
                  HorizontalAlignment="Center"
@@ -70,17 +45,17 @@
                  FontWeight="Bold"
                  Height="30"
                  TextWrapping="NoWrap"
-                 TextAlignment="Center"
+                 TextAlignment="Left"
                  Width="150"
                  IsEnabled="True"
                  Visibility="Visible"
                  Foreground="Black"
-                 TextChanged="EnteringAWordTextBox_TextChanged"
-                 FontSize="16" Margin="313,336,299,121"/>
-            <Line x:Name="EnteringAWordLine" X1="0" Y1="0" X2="150" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="374,400,360,153"/>
+                 FontSize="17" Margin="374,370,360,155" Panel.ZIndex="4"/>
+                <Line x:Name="EnteringAWordLine" X1="0" Y1="0" X2="150" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="374,400,360,153"/>
+                <TextBlock x:Name="CorrectAnswerTextBlock" Opacity="0.5" FontSize="17" Foreground="Red" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Left" Margin="376,383,358,170" TextWrapping="Wrap" VerticalAlignment="Center" Height="28" Width="150"/>
 
 
-            <TextBox x:Name="SearchByNumberTextBox"
+                <TextBox x:Name="SearchByNumberTextBox"
                      BorderThickness="0"
                      Text="1"
                      FontSize="20"
@@ -95,9 +70,9 @@
                  Visibility="Visible"
                  KeyDown="SearchByNumberTextBox_KeyDown" Margin="362,250,457,251" />
 
-           
 
-            <Label x:Name="WordOutputLabel"
+
+                <Label x:Name="WordOutputLabel"
                Foreground="Black"
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
@@ -108,7 +83,7 @@
                FontWeight="Bold"
                FontSize="28" Width="690" Height="48" Margin="97,283,97,224"/>
 
-            <Label x:Name="DescriptionLabel"
+                <Label x:Name="DescriptionLabel"
                Foreground="Black"
                HorizontalContentAlignment="Center"
                HorizontalAlignment="Center"
@@ -117,9 +92,9 @@
                IsEnabled="True"
                Visibility="Visible"
                FontWeight="Bold"
-               FontSize="16" Height="34" Margin="202,320,191,179" Width="490"/>
+               FontSize="16" Height="34" Margin="97,331,97,190" Width="690"/>
 
-            <Label x:Name="WordsCounterLabel"
+                <Label x:Name="WordsCounterLabel"
                Foreground="Black"
                FontSize="20"
                FontWeight="Bold"
@@ -129,25 +104,34 @@
                IsEnabled="True"
                Width="108"
                Visibility="Visible" Height="37" Margin="361,228,293,235"/>
+
             </Grid>
 
 
 
-
-            <Button x:Name="MainWordsButton"
+            <Grid x:Name="ChoiceOfTopicGrid">
+                <DataGrid x:Name="ExistingTopicsDataGrid" IsReadOnly="True" SelectionChanged="ExistingTopicsDataGrid_SelectionChanged" Background="White" BorderBrush="Black" FontWeight="Bold" HorizontalAlignment="Center" Height="100" Margin="388,325,347,246" VerticalAlignment="Center" Width="149">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Тема" Binding="{Binding Path=Name}" Width="120" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button x:Name="MainWordsButton"
                 Click="MainWordsButton_Click"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontWeight="Bold"
                 Content="Основные слова"
-                Width="84"
+                Width="149"
                 Height="24"
                 Background="White"
                 BorderBrush="Black"
-                FontSize="9"    
+                FontSize="12"    
                 IsEnabled="True"
-                Visibility="Visible" Margin="342,170,336,293"
+                Visibility="Visible" Margin="388,434,347,213"
                 />
+                <TextBox x:Name="TopicSearchTextBox" FontWeight="Bold" BorderThickness="0" TextChanged="TopicSearchTextBox_TextChanged" HorizontalAlignment="Center" Height="24" Margin="388,290,347,357" TextWrapping="NoWrap" VerticalAlignment="Center" Width="149"/>
+                <Line X1="0" Y1="0" X2="149" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="387,314,347,355"/>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

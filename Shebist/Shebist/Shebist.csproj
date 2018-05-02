@@ -93,6 +93,8 @@
     <Compile Include="TopicEditorPage.xaml.cs">
       <DependentUpon>TopicEditorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Topic.cs" />
+    <Compile Include="Word.cs" />
     <Page Include="AccountPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,6 +188,11 @@
     <Resource Include="shuffle.png" />
     <Resource Include="again.png" />
     <Resource Include="stop.png" />
+    <Resource Include="changebutton.png" />
+    <Resource Include="deletebutton.png" />
+    <Resource Include="upbutton.png" />
+    <Resource Include="downbutton.png" />
+    <Resource Include="addbutton.png" />
     <Content Include="UserDB.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
