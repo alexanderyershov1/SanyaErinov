@@ -94,6 +94,7 @@
       <DependentUpon>TopicEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Topic.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="Word.cs" />
     <Page Include="AccountPage.xaml">
       <SubType>Designer</SubType>

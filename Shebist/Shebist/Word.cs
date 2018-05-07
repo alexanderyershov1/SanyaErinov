@@ -2,10 +2,11 @@
 {
     public class Word
     {
-        public int Id { get; set; }
-        public string Russian { get; set; }
-        public string Description { get; set; }
-        public string English { get; set; }
-        public string Path { get; set; }
+        public int Id;
+        public int TopicId;
+        public string Question;
+        public string Hint;
+        public string Answer;
+        public string Path;
     }
 }

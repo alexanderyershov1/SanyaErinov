@@ -35,225 +35,98 @@ namespace Shebist
         }
 
         public List<Topic>  topics = new List<Topic>();
-        BinaryFormatter formatter = new BinaryFormatter();//для сериализации
         static string Debug = Directory.GetCurrentDirectory(),//путь к папке Debug
         Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();//путь к папке Shebist
 
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
-        {Shebist}\UserDB.mdf;Integrated Security=True",//Строка подключения к базе данных
-        english,//правильное английское слово
-        path;//путь к файлу озвучки
-        public int userid;//id пользователя
-        int index = 0,//индекс элемента в массивах russianArray, descriptionArray, englishArray, pathArray
-        numberofword = 1;//номер слова из тех же массивов по порядку
+        {Shebist}\UserDB.mdf;Integrated Security=True";//Строка подключения к базе данных
+        int numberofword;
+        //номер слова по порядку
         SqlCommand command = new SqlCommand();//Создание запросов к бд
         SqlDataReader reader;//Чтение данных из бд
         Random rand = new Random();//генерация рандомных чисел
-        List<int> indiciesForSave = new List<int>();//текущее расположение индексов в массивах для сохранения в бд
-        List<Word> words = new List<Word>();//список слов
-
-        /// <summary>
-        /// Сохранение статуса пользователя
-        /// </summary>
-        void SaveUserState()
-        {
-            string indicies = "";//порядок индексов массивов
-            if (indiciesForSave.Count != 0)//если список indiciesForSave не пуст
-            {
-                for (int i = 0; i < indiciesForSave.Count; i++)//от 0 до последнего элемента списка
-                {
-                    indicies += indiciesForSave.ElementAt(i) + ";";//добавляем к indicies элемент и ;
-                }
-            }
-
-            using (SqlConnection connection = new SqlConnection(connectionString))//открываем подключение
-            {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = $"UPDATE UserDB SET ChoiceOfTopicGridVisibility = '{ExistingTopicsDataGrid.Visibility.ToString()}'," +
-                        $"EnteringAWordGridVisibility = '{EnteringAWordGrid.Visibility.ToString()}'," +
-                        $"Indicies = '{indicies}'," +
-                        $"TopicId = '{currentTopic.Id}', MassivIndex = {index} WHERE Id = {userid}";
-                //Обновляем таблицу UserDB, Видимость элементов группы выбора темы = ChoiceOfTopicTextBox.Visibility.ToString(),
-                //Видимость элементов группы ввода слова = EnteringAWordTextBox.Visibility.ToString(),
-                //Индексы = indicies, Id темы = topicId
-                command.ExecuteNonQuery();
-            }
-        }
+        List<Word> currentWords = new List<Word>();//список слов
 
         //При загрузке страницы
-        bool downloadFromDB = true;
+        public User user;
+        Topic currentTopic;
+        public Topic MainWords;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (downloadFromDB)
+            AccountMenuItem.Header = user.Name;
+            AccountMenuItem.Width = 20;
+            for (int i = 0; i < AccountMenuItem.Header.ToString().Length; i++)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.Connection = connection;
-                    command.CommandText = $"SELECT Id, Name FROM Topics WHERE UserID = {userid}";
-                    reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            ExistingTopicsDataGrid.Items.Add(new Topic { Id = reader.GetInt32(0).ToString(),
-                                Name = reader.GetString(1).Trim()
-                            });
-                            topics.Add(new Topic
-                            {
-                                Id = reader.GetInt32(0).ToString(),
-                                Name = reader.GetString(1).Trim()
-                            });
-                        }
-                    }
-                    reader.Close();
-                    command.CommandText = $"SELECT Name, ChoiceOfTopicGridVisibility," +
-                        $"EnteringAWordGridVisibility," +
-                        $"TopicId," +
-                        $"Indicies," +
-                        $"MassivIndex FROM UserDB WHERE Id = {userid}";
-                    reader = command.ExecuteReader();
-
-                    if (reader.HasRows)
-                    {
-                        reader.Read();
-                        //Находим имя пользователя по id
-                        AccountMenuItem.Header = reader.GetValue(0);
-                        AccountMenuItem.Width = 20;
-                        for (int i = 0; i < AccountMenuItem.Header.ToString().Length; i++)
-                        {
-                            AccountMenuItem.Width += 9;
-                        }
-                        //Устанавливаем свойству AccountMenuItem.Header значение Name из бд
-                        //Узнаём, видимы ли элементы группы выбора темы
-                        if (reader.GetString(1) == "Visible")//если видимы, меняем свойство Visibility на Visible
-                        {
-                            ChoiceOfTopicGrid.Visibility = Visibility.Visible;
-                            EnteringAWordGrid.Visibility = Visibility.Hidden;
-                        }
-
-                        else//Если нет, то на Hidden
-                        {
-                            ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
-                            EnteringAWordGrid.Visibility = Visibility.Visible;
-                        }
-
-                        if (reader.GetString(2) == "Visible")//Аналогично с элементами группы ввода слова
-                            EnteringAWordGrid.Visibility = Visibility.Visible;
-                        else
-                            EnteringAWordGrid.Visibility = Visibility.Hidden;
-
-                        currentTopic.Id = reader.GetString(3).Trim();//получаем название таблицы 
-                                                             //алгоритм для считывания порядка индексов элементов в массиве
-                        int startIndex = 0, length = 0;//переменные для обозначения startIndex и length метода Substring
-                        indiciesForSave.Clear();//Предварительно очищаем список indiciesForSave
-                        string indiciesLength = reader.GetString(4).Trim();//получаем количество символов поля Indicies
-                        if (indiciesLength != "")//если поле Indicies не пустое
-                        {
-                            //заполняем список indiciesForSave индексами из поля Indicies при помощи специального алгоритма
-                            for (int i = 0; i < reader.GetString(4).Trim().Length; i++)
-                            {
-                                if (reader.GetString(4).Trim().ElementAt(i) == ';')
-                                {//если символ равен ;, добавляем в список indiciesForSave элемент, начиная с startIndex длиной в length
-                                    indiciesForSave.Add(Int32.Parse(reader.GetString(4).Trim().Substring(startIndex, length)));
-                                    startIndex = i + 1;//прибавляем 1 к startIndex
-                                    length = 0;//обнуляем длину
-                                }
-                                else length++;//иначе увеличиваем на 1 длину строки
-                            }
-                            WordsCounterLabel.Content = "/" + indiciesForSave.Count;
-                            //устанавливаем свойство WordsCounterLabel.Content равным количеству элементов в списке indiciesForSave
-                            //создаём список words с длиной, равной количеству
-                            //элементов в списке indiciesForSave
-                            currentTopic.words = new List<Word>(indiciesForSave.Count);
-                            //получаем текущий индекс слова в массивах из бд
-                            index = reader.GetInt32(5);
-                            //устанавливаем номер слова, прибавляя к индексу 1
-                            numberofword = index + 1;
-                            //устанавливаем свойство SearchByNumberTextBox.Text равным numberofword, преобразованной к строке
-                            SearchByNumberTextBox.Text = numberofword.ToString();
-                            reader.Close();
-                            command.CommandText = $"SELECT Russian, Description, English, Path FROM [{currentTopic.Id}]";
-                            //Выбираем русские слова, описания, английские слова, пути к озвучке из таблицы topicId
-                            reader = command.ExecuteReader();
-                            int elementIndex = 0;
-
-                            for (int i = 0; i < indiciesForSave.Count; i++)
-                            {
-                                currentTopic.words.Add(new Word());
-                            }
-
-                            while (reader.Read())
-                            {//Заполняем список в той последовательности, в которой мы последний раз получили
-                                currentTopic.words[indiciesForSave.ElementAt(elementIndex++)] = new Word
-                                {
-                                    Russian = reader.GetString(0).Trim(),
-                                    Description = reader.GetString(1).Trim(),
-                                    English = reader.GetString(2).Trim(),
-                                    Path = reader.GetString(3).Trim()
-                                };
-                            }
-                            reader.Close();
-                            //Уставливаем свойства и переменные значениями из массивов по индексу, сохранившемуся при выходе
-                            WordOutputLabel.Content = currentTopic.words[index].Russian;
-                            DescriptionLabel.Content = currentTopic.words[index].Description;
-                            english = currentTopic.words[index].English;
-                            path = currentTopic.words[index].Path;
-                        }
-                    }
-                }
+                AccountMenuItem.Width += 9;
+            }
+            if(user.ChoiceOfTopicGridVisibility == "Visible")
+            {
+                ChoiceOfTopicGrid.Visibility = Visibility.Visible;
+                EnteringAWordGrid.Visibility = Visibility.Hidden;
             }
             else
             {
-                foreach (Topic topic in topics)
-                {
-                    ExistingTopicsDataGrid.Items.Add(topic);
-                }
+                ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
+                EnteringAWordGrid.Visibility = Visibility.Visible;
             }
-            
+            foreach(Topic topic in topics)
+            {
+                ExistingTopicsDataGrid.Items.Add(topic);
+            }
+           
+            foreach(Topic topic in topics)
+            {
+                if (topic.Id == user.CurrentTopicId) currentTopic = topic;
+            }
+            if (user.CurrentTopicId == 0) currentTopic = MainWords;
+
+            if (EnteringAWordGrid.Visibility == Visibility.Visible)
+            {
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                WordsCounterLabel.Content = "/" + currentTopic.currentWords.Count;
+                numberofword = currentTopic.CurrentIndex + 1;
+                SearchByNumberTextBox.Text = numberofword.ToString();
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
+            }
         }
 
         //включена ли озвучка
         bool isSoundEnabled = true;
-
-        
+ 
         private void EnteringAWordTextBox_KeyDown(object sender, KeyEventArgs e)
         {  
             if (e.Key == Key.Enter)
             {
-                if (EnteringAWordTextBox.Text.ToLower() == currentTopic.words[index].English.ToLower())
+                if (EnteringAWordTextBox.Text.ToLower() == currentTopic.currentWords[currentTopic.CurrentIndex].Answer.ToLower())
                 {
                     if (isSoundEnabled)
                     {
-                        if (File.Exists(path))
+                        if (File.Exists(currentTopic.currentWords[currentTopic.CurrentIndex].Path))
                         {
-                            player.Open(new Uri(path, UriKind.Absolute));
+                            player.Open(new Uri(currentTopic.currentWords[currentTopic.CurrentIndex].Path, UriKind.Absolute));
                             player.Play();
                         }
                         else
                         {
-                            player.Open(new Uri(Debug + "\\MainWordsSounds" + path, UriKind.Absolute));
+                            player.Open(new Uri(Debug + "\\MainWordsSounds" + currentTopic.currentWords[currentTopic.CurrentIndex].Path, UriKind.Absolute));
                             player.Play();
                         }
                     }
+
                     CorrectAnswerTextBlock.Text = "";
                     EnteringAWordTextBox.Clear();
 
-                    if (numberofword < currentTopic.words.Count)
+                    if (numberofword < currentTopic.currentWords.Count)
                     {
                         numberofword++;
-                        WordOutputLabel.Content = currentTopic.words[++index].Russian;
-                        DescriptionLabel.Content = currentTopic.words[index].Description;
-                        english = currentTopic.words[index].English;
-                        path = currentTopic.words[index].Path;
+                        WordOutputLabel.Content = currentTopic.currentWords[++currentTopic.CurrentIndex].Question;
+                        DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                         SearchByNumberTextBox.Text = numberofword.ToString();
                     }
                     else
                     {
                         WordOutputLabel.Content = "Выполнено";
                         DescriptionLabel.Content = "";
-                        SearchByNumberTextBox.Text = numberofword.ToString();
                     }
                 }
                 else
@@ -261,22 +134,21 @@ namespace Shebist
                     CorrectAnswerTextBlock.Text = "";
                     List<int> indiciesOfMissedLetters = new List<int>();
 
-                    int delta = currentTopic.words[index].English.Length - EnteringAWordTextBox.Text.Length;
+                    int delta = currentTopic.currentWords[currentTopic.CurrentIndex].Answer.Length - EnteringAWordTextBox.Text.Length;
                     if (delta == 0 || delta < 0)
                     {
                         List<int> indiciesOfRightLetters = new List<int>();
 
                         for (int i = 0; i < EnteringAWordTextBox.Text.Length; i++)
                         {
-                            if (i < currentTopic.words[index].English.Length)
+                            if (i < currentTopic.currentWords[currentTopic.CurrentIndex].Answer.Length)
                             {
-                                if (EnteringAWordTextBox.Text[i] == currentTopic.words[index].English[i])
+                                if (EnteringAWordTextBox.Text[i] == currentTopic.currentWords[currentTopic.CurrentIndex].Answer[i])
                                     indiciesOfRightLetters.Add(i);
                             }
                         }
-
-
-                        for (int i = 0; i < currentTopic.words[index].English.Length; i++)
+                        
+                        for (int i = 0; i < currentTopic.currentWords[currentTopic.CurrentIndex].Answer.Length; i++)
                         {
                             if (indiciesOfRightLetters.Contains(i))
                             {
@@ -284,7 +156,7 @@ namespace Shebist
                                 {
                                     FontSize = 17,
                                     Foreground = Brushes.Green,
-                                    Text = currentTopic.words[index].English[i].ToString()
+                                    Text = currentTopic.currentWords[currentTopic.CurrentIndex].Answer[i].ToString()
                                 });
                             }
                                 
@@ -292,7 +164,7 @@ namespace Shebist
                             {
                                 FontSize = 17,
                                 Foreground = Brushes.Red,
-                                Text = currentTopic.words[index].English[i].ToString()
+                                Text = currentTopic.currentWords[currentTopic.CurrentIndex].Answer[i].ToString()
                             });
                         }
                     }
@@ -306,9 +178,9 @@ namespace Shebist
                         int j = 0;
                         for (int i = 0; i < EnteringAWordTextBox.Text.Length; i++)
                         {
-                            if (i < currentTopic.words[index].English.Length)
+                            if (i < currentTopic.currentWords[currentTopic.CurrentIndex].Answer.Length)
                             {
-                                if (EnteringAWordTextBox.Text[j] != currentTopic.words[index].English[i])
+                                if (EnteringAWordTextBox.Text[j] != currentTopic.currentWords[currentTopic.CurrentIndex].Answer[i])
                                 {
                                     indiciesOfMissedLetters.Add(i);
                                 }
@@ -319,7 +191,7 @@ namespace Shebist
 
                         if (indiciesOfMissedLetters.Count != 0)
                         {
-                            for (int i = 0; i < currentTopic.words[index].English.Length; i++)
+                            for (int i = 0; i < currentTopic.currentWords[currentTopic.CurrentIndex].Answer.Length; i++)
                             {
                                 if (indiciesOfMissedLetters.Contains(i))
                                 {   
@@ -327,7 +199,7 @@ namespace Shebist
                                     {
                                         FontSize = 17,
                                         Foreground = Brushes.Red,
-                                        Text = currentTopic.words[index].English[i].ToString()
+                                        Text = currentTopic.currentWords[currentTopic.CurrentIndex].Answer[i].ToString()
                                     });
                                 }
                                 else
@@ -336,7 +208,7 @@ namespace Shebist
                                     {
                                         FontSize = 17,
                                         Foreground = Brushes.Green,
-                                        Text = currentTopic.words[index].English[i].ToString()
+                                        Text = currentTopic.currentWords[currentTopic.CurrentIndex].Answer[i].ToString()
                                     });
                                 }
                             }
@@ -345,14 +217,14 @@ namespace Shebist
 
                     if (isSoundEnabled)
                     {
-                        if (File.Exists(path))
+                        if (File.Exists(currentTopic.currentWords[currentTopic.CurrentIndex].Path))
                         {
-                            player.Open(new Uri(path, UriKind.Absolute));
+                            player.Open(new Uri(currentTopic.currentWords[currentTopic.CurrentIndex].Path, UriKind.Absolute));
                             player.Play();
                         }
                         else
                         {
-                            player.Open(new Uri(Debug + "\\MainWordsSounds" + path, UriKind.Absolute));
+                            player.Open(new Uri(Debug + "\\MainWordsSounds" + currentTopic.currentWords[currentTopic.CurrentIndex].Path, UriKind.Absolute));
                             player.Play();
                         }
                     }
@@ -367,23 +239,19 @@ namespace Shebist
         {
             NextButton.Width = NextButton.Height = 30;
             CorrectAnswerTextBlock.Text = "";
-            if (numberofword < currentTopic.words.Count)
+            if (numberofword < currentTopic.currentWords.Count)
             {
                 numberofword++;
-                WordOutputLabel.Content = currentTopic.words[++index].Russian;
-                DescriptionLabel.Content = currentTopic.words[index].Description;
-                english = currentTopic.words[index].English;
-                path = currentTopic.words[index].Path;
+                WordOutputLabel.Content = currentTopic.currentWords[++currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                 SearchByNumberTextBox.Text = numberofword.ToString();
             }
-            else if (numberofword == currentTopic.words.Count)
+            else if (numberofword == currentTopic.currentWords.Count)
             {
-                index = 0;
+                currentTopic.CurrentIndex = 0;
                 numberofword = 1;
-                WordOutputLabel.Content = currentTopic.words[0].Russian;
-                DescriptionLabel.Content = currentTopic.words[0].Description;
-                english = currentTopic.words[0].English;
-                path = currentTopic.words[0].Path;
+                WordOutputLabel.Content = currentTopic.currentWords[0].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[0].Hint;
                 SearchByNumberTextBox.Text = numberofword.ToString();
             }
         }
@@ -416,13 +284,11 @@ namespace Shebist
             //Обнуляем индекс, а номер слова ставим 1,
             //В WordOutputLabel.Content выводим первое значение из массива русских слов,
             //DescriptionLabel.Content первое значение из массива описаний,
-            //english первое значение из английских слов, path первое значение из массива путей
-            index = 0;
+            //Answer первое значение из английских слов, path первое значение из массива путей
+            currentTopic.CurrentIndex = 0;
             numberofword = 1;
-            WordOutputLabel.Content = currentTopic.words[0].Russian;
-            DescriptionLabel.Content = currentTopic.words[0].Description;
-            english = currentTopic.words[0].English;
-            path = currentTopic.words[0].Path;
+            WordOutputLabel.Content = currentTopic.currentWords[0].Question;
+            DescriptionLabel.Content = currentTopic.currentWords[0].Hint;
             SearchByNumberTextBox.Text = "1";
         }
 
@@ -431,9 +297,18 @@ namespace Shebist
             ChoiceOfTopicGrid.Visibility = Visibility.Visible;
             EnteringAWordGrid.Visibility = Visibility.Hidden;
             CorrectAnswerTextBlock.Text = "";
-            index = 0;
-            indiciesForSave.Clear();
-            currentTopic.Id = null;
+            EnteringAWordTextBox.Clear();
+            if(currentTopic.Id != 0)
+            {
+                foreach (Topic topic in topics)
+                {
+                    if (topic.Name == currentTopic.Name)
+                    {
+                        topic.CurrentIndex = currentTopic.CurrentIndex;
+                    }
+                }
+            }
+            else user.IndexOfMainWords = currentTopic.CurrentIndex;
         }
 
         //При нажатии на MixButton
@@ -442,46 +317,34 @@ namespace Shebist
             //Высота и ширина MixButton = 30
             MixButton.Width = MixButton.Height = 30;
             CorrectAnswerTextBlock.Text = "";
-            //Очищаем indiciesForSave
-            indiciesForSave.Clear();
-            //создаём список чисел indicies с длиной russianArray.Length
-            List<int> indices = new List<int>(currentTopic.words.Count);
-            //Заполняем его от 0 до russianArray.Length - 1
-            for (int i = 0; i < currentTopic.words.Count; i++)
+
+            //создаём список чисел indicies с длиной currentTopic.currentWords.Count
+            List<int> indices = new List<int>(currentTopic.currentWords.Count);
+            //Заполняем его от 0 до currentTopic.currentWords.Count
+            for (int i = 0; i < currentTopic.currentWords.Count; i++)
             {
                 indices.Add(i);
             }
-            using (SqlConnection connection = new SqlConnection(connectionString))
+
+            int randomIndex, element;
+            currentTopic.SequenceOfIndices.Clear();
+
+            for (int i = 0; i < currentTopic.currentWords.Count; i++)
             {
-                connection.Open();
-                command.CommandText = $"SELECT Russian, Description, English, Path FROM [{currentTopic.Id}]";
-                command.Connection = connection;
-                reader = command.ExecuteReader();
-                int randomIndex;
-                int element;
-                if (reader.HasRows)
+                element = rand.Next(0, indices.Count - 1);
+                randomIndex = indices.ElementAt(element);
+                currentTopic.currentWords[randomIndex] = new Word
                 {
-                    while (reader.Read())
-                    {
-                        element = rand.Next(0, indices.Count - 1);
-                        randomIndex = indices.ElementAt(element);
-                        indiciesForSave.Add(randomIndex);
-                        currentTopic.words[randomIndex] = new Word
-                        {
-                            Russian = reader.GetString(0).Trim(),
-                            Description = reader.GetString(1).Trim(),
-                            English = reader.GetString(2).Trim(),
-                            Path = reader.GetString(3).Trim()
-                        };
-                        indices.RemoveAt(element);
-                    }
-                    reader.Close();
-                }
-                WordOutputLabel.Content = currentTopic.words[index].Russian;
-                DescriptionLabel.Content = currentTopic.words[index].Description;
-                english = currentTopic.words[index].English;
-                path = currentTopic.words[index].Path;
+                    Question = currentTopic.Words[i].Question,
+                    Hint = currentTopic.Words[i].Hint,
+                    Answer = currentTopic.Words[i].Answer,
+                    Path = currentTopic.Words[i].Path,
+                };
+                indices.RemoveAt(element);
+                currentTopic.SequenceOfIndices.Add(randomIndex);
             }
+            WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+            DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
         }
 
         private void NextButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -540,95 +403,45 @@ namespace Shebist
             CorrectAnswerTextBlock.Text = "";
             if (numberofword == 1)
             {
-                index = currentTopic.words.Count - 1;
-                numberofword = currentTopic.words.Count;
-                WordOutputLabel.Content = currentTopic.words[index].Russian;
-                DescriptionLabel.Content = currentTopic.words[index].Description;
-                english = currentTopic.words[index].English;
-                path = currentTopic.words[index].Path;
+                currentTopic.CurrentIndex = currentTopic.currentWords.Count - 1;
+                numberofword = currentTopic.currentWords.Count;
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                 SearchByNumberTextBox.Text = numberofword.ToString();
             }
             else if (WordOutputLabel.Content.ToString() == "Выполнено")
             {
-                WordOutputLabel.Content = currentTopic.words[index].Russian;
-                DescriptionLabel.Content = currentTopic.words[index].Description;
-                english = currentTopic.words[index].English;
-                path = currentTopic.words[index].Path;
-
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                 DescriptionLabel.Visibility = Visibility.Visible;
-                SearchByNumberTextBox.Text = numberofword.ToString();
             }
             else
             {
                 numberofword--;
-                WordOutputLabel.Content = currentTopic.words[--index].Russian;
-                DescriptionLabel.Content = currentTopic.words[index].Description;
-                english = currentTopic.words[index].English;
-                path = currentTopic.words[index].Path;
+                WordOutputLabel.Content = currentTopic.currentWords[--currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                 SearchByNumberTextBox.Text = numberofword.ToString();
             }
         }
 
         private void MainWordsButton_Click(object sender, RoutedEventArgs e)
         {
-            currentTopic.Id = "MainWords";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                command.CommandText = $"SELECT COUNT(*) FROM MainWords";
-                command.Connection = connection;
-                reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    indiciesForSave = new List<int>(reader.GetInt32(0));
-                    currentTopic.words = new List<Word>(reader.GetInt32(0));
-                    reader.Close();
-
-
-                    command.CommandText = $"SELECT Russian, Description, English, Path FROM MainWords";
-                    reader = command.ExecuteReader();
-                    index = 0;
-                    if (reader.HasRows)
-                    {
-
-                        while (reader.Read())
-                        {
-                            currentTopic.words.Add(new Word
-                            {
-                                Russian = reader.GetString(0).Trim(),
-                                Description = reader.GetString(1).Trim(),
-                                English = reader.GetString(2).Trim(),
-                                Path = Debug + "\\MainWordsSounds" + reader.GetString(3).Trim()
-                            });
-                            indiciesForSave.Add(index++);
-                        }
-                        reader.Close();
-                    }
-
-                    ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
-
-                    EnteringAWordGrid.Visibility = Visibility.Visible;
-
-
-                    index = 0;
-                    numberofword = 1;
-                    WordsCounterLabel.Content = "/" + currentTopic.words.Count;
-                    WordOutputLabel.Content = currentTopic.words[0].Russian;
-                    DescriptionLabel.Content = currentTopic.words[0].Description;
-                    english = currentTopic.words[0].English;
-                    path = currentTopic.words[0].Path;
-                    SearchByNumberTextBox.Text = "1";
-                }
-            }
+            currentTopic = MainWords;
+            ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
+            EnteringAWordGrid.Visibility = Visibility.Visible;
+            user.ChoiceOfTopicGridVisibility = "Hidden";
+            currentTopic.CurrentIndex = user.IndexOfMainWords;
+            user.CurrentTopicId = 0;
+            numberofword = currentTopic.CurrentIndex + 1;
+            WordsCounterLabel.Content = "/" + currentTopic.Words.Count;
+            SearchByNumberTextBox.Text = numberofword.ToString();
+            WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+            DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
         }
         
         private void TopicEditorMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            TopicEditorPage tpe = new TopicEditorPage { userid = userid, currentTopicId = currentTopic.Id };
-            this.NavigationService.Navigate(tpe);
-            SaveUserState();
+            this.NavigationService.Navigate(new TopicEditorPage { user = user, topics = topics, MainWords = MainWords });
         }
 
         private void SettingsMenuItem_Click(object sender, EventArgs e)
@@ -636,78 +449,23 @@ namespace Shebist
             SettingsWindow sw = new SettingsWindow(MainGrid);
             sw.Show();
         }
-
-        Topic currentTopic = new Topic();
+        
         private void ExistingTopicsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Topic topic = (Topic)ExistingTopicsDataGrid.SelectedItem;
-            if(topic != null)
+            ExistingTopicsDataGrid.SelectedItem = null;
+            if (topic != null && topic.Words.Count != 0)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.Connection = connection;
-                    currentTopic.Id = topic.Id;
-                    currentTopic.Name = topic.Name;
-                    //Выбираем количество строк в таблице topicId
-                    command.CommandText = $"SELECT COUNT(*) FROM [{currentTopic.Id}]";
-                    reader = command.ExecuteReader();
-                    //Если есть данные
+                currentTopic = topic;
+                user.CurrentTopicId = currentTopic.Id;
+                numberofword = currentTopic.CurrentIndex + 1;
 
-                    reader.Read();
-                    //Создаём массивы с длиной, равной количеству строк в таблице topicId
-                    if(reader.GetInt32(0) > 0)
-                    {
-                        currentTopic.words = new List<Word>(reader.GetInt32(0));
-                        
-                        for (int i = 0; i < reader.GetInt32(0); i++)
-                        {
-                            currentTopic.words.Add(new Word());
-                        }
-
-                        indiciesForSave.Clear();
-
-                        for (int i = 0; i < reader.GetInt32(0); i++)
-                        {
-                            indiciesForSave.Add(i);
-                        }
-                        reader.Close();
-
-                        //Выбираем вопросы, подсказки, ответы и пути из таблицы topicId
-                        command.CommandText = $"SELECT Russian, Description, English, Path FROM [{currentTopic.Id}]";
-                        reader = command.ExecuteReader();
-                        //Если есть данные
-                        index = 0;
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                //Заполняем массивы данными из бд
-                                currentTopic.words[index++] = new Word
-                                {
-                                    Russian = reader.GetString(0).Trim(),
-                                    Description = reader.GetString(1).Trim(),
-                                    English = reader.GetString(2).Trim(),
-                                    Path = reader.GetString(3).Trim()
-                                };
-                            }
-                            reader.Close();
-                            ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
-
-                            EnteringAWordGrid.Visibility = Visibility.Visible;
-
-                            index = 0;
-                            numberofword = 1;
-                            WordsCounterLabel.Content = "/" + currentTopic.words.Count;
-                            WordOutputLabel.Content = currentTopic.words[0].Russian;
-                            DescriptionLabel.Content = currentTopic.words[0].Description;
-                            english = currentTopic.words[0].English;
-                            path = currentTopic.words[0].Path;
-                            SearchByNumberTextBox.Text = "1";
-                        }
-                    }
-                }
-            } 
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
+                ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
+                user.ChoiceOfTopicGridVisibility = "Hidden";
+                EnteringAWordGrid.Visibility = Visibility.Visible;
+            }
         }
 
         private void TopicSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -752,9 +510,7 @@ namespace Shebist
 
         private void AccountMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            AccountPage ap = new AccountPage { userid = userid };
-            this.NavigationService.Navigate(ap);
-            SaveUserState();
+            this.NavigationService.Navigate(new AccountPage { user = user, topics = topics, MainWords = MainWords });
         }
 
         //переход к слову по номеру
@@ -765,13 +521,11 @@ namespace Shebist
                 try
                 {
                     numberofword = Int32.Parse(SearchByNumberTextBox.Text);
-                    if (numberofword >= 1 && numberofword <= currentTopic.words.Count)
+                    if (numberofword >= 1 && numberofword <= currentTopic.currentWords.Count)
                     {
-                        index = numberofword - 1;
-                        WordOutputLabel.Content = currentTopic.words[index].Russian;
-                        DescriptionLabel.Content = currentTopic.words[index].Description;
-                        english = currentTopic.words[index].English;
-                        path = currentTopic.words[index].Path;
+                        currentTopic.CurrentIndex = numberofword - 1;
+                        WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                        DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                     }
                     else
                     {

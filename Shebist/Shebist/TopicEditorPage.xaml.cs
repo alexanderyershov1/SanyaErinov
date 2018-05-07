@@ -31,14 +31,16 @@ namespace Shebist
 
         }
 
+        public User user;
+        public List<Topic> topics;
+        public Topic MainWords;
         int wordId = 0;
-        string topicId;
-        public string currentTopicId;
+        int topicId;
+        public int currentTopicId;
         static string Debug = Directory.GetCurrentDirectory();
         static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
         static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
         static SqlCommand command = new SqlCommand();
-        public List<Topic> topics;
         SqlDataReader reader;
 
         private void TopicsNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -105,44 +107,30 @@ namespace Shebist
         {
             if (DeleteCheckNameLabel.Foreground == Brushes.Green)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                foreach (Topic topic in topics)
                 {
-                    connection.Open();
-                    command.Connection = connection;
-
-                    foreach(Topic topic in topics)
+                    if (topic.Name == DeleteTopicsNameTextBox.Text)
                     {
-                        if(topic.Name == DeleteTopicsNameTextBox.Text)
-                        {
-                            topicId = topic.Id;
-                            topics.Remove(topic);
-                            break;
-                        }
+                        topicId = topic.Id;
+                        topics.Remove(topic);
+                        break;
                     }
+                }
 
-                    foreach(ItemsControl item in ExistingTopicsDataGrid.Items)
+                foreach (Topic topic in ExistingTopicsDataGrid.Items)
+                {
+                    if (topic.Name == DeleteTopicsNameTextBox.Text)
                     {
-                        ExistingTopicsDataGrid.Items.Remove(item);
-                        ExistingTopicsDataGrid2.Items.Remove(item);
+                        ExistingTopicsDataGrid.Items.Remove(topic);
+                        break;
                     }
-                    
-                    foreach(Topic topic in topics)
-                    {
-                        ExistingTopicsDataGrid.Items.Add(new Topic { Name = topic.Name });
-                        ExistingTopicsDataGrid2.Items.Add(new Topic { Name = topic.Name });
-                    }
+                }
 
-                    command.CommandText = $"DROP TABLE [{topicId}]";
-                    command.ExecuteNonQuery();
-                    command.CommandText = $"DELETE FROM [Topics] WHERE Id = {topicId}";
-                    command.ExecuteNonQuery();
+                DeleteTopicsNameTextBox.Clear();
 
-                    DeleteTopicsNameTextBox.Clear();
-
-                   if(ExistingTopicsDataGrid.Items.Count == 0)
-                    {
-                        CreateEditTabControl.IsEnabled = false;
-                    }
+                if (ExistingTopicsDataGrid.Items.Count == 0)
+                {
+                    CreateEditTabControl.IsEnabled = false;
                 }
             }
         }
@@ -151,123 +139,66 @@ namespace Shebist
         {
             if (CheckNameLabel.Foreground == Brushes.Green)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    command.CommandText = $"INSERT INTO Topics (UserId, Name) VALUES ({userid}, N'{TopicsNameTextBox.Text}')";
-                    command.Connection = connection;
-                    command.ExecuteNonQuery();
-                    command.CommandText = $"SELECT Id FROM Topics WHERE UserId = {userid} AND Name = N'{TopicsNameTextBox.Text}'";
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    topicId = reader.GetInt32(0).ToString();
-                    reader.Close();
-
-                    command.CommandText = $"CREATE TABLE [dbo].[{topicId}]([Id] INT IDENTITY(1, 1) NOT NULL, [TopicId] INT NOT NULL," +
-                    "[Russian] NCHAR(50) NULL, [Description] NCHAR(50) NULL, [English] NCHAR(50) NULL, [Path] NCHAR(50) NULL," +
-                    "PRIMARY KEY CLUSTERED([Id] ASC), FOREIGN KEY([TopicId]) REFERENCES[dbo].[Topics] ([Id]))";
-                    command.ExecuteNonQuery();
-
-                    topics.Add(new Topic { Id = topicId, Name = TopicsNameTextBox.Text });
-                    ExistingTopicsDataGrid.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
-                    ExistingTopicsDataGrid2.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
-                    TopicsNameTextBox.Clear();
-                }
+                topics.Add(new Topic { Name = TopicsNameTextBox.Text, CurrentIndex = 0, SequenceOfIndices = new List<int>() });
+                ExistingTopicsDataGrid.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
+                TopicsNameTextBox.Clear();
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            foreach(Topic topic in topics)
             {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = $"SELECT COUNT(*) FROM Topics WHERE UserId = {userid}";
-                reader = command.ExecuteReader();
-                reader.Read();
-                topics = new List<Topic>(reader.GetInt32(0));
-                reader.Close();
-
-                command.CommandText = $"SELECT Id, Name FROM Topics WHERE UserId = {userid}";
-                reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    ExistingTopicsDataGrid.Items.Add(new Topic { Name = reader.GetString(1).Trim() });
-                    ExistingTopicsDataGrid2.Items.Add(new Topic { Name = reader.GetString(1).Trim() });
-                    topics.Add(new Topic { Id = reader.GetInt32(0).ToString(), Name = reader.GetString(1).Trim() });
-                }
+                ExistingTopicsDataGrid.Items.Add(topic);
+                ExistingTopicsDataGrid2.Items.Add(topic);
             }
         }
 
         private void ExistingTopicsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Topic topic = (Topic)ExistingTopicsDataGrid.SelectedValue;
-            if(topic != null)
+            if (topic != null)
             {
                 DeleteTopicsNameTextBox.Text = topic.Name;
             }
         }
 
         int indexOfElement = 0;
+        Topic currentTopic;
         private void ExistingTopicsDataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            for (int i = 0; i < WordsDataGrid.Items.Count;)
-            {
-                WordsDataGrid.Items.RemoveAt(i);
-            }
 
-            InputRussianTextBox.Clear();
-            InputDescriptionTextBox.Clear();
-            InputEnglishTextBox.Clear();
+            WordsDataGrid.Items.Clear();
+            InputQuestionTextBox.Clear();
+            InputHintTextBox.Clear();
+            InputAnswerTextBox.Clear();
             InputPathTextBox.Clear();
-            Topic topic = (Topic)ExistingTopicsDataGrid2.SelectedValue;
+            currentTopic = (Topic)ExistingTopicsDataGrid2.SelectedValue;
             if(ExistingTopicsDataGrid2.Items.Count != 0)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                foreach(Word word in currentTopic.Words)
                 {
-                    connection.Open();
-                    command.Connection = connection;
-                    //Выбираем Id темы, где Id пользователя = userid и название темы = topic.Name
-                    command.CommandText = $"SELECT Id FROM Topics WHERE UserId = {userid} AND Name = N'{topic.Name}'";
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    topicId = reader.GetInt32(0).ToString();
-                    reader.Close();
-                    command.CommandText = $"SELECT Id, Russian, Description, English, Path FROM [{topicId}]";
-                    reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        WordsDataGrid.Items.Add(new Word
-                        {
-                            Id = reader.GetInt32(0),
-                            Russian = reader.GetString(1).Trim(),
-                            Description = reader.GetString(2).Trim(),
-                            English = reader.GetString(3).Trim(),
-                            Path = reader.GetString(4).Trim()
-                        });
-                    }
-                    reader.Close();
-                    if (WordsDataGrid.Items.Count != 0)
-                    {
-                        indexOfElement = 0;
-                        Word word = (Word)WordsDataGrid.Items[indexOfElement];
-                        wordId = word.Id;
-                        InputRussianTextBox.Text = word.Russian;
-                        InputDescriptionTextBox.Text = word.Description;
-                        InputEnglishTextBox.Text = word.English;
-                        InputPathTextBox.Text = word.Path;
-                    }
-                    else wordId = indexOfElement = 0;             
+                    WordsDataGrid.Items.Add(word);
                 }
 
-                CreateEditTabControl.IsEnabled = true;
-            }     
+                if (WordsDataGrid.Items.Count != 0)
+                {
+                    indexOfElement = 0;
+                    Word word = (Word)WordsDataGrid.Items[indexOfElement];
+                    wordId = word.Id;
+                    InputQuestionTextBox.Text = word.Question;
+                    InputHintTextBox.Text = word.Hint;
+                    InputAnswerTextBox.Text = word.Answer;
+                    InputPathTextBox.Text = word.Path;
+                }
+                else wordId = indexOfElement = 0;
+            }
         }
 
         private void BackMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new MainPage { userid = userid,
-                topics = topics
+            this.NavigationService.Navigate(new MainPage { user = user,
+                topics = topics, MainWords = MainWords
             });
         }
 
@@ -278,9 +209,9 @@ namespace Shebist
             {
                 Word word = (Word)WordsDataGrid.Items[++indexOfElement];
                 wordId = word.Id;
-                InputRussianTextBox.Text = word.Russian;
-                InputDescriptionTextBox.Text = word.Description;
-                InputEnglishTextBox.Text = word.English;
+                InputQuestionTextBox.Text = word.Question;
+                InputHintTextBox.Text = word.Hint;
+                InputAnswerTextBox.Text = word.Answer;
                 InputPathTextBox.Text = word.Path;
             }
             else
@@ -288,9 +219,9 @@ namespace Shebist
                 indexOfElement = 0;
                 Word word = (Word)WordsDataGrid.Items[indexOfElement];
                 wordId = word.Id;
-                InputRussianTextBox.Text = word.Russian;
-                InputDescriptionTextBox.Text = word.Description;
-                InputEnglishTextBox.Text = word.English;
+                InputQuestionTextBox.Text = word.Question;
+                InputHintTextBox.Text = word.Hint;
+                InputAnswerTextBox.Text = word.Answer;
                 InputPathTextBox.Text = word.Path;
             }
         }
@@ -299,31 +230,14 @@ namespace Shebist
         {
             if (wordId != 0)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                foreach(Word word in currentTopic.Words)
                 {
-                    connection.Open();
-                    command.Connection = connection;
-                    command.CommandText = $"UPDATE [{topicId}] SET Russian = N'{InputRussianTextBox.Text}'" +
-                        $", Description = N'{InputDescriptionTextBox.Text}', English = N'{InputEnglishTextBox.Text}'," +
-                        $"Path = N'{InputPathTextBox.Text}' WHERE Id = {wordId}";
-                    command.ExecuteNonQuery();
-                    WordsDataGrid.Items.Clear();
-                    command.CommandText = $"SELECT Id, Russian, Description, English, Path FROM [{topicId}]";
-                    reader = command.ExecuteReader();
-                    if (reader.HasRows)
+                    if(word.Id == wordId)
                     {
-                        while (reader.Read())
-                        {
-                            WordsDataGrid.Items.Add(new Word
-                            {
-                                Id = reader.GetInt32(0),
-                                Russian = reader.GetString(1).Trim(),
-                                Description = reader.GetString(2).Trim(),
-                                English = reader.GetString(3).Trim(),
-                                Path = reader.GetString(4).Trim()
-
-                            });
-                        }
+                        word.Question = InputQuestionTextBox.Text.Trim();
+                        word.Hint = InputHintTextBox.Text.Trim();
+                        word.Answer = InputAnswerTextBox.Text.Trim();
+                        word.Path = InputPathTextBox.Text.Trim();
                     }
                 }
             }
@@ -333,140 +247,85 @@ namespace Shebist
         {
             if (wordId != 0)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                WordsDataGrid.Items.Clear();
+
+                foreach (Word word in currentTopic.Words)
                 {
-                    connection.Open();
-                    command.Connection = connection;
-                    command.CommandText = $"DELETE FROM [{topicId}] WHERE Id = {wordId}";
-                    command.ExecuteNonQuery();
-                    WordsDataGrid.Items.Clear();
-                    command.CommandText = $"SELECT Id, Russian, Description, English, Path FROM [{topicId}]";
-                    reader = command.ExecuteReader();
-                    if (reader.HasRows)
+                    if (word.Id == wordId)
                     {
-                        while (reader.Read())
-                        {
-                            WordsDataGrid.Items.Add(new Word
-                            {
-                                Id = reader.GetInt32(0),
-                                Russian = reader.GetString(1).Trim(),
-                                Description = reader.GetString(2).Trim(),
-                                English = reader.GetString(3).Trim(),
-                                Path = reader.GetString(4).Trim()
+                        currentTopic.Words.Remove(word);
+                    }
+                }
 
-                            });
-                        }
-                    }
-                    reader.Close();
+                foreach (Word word in currentTopic.Words)
+                {
+                    WordsDataGrid.Items.Add(word);
+                }
 
-                    if (topicId == currentTopicId)
+                if (currentTopic.SequenceOfIndices.Count != 0)
+                {
+                    currentTopic.SequenceOfIndices.Clear();
+
+                    for (int i = 0; i < currentTopic.Words.Count; i++)
                     {
-                        command.CommandText = $"SELECT indicies FROM UserDb WHERE Id = {userid}";
-                        reader = command.ExecuteReader();
-                        reader.Read();
-                        string oldIndicies = reader.GetString(0);
-                        reader.Close();
-                        string newIndicies = "";
-                        int j = 0;
-                        for(int i = 0; i < oldIndicies.Length; i++)
-                        {
-                            if (j == WordsDataGrid.Items.Count) break;
-                            if (oldIndicies[i] == ';') j++;
-                            newIndicies += oldIndicies[i];
-                        }
-                        command.CommandText = $"UPDATE UserDB SET indicies = '{newIndicies}'";
-                        command.ExecuteNonQuery();
+                        currentTopic.SequenceOfIndices.Add(i);
                     }
-                    command.CommandText = $"SELECT Id, Russian, Description, English, Path FROM [{topicId}] WHERE Id > {wordId}";
-                    reader = command.ExecuteReader();
-                    if (reader.HasRows)
+                }
+
+                foreach (Word word in currentTopic.Words)
+                {
+                    if (word.Id > wordId)
                     {
-                        reader.Read();
-                        wordId = reader.GetInt32(0);
-                        InputRussianTextBox.Text = reader.GetString(1).Trim();
-                        InputDescriptionTextBox.Text = reader.GetString(2).Trim();
-                        InputEnglishTextBox.Text = reader.GetString(3).Trim();
-                        InputPathTextBox.Text = reader.GetString(4).Trim();
+                        wordId = word.Id;
+                        break;
                     }
-                    else
+                    else if(word.Id < wordId)
                     {
-                        reader.Close();
-                        command.CommandText = $"SELECT Id, Russian, Description, English, Path FROM [{topicId}] WHERE Id < {wordId}";
-                        reader = command.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                            {
-                                wordId = reader.GetInt32(0);
-                                InputRussianTextBox.Text = reader.GetString(1).Trim();
-                                InputDescriptionTextBox.Text = reader.GetString(2).Trim();
-                                InputEnglishTextBox.Text = reader.GetString(3).Trim();
-                                InputPathTextBox.Text = reader.GetString(4).Trim();
-                            }
-                        }
-                        else
-                        {
-                            reader.Close();
-                            wordId = 0;
-                            InputRussianTextBox.Clear();
-                            InputDescriptionTextBox.Clear();
-                            InputEnglishTextBox.Clear();
-                            InputPathTextBox.Clear();
-                        }
+                        wordId = word.Id;
+                        break;
                     }
-                    reader.Close();
+                }
+
+                foreach (Word word in currentTopic.Words)
+                {
+                    if(word.Id == wordId)
+                    {
+                        InputQuestionTextBox.Text = word.Question;
+                        InputHintTextBox.Text = word.Hint;
+                        InputAnswerTextBox.Text = word.Answer;
+                        InputPathTextBox.Text = word.Path;
+                    }
                 }
             }
         }
 
         private void AddButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            int newWordId = 0;
+            foreach(Word word in currentTopic.Words)
             {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = $"INSERT INTO [{topicId}]" +
-                    $" (TopicId, Russian, Description, English, Path) VALUES ({topicId}, N'{InputRussianTextBox2.Text}', N'{InputDescriptionTextBox2.Text}'," +
-                    $"N'{InputEnglishTextBox2.Text}', N'{InputPathTextBox2.Text}')";
-                command.ExecuteNonQuery();
-
-                if (wordId == 0)
-                {
-                    command.CommandText = $"SELECT Id, Russian, Description, English, Path FROM [{topicId}] WHERE Id = (SELECT MIN(Id) FROM [{topicId}])";
-                    reader = command.ExecuteReader();
-                    if (reader.HasRows)
-                    {
-                        reader.Read();
-                        wordId = reader.GetInt32(0);
-                        InputRussianTextBox.Text = reader.GetString(1).Trim();
-                        InputDescriptionTextBox.Text = reader.GetString(2).Trim();
-                        InputEnglishTextBox.Text = reader.GetString(3).Trim();
-                        InputPathTextBox.Text = reader.GetString(4).Trim();
-                    }
-                }
-                reader.Close();
-
-                if (currentTopicId == topicId)
-                {
-                    command.CommandText = $"UPDATE UserDB SET indicies = indicies + '{WordsDataGrid.Items.Count};'";
-                    command.ExecuteNonQuery();
-                }
+                if (word.Id > newWordId) newWordId = word.Id;
             }
+            newWordId++;
 
             WordsDataGrid.Items.Add(new Word
             {
-                Russian = InputRussianTextBox2.Text,
-                Description = InputDescriptionTextBox2.Text,
-                English = InputEnglishTextBox2.Text,
-                Path = InputPathTextBox2.Text
+                Id = newWordId,
+                Question = InputQuestionTextBox2.Text.Trim(),
+                Hint = InputHintTextBox2.Text.Trim(),
+                Answer = InputAnswerTextBox2.Text.Trim(),
+                Path = InputPathTextBox2.Text.Trim()
             });
 
-            
-            
-            InputRussianTextBox2.Clear();
-            InputDescriptionTextBox2.Clear();
-            InputEnglishTextBox2.Clear();
-            InputPathTextBox2.Clear();
+            currentTopic.Words.Add(new Word
+            {
+                Id = newWordId,
+                TopicId = currentTopic.Id,
+                Question = InputQuestionTextBox2.Text.Trim(),
+                Hint = InputHintTextBox2.Text.Trim(),
+                Answer = InputAnswerTextBox2.Text.Trim(),
+                Path = InputPathTextBox2.Text.Trim()
+            });
         }
 
         private void Menu_MouseEnter(object sender, MouseEventArgs e)
@@ -484,15 +343,10 @@ namespace Shebist
             Word word = (Word)WordsDataGrid.SelectedItem;
             if(word != null)
             {
-                for (int i = 0; i < WordsDataGrid.Items.Count; i++)
-                {
-                    Word word2 = (Word)WordsDataGrid.Items[i];
-                    if (word2.Id == word.Id) indexOfElement = i;
-                }
                 wordId = word.Id;
-                InputRussianTextBox.Text = word.Russian;
-                InputDescriptionTextBox.Text = word.Description;
-                InputEnglishTextBox.Text = word.English;
+                InputQuestionTextBox.Text = word.Question;
+                InputHintTextBox.Text = word.Hint;
+                InputAnswerTextBox.Text = word.Answer;
                 InputPathTextBox.Text = word.Path;
             }
         }
@@ -504,9 +358,9 @@ namespace Shebist
             {
                 Word word = (Word)WordsDataGrid.Items[--indexOfElement];
                 wordId = word.Id;
-                InputRussianTextBox.Text = word.Russian;
-                InputDescriptionTextBox.Text = word.Description;
-                InputEnglishTextBox.Text = word.English;
+                InputQuestionTextBox.Text = word.Question;
+                InputHintTextBox.Text = word.Hint;
+                InputAnswerTextBox.Text = word.Answer;
                 InputPathTextBox.Text = word.Path;
             }
             else
@@ -514,9 +368,9 @@ namespace Shebist
                 indexOfElement = WordsDataGrid.Items.Count - 1;
                 Word word = (Word)WordsDataGrid.Items[indexOfElement];
                 wordId = word.Id;
-                InputRussianTextBox.Text = word.Russian;
-                InputDescriptionTextBox.Text = word.Description;
-                InputEnglishTextBox.Text = word.English;
+                InputQuestionTextBox.Text = word.Question;
+                InputHintTextBox.Text = word.Hint;
+                InputAnswerTextBox.Text = word.Answer;
                 InputPathTextBox.Text = word.Path;
             }
         }

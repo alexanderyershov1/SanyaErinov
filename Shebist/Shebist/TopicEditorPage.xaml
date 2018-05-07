@@ -116,10 +116,10 @@
                                 <Image Source="downbutton.png" x:Name="DownButton" MouseLeftButtonDown="DownButton_MouseLeftButtonDown" Width="20" Height="20" Margin="280,60,44,95" RenderTransformOrigin="1.725,2.825"/>
                                 <Image Source="changebutton.png" x:Name="ChangeButton" MouseLeftButtonDown="ChangeButton_MouseLeftButtonDown" Margin="273,86,39,65"/>
                                 <Image Source="deletebutton.png" x:Name="DeleteButton" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown" Margin="273,120,39,31"/>
-                                <TextBox x:Name="InputRussianTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="169,35,99,121"/>
+                                <TextBox x:Name="InputQuestionTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="169,35,99,121"/>
                                 <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="169,52,25,121"/>
-                                <TextBox x:Name="InputDescriptionTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,63,98,93"/>
-                                <TextBox x:Name="InputEnglishTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,89,98,67"/>
+                                <TextBox x:Name="InputHintTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,63,98,93"/>
+                                <TextBox x:Name="InputAnswerTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,89,98,67"/>
                                 <TextBox x:Name="InputPathTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="170,112,98,42"/>
                                 <Label  Content="Вопрос" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="88,26,201,121" Width="55" Height="28"/>
                                 <Label Content="Подсказка" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="67,54,201,95" Width="76"/>
@@ -134,10 +134,10 @@
                         <TabItem Header="Добавить" FontWeight="Bold" BorderBrush="Black">
                             <Grid>
                                 <Image x:Name="AddButton" MouseLeftButtonDown="AddButton_MouseLeftButtonDown" Source="addbutton.png" HorizontalAlignment="Center" VerticalAlignment="Center" Height="30" Margin="276,75,38,67"/>
-                                <TextBox x:Name="InputRussianTextBox2" BorderThickness="0" FontWeight="Bold" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="169,35,99,121"/>
+                                <TextBox x:Name="InputQuestionTextBox2" BorderThickness="0" FontWeight="Bold" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="169,35,99,121"/>
                                 <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="169,51,25,119"/>
-                                <TextBox x:Name="InputDescriptionTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,63,98,93"/>
-                                <TextBox x:Name="InputEnglishTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,89,98,67"/>
+                                <TextBox x:Name="InputHintTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,63,98,93"/>
+                                <TextBox x:Name="InputAnswerTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,89,98,67"/>
                                 <TextBox x:Name="InputPathTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="170,112,98,42"/>
                                 <Label  Content="Вопрос" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="88,26,201,121" Width="55" Height="28"/>
                                 <Label Content="Подсказка" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="67,54,201,95" Width="76"/>

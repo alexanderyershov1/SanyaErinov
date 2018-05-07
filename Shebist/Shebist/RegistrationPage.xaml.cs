@@ -31,6 +31,7 @@ namespace Shebist
         }
         
         string Debug = Directory.GetCurrentDirectory();
+        public List<User> users = new List<User>();
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
@@ -76,8 +77,7 @@ namespace Shebist
 
         private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AuthorizationPage ap = new AuthorizationPage();
-            this.NavigationService.Navigate(ap);
+            this.NavigationService.Navigate(new AuthorizationPage { users = users });
         }
 
         MailAddress to;
@@ -87,18 +87,60 @@ namespace Shebist
             {   
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
+                    try
+                    {
                         connection.Open();
                         command.Connection = connection;
-                        command.CommandText = $"INSERT INTO UserDB (Login, Name, Email, Password, ChoiceOfTopicGridVisibility," +
-                        $"EnteringAWordGridVisibility, TopicId, MassivIndex, Indicies) VALUES (N'{this.LoginTextBox.Text}'," +
-                            $" N'{this.NameTextBox.Text}', N'{this.EmailTextBox.Text}', N'{PasswordBox.Password}'," +
-                            $" 'Visible', 'Hidden', ' ', 0, ' ')";
+                        command.CommandText = $"INSERT INTO Users (Login, Name, Email, Password, CurrentTopicId, ChoiceOfTopicGridVisibility)" +
+                        $" VALUES (N'{LoginTextBox.Text.Trim()}'," +
+                            $" N'{NameTextBox.Text.Trim()}', N'{EmailTextBox.Text.Trim()}', N'{PasswordBox.Password.Trim()}'," +
+                            $" 0, 'Visible')";
                         command.ExecuteNonQuery();
                         MessageBox.Show("Вы зарегистрированы");
-                    }
+                        command.CommandText = $"SELECT Login FROM Users WHERE Login = N'{LoginTextBox.Text.Trim()}'";
+                        reader = command.ExecuteReader();
+                        reader.Read();
 
-                AuthorizationPage ap = new AuthorizationPage(LoginTextBox.Text, PasswordBox.Password);
-                this.NavigationService.Navigate(ap);
+                        users.Add(new User
+                        {
+                            Login = LoginTextBox.Text.Trim(),
+                            Name = NameTextBox.Text.Trim(),
+                            Email = EmailTextBox.Text.Trim(),
+                            Password = PasswordBox.Password,
+                            CurrentTopicId = 0,
+                            ChoiceOfTopicGridVisibility = "Visible"
+                        });
+                    }
+                    catch (SqlException)
+                    {
+
+                        reader.Close();
+                        command.CommandText = "SELECT Id, Login, Name, Email, Password, CurrentTopicId, ChoiceOfTopicGridVisibility FROM Users" +
+                            $" WHERE Login = N'{LoginTextBox.Text}' OR Email = N'{EmailTextBox.Text}'";
+                        reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            if(LoginTextBox.Text == reader.GetString(1))
+                            {
+                                CheckLoginLabel.Foreground = Brushes.Red;
+                                CheckLoginLabel.Content = "✖";
+                            }
+                            MessageBox.Show($"Пользователь {reader.GetString(1)} уже существует");
+                            users.Add(new User
+                            {
+                                Login = reader.GetString(0),
+                                Name = reader.GetString(1),
+                                Email = reader.GetString(2),
+                                Password = reader.GetString(3),
+                                CurrentTopicId = reader.GetInt32(4),
+                                ChoiceOfTopicGridVisibility = reader.GetString(5)
+                            });
+                        }
+                    }
+            }
+                    
+                this.NavigationService.Navigate(new AuthorizationPage { users = users });
             }
         }
 
@@ -111,16 +153,29 @@ namespace Shebist
             }
             else
             {
-                    if (logins.Contains(LoginTextBox.Text))
+                if(users.Count != 0)
+                {
+                    foreach (User user in users)
                     {
-                        CheckLoginLabel.Foreground = Brushes.Red;
-                        CheckLoginLabel.Content = "✖";
+                        if (user.Login == LoginTextBox.Text)
+                        {
+                            CheckLoginLabel.Foreground = Brushes.Red;
+                            CheckLoginLabel.Content = "✖";
+                            break;
+                        }
+                        else
+                        {
+                            CheckLoginLabel.Foreground = Brushes.Green;
+                            CheckLoginLabel.Content = "✔";
+                        }
                     }
-                    else
-                    {
-                        CheckLoginLabel.Foreground = Brushes.Green;
-                        CheckLoginLabel.Content = "✔";
-                    }
+                }
+                else
+                {
+                    CheckLoginLabel.Foreground = Brushes.Green;
+                    CheckLoginLabel.Content = "✔";
+                }
+               
             }
         }
 
@@ -150,16 +205,28 @@ namespace Shebist
                 try
                 {
                     to = new MailAddress($"{EmailTextBox.Text}");
-                        if (emails.Contains(EmailTextBox.Text))
+                    if(users.Count != 0)
+                    {
+                        foreach (User user in users)
                         {
-                            CheckEmailLabel.Foreground = Brushes.Red;
-                            CheckEmailLabel.Content = "✖";
+                            if (user.Email == EmailTextBox.Text)
+                            {
+                                CheckEmailLabel.Foreground = Brushes.Red;
+                                CheckEmailLabel.Content = "✖";
+                                break;
+                            }
+                            else
+                            {
+                                CheckEmailLabel.Foreground = Brushes.Green;
+                                CheckEmailLabel.Content = "✔";
+                            }
                         }
-                        else
-                        {
-                            CheckEmailLabel.Foreground = Brushes.Green;
-                            CheckEmailLabel.Content = "✔";
-                        }
+                    }
+                    else
+                    {
+                        CheckEmailLabel.Foreground = Brushes.Green;
+                        CheckEmailLabel.Content = "✔";
+                    }
                     
                 }
                 catch(FormatException)
@@ -167,7 +234,6 @@ namespace Shebist
                     CheckEmailLabel.Foreground = Brushes.Red;
                     CheckEmailLabel.Content = "✖";
                 }
-                
             }
         }
 
@@ -220,36 +286,9 @@ namespace Shebist
             AlreadyHaveAnAccountLabel.FontSize = 12;
         }
 
-        string[] logins, emails;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = "SELECT COUNT(*) FROM UserDB";
-                reader = command.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    logins = new string[reader.GetInt32(0)];
-                    emails = new string[reader.GetInt32(0)];
-
-                }
-                reader.Close();
-
-                command.CommandText = $"SELECT Login, Email FROM UserDB";
-                reader = command.ExecuteReader();
-                int n = 0;
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        logins[n] = reader.GetString(0);
-                        emails[n++] = reader.GetString(1);
-                    }
-                }
-            }
+           
         }
     }
 }
