@@ -121,7 +121,16 @@ namespace Shebist
                 {
                     if (topic.Name == DeleteTopicsNameTextBox.Text)
                     {
-                        ExistingTopicsDataGrid.Items.Remove(topic);
+                        ExistingTopicsDataGrid.Items.Remove(topic);                  
+                        break;
+                    }
+                }
+
+                foreach (Topic topic in ExistingTopicsDataGrid2.Items)
+                {
+                    if (topic.Name == DeleteTopicsNameTextBox.Text)
+                    {
+                        ExistingTopicsDataGrid2.Items.Remove(topic);
                         break;
                     }
                 }
@@ -131,6 +140,14 @@ namespace Shebist
                 if (ExistingTopicsDataGrid.Items.Count == 0)
                 {
                     CreateEditTabControl.IsEnabled = false;
+                    InputQuestionTextBox.Clear();
+                    InputHintTextBox.Clear();
+                    InputAnswerTextBox.Clear();
+                    InputPathTextBox.Clear();
+                    InputQuestionTextBox2.Clear();
+                    InputHintTextBox2.Clear();
+                    InputAnswerTextBox2.Clear();
+                    InputPathTextBox2.Clear();
                 }
             }
         }
@@ -141,6 +158,7 @@ namespace Shebist
             {
                 topics.Add(new Topic { Name = TopicsNameTextBox.Text, CurrentIndex = 0, SequenceOfIndices = new List<int>() });
                 ExistingTopicsDataGrid.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
+                ExistingTopicsDataGrid2.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
                 TopicsNameTextBox.Clear();
             }
         }
@@ -164,18 +182,41 @@ namespace Shebist
         }
 
         int indexOfElement = 0;
-        Topic currentTopic;
+        Topic currentTopic = null;
         private void ExistingTopicsDataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+           if(currentTopic != null)
+            {
+                for (int i = 0; i < topics.Count; i++)
+                {
+                    if (topics[i].Name == currentTopic.Name)
+                    {
+                        topics[i] = currentTopic;
+                    }
+                }
+            }
+            
             WordsDataGrid.Items.Clear();
             InputQuestionTextBox.Clear();
             InputHintTextBox.Clear();
             InputAnswerTextBox.Clear();
             InputPathTextBox.Clear();
             currentTopic = (Topic)ExistingTopicsDataGrid2.SelectedValue;
+            
+
+            foreach (Topic topic in topics)
+            {
+                if(topic.Name == currentTopic.Name)
+                {
+                    currentTopic = topic;
+                    break;
+                }
+            }
+
             if(ExistingTopicsDataGrid2.Items.Count != 0)
             {
+                CreateEditTabControl.IsEnabled = true;
+
                 foreach(Word word in currentTopic.Words)
                 {
                     WordsDataGrid.Items.Add(word);
@@ -184,12 +225,11 @@ namespace Shebist
                 if (WordsDataGrid.Items.Count != 0)
                 {
                     indexOfElement = 0;
-                    Word word = (Word)WordsDataGrid.Items[indexOfElement];
-                    wordId = word.Id;
-                    InputQuestionTextBox.Text = word.Question;
-                    InputHintTextBox.Text = word.Hint;
-                    InputAnswerTextBox.Text = word.Answer;
-                    InputPathTextBox.Text = word.Path;
+                    wordId = currentTopic.Words[0].Id;
+                    InputQuestionTextBox.Text = currentTopic.Words[0].Question;
+                    InputHintTextBox.Text = currentTopic.Words[0].Hint;
+                    InputAnswerTextBox.Text = currentTopic.Words[0].Answer;
+                    InputPathTextBox.Text = currentTopic.Words[0].Path;
                 }
                 else wordId = indexOfElement = 0;
             }

@@ -96,14 +96,14 @@
 
                     <DataGrid x:Name="WordsDataGrid" SelectionChanged="WordsDataGrid_SelectionChanged" FontWeight="Bold" Background="White" BorderBrush="Black" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="512" Height="200" Margin="567,260,239,295" Grid.Column="2">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Вопрос" Binding="{Binding Path=Russian}"/>
-                            <DataGridTextColumn Header="Подсказка" Binding="{Binding Path=Description}"/>
-                            <DataGridTextColumn Header="Ответ" Binding="{Binding Path=English}"/>
+                            <DataGridTextColumn Header="Вопрос" Binding="{Binding Path=Question}"/>
+                            <DataGridTextColumn Header="Подсказка" Binding="{Binding Path=Hint}"/>
+                            <DataGridTextColumn Header="Ответ" Binding="{Binding Path=Answer}"/>
                             <DataGridTextColumn Header="Путь к файлу озвучки" Binding="{Binding Path=Path}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <Label x:Name="TopicNameLabel" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="886,184,422,545" Grid.Column="2"/>
-                    <TextBox Height="23" TextWrapping="Wrap" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" Margin="208,147,1020,731"/>
+                    <TextBox Height="23" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" Margin="208,147,1020,731" Width="132"/>
                     <DataGrid x:Name="ExistingTopicsDataGrid2" FontWeight="Bold" Background="White" BorderBrush="Black" Margin="208,175,1020,596" SelectionChanged="ExistingTopicsDataGrid2_SelectionChanged" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="132" Height="130">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Тема" Binding="{Binding Path=Name}" Width="120" />
