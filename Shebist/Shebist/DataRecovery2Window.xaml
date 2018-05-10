@@ -1,0 +1,56 @@
+﻿<Window x:Class="Shebist.DataRecovery2Window"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Shebist"
+      mc:Ignorable="d"
+      Title="DataRecoveryPage2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="1366" Height="728">
+
+    <Grid>
+        
+        <PasswordBox x:Name="NewPasswordBox"
+                     HorizontalContentAlignment="Center"
+                     PasswordChanged="NewPasswordBox_PasswordChanged"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Margin="83,100,71,182"
+                     Width="146"/>
+
+        <PasswordBox x:Name="AgainPasswordBox"
+                     HorizontalContentAlignment="Center"
+                     PasswordChanged="AgainPasswordBox_PasswordChanged"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Margin="83,149,71,133"
+                     Width="146"/>
+
+        <Label Foreground="Black"
+               Content="Новый пароль"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="110,69,100,205"/>
+
+        <Label Foreground="Black"
+               Content="Ещё раз"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="125,123,121,151"/>
+
+        <Button Content="Изменить"
+                Click="ChangeButton_Click"
+                x:Name="ChangeButton"
+                Background="White"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="117,199,109,81"
+                Width="74"/>
+
+        <Label HorizontalAlignment="Center"
+               Foreground="Red"
+               x:Name="CheckPasswodsLabel"
+               VerticalAlignment="Center"
+               Margin="90,168,71,106"
+               Content="Пароли не совпадают" Width="139"/>
+    </Grid>
+</Window>

@@ -69,50 +69,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AccountPage.xaml.cs">
-      <DependentUpon>AccountPage.xaml</DependentUpon>
+    <Compile Include="AccountWindow.xaml.cs">
+      <DependentUpon>AccountWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AuthorizationPage.xaml.cs">
-      <DependentUpon>AuthorizationPage.xaml</DependentUpon>
+    <Compile Include="AuthorizationWindow.xaml.cs">
+      <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataRecoveryPage.xaml.cs">
-      <DependentUpon>DataRecoveryPage.xaml</DependentUpon>
+    <Compile Include="DataRecovery2Window.xaml.cs">
+      <DependentUpon>DataRecovery2Window.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataRecoveryPage2.xaml.cs">
-      <DependentUpon>DataRecoveryPage2.xaml</DependentUpon>
+    <Compile Include="DataRecoveryWindow.xaml.cs">
+      <DependentUpon>DataRecoveryWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="RegistrationPage.xaml.cs">
-      <DependentUpon>RegistrationPage.xaml</DependentUpon>
+    <Compile Include="RegistrationWindow.xaml.cs">
+      <DependentUpon>RegistrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TopicEditorPage.xaml.cs">
-      <DependentUpon>TopicEditorPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Topic.cs" />
+    <Compile Include="TopicEditorWindow.xaml.cs">
+      <DependentUpon>TopicEditorWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User.cs" />
     <Compile Include="Word.cs" />
-    <Page Include="AccountPage.xaml">
+    <Page Include="AccountWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AuthorizationPage.xaml">
+    <Page Include="AuthorizationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DataRecoveryPage.xaml">
+    <Page Include="DataRecovery2Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DataRecoveryPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainPage.xaml">
+    <Page Include="DataRecoveryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -128,7 +121,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="RegistrationPage.xaml">
+    <Page Include="RegistrationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -136,7 +129,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TopicEditorPage.xaml">
+    <Page Include="TopicEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
