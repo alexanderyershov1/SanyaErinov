@@ -32,7 +32,6 @@ namespace Shebist
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
-        SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
         static string Debug = Directory.GetCurrentDirectory();
         static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
@@ -42,15 +41,15 @@ namespace Shebist
         SqlDataReader reader;
         User currentUser;
 
-        static List<int> ReadIndices(string s)
+        static List<short> ReadIndices(string s)
         {
-            List<int> SequenceOfIndices = new List<int>();
+            List<short> SequenceOfIndices = new List<short>();
             int startIndex = 0, length = 0;
             for (int i = 0; i < s.Length; i++)
             {
                 if (s[i] == ';')
                 {//если символ равен ;, добавляем в список indiciesForSave элемент, начиная с startIndex длиной в length
-                    SequenceOfIndices.Add(Int32.Parse(s.Substring(startIndex, length)));
+                    SequenceOfIndices.Add(short.Parse(s.Substring(startIndex, length)));
                     startIndex = i + 1;//прибавляем 1 к startIndex
                     length = 0;//обнуляем длину
                 }
@@ -83,36 +82,45 @@ namespace Shebist
                         reader = command.ExecuteReader();
                         reader.Read();
                         currentUser.Name = reader.GetString(0);
-                        currentUser.CurrentTopicId = reader.GetInt32(1);
+                        currentUser.CurrentTopicId = reader.GetString(1);
                         currentUser.ChoiceOfTopicGridVisibility = reader.GetString(2);
                         currentUser.SequenceOfIndicesOfMainWords = ReadIndices(reader.GetString(3));
-                        currentUser.IndexOfMainWords = reader.GetInt32(4);
+                        currentUser.IndexOfMainWords = reader.GetInt16(4);
                         reader.Close();
 
-                        List<Topic> topics = new List<Topic>();
-                        command.CommandText = $"SELECT Name, SequenceOfIndices, CurrentIndex FROM Topics WHERE UserLogin = N'{currentUser.Login}'";
+                        List<Topic> oldTopics = new List<Topic>(), newTopics = new List<Topic>();
+                        command.CommandText = $"SELECT Id, Name, SequenceOfIndices, CurrentIndex FROM Topics WHERE UserLogin = N'{currentUser.Login}'";
                         reader = command.ExecuteReader();
                         if (reader.HasRows)
                         {
                             while (reader.Read())
                             {
-                                topics.Add(new Topic
+                                oldTopics.Add(new Topic
                                 {
-                                    Id = reader.GetInt32(0),
+                                    Id = reader.GetInt32(0).ToString(),
                                     Name = reader.GetString(1).Trim(),
                                     SequenceOfIndices = ReadIndices(reader.GetString(2)),
-                                    CurrentIndex = reader.GetInt32(3)
+                                    CurrentIndex = reader.GetInt16(3)
                                 });
+
+                                newTopics.Add(new Topic
+                                {
+                                    Id = reader.GetInt32(0).ToString(),
+                                    Name = reader.GetString(1).Trim(),
+                                    SequenceOfIndices = ReadIndices(reader.GetString(2)),
+                                    CurrentIndex = reader.GetInt16(3)
+                                });
+
                             }
                         }
                         reader.Close();
 
-                        if (topics.Count > 0)
+                        if (oldTopics.Count > 0)
                         {
-                            foreach (Topic topic in topics)
+                            foreach (Topic topic in oldTopics)
                             {
                                 command.CommandText = $"SELECT Id, Question, Hint, Answer, Path FROM " +
-                                    $"Words WHERE TopicId = {topic.Id}";
+                                    $"Words WHERE TopicId = {Int32.Parse(topic.Id)}";
                                 reader = command.ExecuteReader();
                                 if (reader.HasRows)
                                 {
@@ -120,7 +128,31 @@ namespace Shebist
                                     {
                                         topic.Words.Add(new Word
                                         {
-                                            Id = reader.GetInt32(0),
+                                            Id = reader.GetInt32(0).ToString(),
+                                            TopicId = topic.Id,
+                                            Question = reader.GetString(1).Trim(),
+                                            Hint = reader.GetString(2).Trim(),
+                                            Answer = reader.GetString(3).Trim(),
+                                            Path = reader.GetString(4).Trim(),
+                                        });
+                                    }
+                                }
+                            }
+                            reader.Close();
+                            
+                            foreach (Topic topic in newTopics)
+                            {
+                                command.CommandText = $"SELECT Id, Question, Hint, Answer, Path FROM " +
+                                    $"Words WHERE TopicId = {Int32.Parse(topic.Id)}";
+                                reader = command.ExecuteReader();
+                                if (reader.HasRows)
+                                {
+                                    while (reader.Read())
+                                    {
+                                        topic.Words.Add(new Word
+                                        {
+                                            Id = reader.GetInt32(0).ToString(),
+                                            TopicId = topic.Id,
                                             Question = reader.GetString(1).Trim(),
                                             Hint = reader.GetString(2).Trim(),
                                             Answer = reader.GetString(3).Trim(),
@@ -130,15 +162,19 @@ namespace Shebist
                                 }
                             }
 
-                            foreach (Topic topic in topics)
+                            foreach (Topic topic in oldTopics)
                             {
                                 for (int i = 0; i < topic.Words.Count; i++)
                                 {
-                                    topic.currentWords.Add(new Word());
+                                    topic.currentWords.Add(topic.Words[topic.SequenceOfIndices[i]]);
                                 }
+                            }
+
+                            foreach (Topic topic in newTopics)
+                            {
                                 for (int i = 0; i < topic.Words.Count; i++)
                                 {
-                                    topic.currentWords[i] = topic.Words[topic.SequenceOfIndices[i]];
+                                    topic.currentWords.Add(topic.Words[topic.SequenceOfIndices[i]]);
                                 }
                             }
                         }
@@ -147,11 +183,12 @@ namespace Shebist
                         Topic MainWords = new Topic();
                         command.CommandText = "SELECT Id, Question, Hint, Answer, Path FROM MainWords";
                         reader = command.ExecuteReader();
+
                         while (reader.Read())
                         {
                             MainWords.Words.Add(new Word
                             {
-                                Id = reader.GetInt32(0),
+                                Id = reader.GetInt32(0).ToString(),
                                 Question = reader.GetString(1).Trim(),
                                 Hint = reader.GetString(2).Trim(),
                                 Answer = reader.GetString(3).Trim(),
@@ -171,14 +208,23 @@ namespace Shebist
                             MainWords.currentWords[i] = MainWords.Words[currentUser.SequenceOfIndicesOfMainWords[i]];
                         }
 
+                        List<short> soiomwOldUser = new List<short>(), soiomwNewUser = new List<short>();
+                        for(short i = 0; i < currentUser.SequenceOfIndicesOfMainWords.Count; i++)
+                        {
+                            soiomwOldUser.Add(currentUser.SequenceOfIndicesOfMainWords[i]);
+                            soiomwNewUser.Add(currentUser.SequenceOfIndicesOfMainWords[i]);
+                        }
+                        
                         MainWindow mw = new MainWindow
                         {
+                            needToUpdate = true,
                             WindowState = this.WindowState,
                             Top = this.Top,
                             Left = this.Left,
                             Width = this.Width,
                             Height = this.Height,
-                            user = new User
+
+                            oldUser = new User
                             {
                                 Login = currentUser.Login,
                                 Password = currentUser.Password,
@@ -187,10 +233,25 @@ namespace Shebist
                                 ChoiceOfTopicGridVisibility = currentUser.ChoiceOfTopicGridVisibility,
                                 CurrentTopicId = currentUser.CurrentTopicId,
                                 IndexOfMainWords = currentUser.IndexOfMainWords,
-                                SequenceOfIndicesOfMainWords = currentUser.SequenceOfIndicesOfMainWords
+                                SequenceOfIndicesOfMainWords = soiomwOldUser
                             },
+
+
+                            newUser = new User
+                            {
+                                Login = currentUser.Login,
+                                Password = currentUser.Password,
+                                Name = currentUser.Name,
+                                Email = currentUser.Email,
+                                ChoiceOfTopicGridVisibility = currentUser.ChoiceOfTopicGridVisibility,
+                                CurrentTopicId = currentUser.CurrentTopicId,
+                                IndexOfMainWords = currentUser.IndexOfMainWords,
+                                SequenceOfIndicesOfMainWords = soiomwNewUser
+                            },
+
                             MainWords = MainWords,
-                            topics = topics
+                            oldTopics = oldTopics,
+                            newTopics = newTopics
 
                         };
                         mw.Show();
@@ -203,8 +264,6 @@ namespace Shebist
                     WrongDataLabel.Visibility = Visibility.Visible;
                 }
             }
-
-
 
             using (FileStream fs = new FileStream($"{Debug}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
             {
@@ -223,8 +282,19 @@ namespace Shebist
                 Height = this.Height,
                 users = users
             };
+
             rw.Show();
             this.Close();
+        }
+
+        static string WriteSequence(List<int> sequence)
+        {
+            string s = "";
+            foreach (int index in sequence)
+            {
+                s += index + ";";
+            }
+            return s;
         }
 
         public List<User> users = new List<User>();

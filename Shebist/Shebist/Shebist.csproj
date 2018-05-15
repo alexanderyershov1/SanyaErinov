@@ -187,6 +187,7 @@
     <Resource Include="upbutton.png" />
     <Resource Include="downbutton.png" />
     <Resource Include="addbutton.png" />
+    <Resource Include="SortByDefault.png" />
     <Content Include="UserDB.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

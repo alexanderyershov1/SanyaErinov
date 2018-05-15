@@ -28,6 +28,12 @@ namespace Shebist
         {
             InitializeComponent();
             ConfrimRegistrationGrid.Visibility = Visibility.Hidden;
+            CheckLoginLabel.Content = "";
+            CheckNameLabel.Content = "";
+            CheckEmailLabel.Content = "";
+            CheckPasswordLabel.Content = "";
+            CheckPasswordsLabel.Content = "";
+
         }
 
         string Debug = Directory.GetCurrentDirectory();
@@ -109,7 +115,7 @@ namespace Shebist
                             Name = NameTextBox.Text.Trim(),
                             Email = EmailTextBox.Text.Trim(),
                             Password = PasswordBox.Password,
-                            CurrentTopicId = 0,
+                            CurrentTopicId = "MainWords",
                             ChoiceOfTopicGridVisibility = "Visible"
                         });
                     }
@@ -134,9 +140,7 @@ namespace Shebist
                                 Login = reader.GetString(0),
                                 Name = reader.GetString(1),
                                 Email = reader.GetString(2),
-                                Password = reader.GetString(3),
-                                CurrentTopicId = reader.GetInt32(4),
-                                ChoiceOfTopicGridVisibility = reader.GetString(5)
+                                Password = reader.GetString(3)
                             });
                         }
                     }
@@ -153,7 +157,7 @@ namespace Shebist
             if (LoginTextBox.Text == "")
             {
                 CheckLoginLabel.Foreground = Brushes.Red;
-                CheckLoginLabel.Content = "✖";
+                CheckLoginLabel.Content = "";
             }
             else
             {
@@ -188,7 +192,7 @@ namespace Shebist
             if (NameTextBox.Text == "")
             {
                 CheckNameLabel.Foreground = Brushes.Red;
-                CheckNameLabel.Content = "✖";
+                CheckNameLabel.Content = "";
             }
             else
             {
@@ -202,7 +206,7 @@ namespace Shebist
             if (EmailTextBox.Text == "")
             {
                 CheckEmailLabel.Foreground = Brushes.Red;
-                CheckEmailLabel.Content = "✖";
+                CheckEmailLabel.Content = "";
             }
             else
             {
@@ -246,7 +250,7 @@ namespace Shebist
             if (PasswordBox.Password == "")
             {
                 CheckPasswordLabel.Foreground = Brushes.Red;
-                CheckPasswordLabel.Content = "✖";
+                CheckPasswordLabel.Content = "";
             }
             else
             {
@@ -277,6 +281,7 @@ namespace Shebist
             {
                 CheckPasswordsLabel.Foreground = Brushes.Red;
                 CheckPasswordsLabel.Content = "✖";
+                if (PasswordBox.Password == "") CheckPasswordsLabel.Content = "";
             }
         }
 

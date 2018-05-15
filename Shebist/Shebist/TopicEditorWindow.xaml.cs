@@ -23,7 +23,6 @@ namespace Shebist
     /// </summary>
     public partial class TopicEditorWindow : Window
     {
-        public int userid;
         public TopicEditorWindow()
         {
             InitializeComponent();
@@ -31,17 +30,17 @@ namespace Shebist
 
         }
 
-        public User user;
-        public List<Topic> topics;
+        public User oldUser, newUser;
+        public bool needToUpdate;
+        public List<Topic> oldTopics, newTopics;
+        List<int> indicesOfDeletedTopics = new List<int>();
+        List<Word> deletedWords = new List<Word>();
         public Topic MainWords;
-        int wordId = 0;
-        int topicId;
         public int currentTopicId;
         static string Debug = Directory.GetCurrentDirectory();
         static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
         static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
         static SqlCommand command = new SqlCommand();
-        SqlDataReader reader;
 
         private void TopicsNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -52,9 +51,9 @@ namespace Shebist
             }
             else
             {
-                if (topics.Count != 0)
+                if (newTopics.Count != 0)
                 {
-                    foreach (Topic topic in topics)
+                    foreach (Topic topic in newTopics)
                     {
                         if (topic.Name == TopicsNameTextBox.Text)
                         {
@@ -86,7 +85,7 @@ namespace Shebist
             }
             else
             {
-                foreach (Topic topic in topics)
+                foreach (Topic topic in newTopics)
                 {
                     if (topic.Name == DeleteTopicsNameTextBox.Text)
                     {
@@ -107,12 +106,13 @@ namespace Shebist
         {
             if (DeleteCheckNameLabel.Foreground == Brushes.Green)
             {
-                foreach (Topic topic in topics)
+                foreach (Topic topic in newTopics)
                 {
                     if (topic.Name == DeleteTopicsNameTextBox.Text)
                     {
-                        topicId = topic.Id;
-                        topics.Remove(topic);
+                        newTopics.Remove(topic);
+                        if(!topic.Id.StartsWith("temp"))
+                            indicesOfDeletedTopics.Add(Int32.Parse(topic.Id));
                         break;
                     }
                 }
@@ -156,7 +156,12 @@ namespace Shebist
         {
             if (CheckNameLabel.Foreground == Brushes.Green)
             {
-                topics.Add(new Topic { Name = TopicsNameTextBox.Text, CurrentIndex = 0, SequenceOfIndices = new List<int>() });
+                newTopics.Add(new Topic
+                { Id = "temp" + (newTopics.Count + 1), 
+                  Name = TopicsNameTextBox.Text,
+                  CurrentIndex = 0,
+                  SequenceOfIndices = new List<short>()
+                });
                 ExistingTopicsDataGrid.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
                 ExistingTopicsDataGrid2.Items.Add(new Topic { Name = TopicsNameTextBox.Text });
                 TopicsNameTextBox.Clear();
@@ -165,7 +170,7 @@ namespace Shebist
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (Topic topic in topics)
+            foreach (Topic topic in newTopics)
             {
                 ExistingTopicsDataGrid.Items.Add(topic);
                 ExistingTopicsDataGrid2.Items.Add(topic);
@@ -187,11 +192,11 @@ namespace Shebist
         {
             if (currentTopic != null)
             {
-                for (int i = 0; i < topics.Count; i++)
+                for (int i = 0; i < newTopics.Count; i++)
                 {
-                    if (topics[i].Name == currentTopic.Name)
+                    if (newTopics[i].Name == currentTopic.Name)
                     {
-                        topics[i] = currentTopic;
+                        newTopics[i] = currentTopic;
                     }
                 }
             }
@@ -205,7 +210,7 @@ namespace Shebist
 
             if (currentTopic != null)
             {
-                foreach (Topic topic in topics)
+                foreach (Topic topic in newTopics)
                 {
                     if (topic.Name == currentTopic.Name)
                     {
@@ -226,13 +231,12 @@ namespace Shebist
                     if (WordsDataGrid.Items.Count != 0)
                     {
                         indexOfElement = 0;
-                        wordId = currentTopic.Words[0].Id;
                         InputQuestionTextBox.Text = currentTopic.Words[0].Question;
                         InputHintTextBox.Text = currentTopic.Words[0].Hint;
                         InputAnswerTextBox.Text = currentTopic.Words[0].Answer;
                         InputPathTextBox.Text = currentTopic.Words[0].Path;
                     }
-                    else wordId = indexOfElement = 0;
+                    else indexOfElement = 0;
                 }
             }
             else
@@ -252,13 +256,14 @@ namespace Shebist
 
         private void BackMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            needToUpdate = false;
             if (currentTopic != null)
             {
-                for (int i = 0; i < topics.Count; i++)
+                for (int i = 0; i < newTopics.Count; i++)
                 {
-                    if (topics[i].Name == currentTopic.Name)
+                    if (newTopics[i].Name == currentTopic.Name)
                     {
-                        topics[i] = currentTopic;
+                        newTopics[i] = currentTopic;
                         break;
                     }
                 }
@@ -266,21 +271,25 @@ namespace Shebist
 
             MainWindow mw = new MainWindow
             {
+                needToUpdate = true,
                 WindowState = this.WindowState,
                 Top = this.Top,
                 Left = this.Left,
                 Width = this.Width,
                 Height = this.Height,
-                user = user,
-                topics = topics,
+                oldUser = oldUser,
+                newUser = newUser,
+                oldTopics = oldTopics,
+                newTopics = newTopics,
                 MainWords = MainWords
             };
+
             mw.Show();
             this.Close();
         }
 
 
-            private void DownButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void DownButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (currentTopic.Words.Count > 1)
             {
@@ -304,21 +313,44 @@ namespace Shebist
 
         private void ChangeButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            MessageBox.Show(currentTopic.Words.Count.ToString());   
             if (currentTopic.Words.Count > 0)
             {
                 currentTopic.Words[indexOfElement].Question = InputQuestionTextBox.Text.Trim();
                 currentTopic.Words[indexOfElement].Hint = InputHintTextBox.Text.Trim();
                 currentTopic.Words[indexOfElement].Answer = InputAnswerTextBox.Text.Trim();
                 currentTopic.Words[indexOfElement].Path = InputPathTextBox.Text.Trim();
-                WordsDataGrid.Items[indexOfElement] = currentTopic.Words[indexOfElement];
+
+                WordsDataGrid.Items.Clear();
+
+                foreach(Word word in currentTopic.Words)
+                {
+                    WordsDataGrid.Items.Add(word);
+                }
+
+                for (int i = 0; i < currentTopic.SequenceOfIndices.Count; i++)
+                {
+                    if (currentTopic.SequenceOfIndices[i] == indexOfElement)
+                    {
+                        currentTopic.currentWords[i].Question = InputQuestionTextBox.Text.Trim();
+                        currentTopic.currentWords[i].Hint = InputHintTextBox.Text.Trim();
+                        currentTopic.currentWords[i].Answer = InputAnswerTextBox.Text.Trim();
+                        currentTopic.currentWords[i].Path = InputPathTextBox.Text.Trim();
+                        break;
+                    }
+                }
             }
         }
 
         private void DeleteButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            MessageBox.Show(currentTopic.currentWords.Count.ToString());
+            MessageBox.Show("Индекс " + indexOfElement);
 
             if (currentTopic.Words.Count > 0)
             {
+                if (!currentTopic.Words[indexOfElement].Id.StartsWith("temp"))
+                    deletedWords.Add(currentTopic.Words[indexOfElement]);
 
                 for (int i = 0; i < currentTopic.SequenceOfIndices.Count; i++)
                 {
@@ -377,7 +409,7 @@ namespace Shebist
                     }
                 }
 
-                string s = " ";
+                string s = "Последовательность индексов";
                 foreach (int i in currentTopic.SequenceOfIndices)
                 {
                     s += i + " ";
@@ -387,10 +419,12 @@ namespace Shebist
                 if (currentTopic.Words.Count > 1)
                 {
                     WordsDataGrid.Items.RemoveAt(indexOfElement);
+                    
+                    int lastIndex = currentTopic.Words.Count - 1;
 
                     currentTopic.Words.RemoveAt(indexOfElement);
 
-                    if (indexOfElement == currentTopic.Words.Count - 1)
+                    if (indexOfElement == lastIndex)
                     {
                         InputQuestionTextBox.Text = currentTopic.Words[--indexOfElement].Question;
                         InputHintTextBox.Text = currentTopic.Words[indexOfElement].Hint;
@@ -399,11 +433,13 @@ namespace Shebist
                     }
                     else
                     {
-                        InputQuestionTextBox.Text = currentTopic.Words[++indexOfElement].Question;
+                        InputQuestionTextBox.Text = currentTopic.Words[indexOfElement].Question;
                         InputHintTextBox.Text = currentTopic.Words[indexOfElement].Hint;
                         InputAnswerTextBox.Text = currentTopic.Words[indexOfElement].Answer;
                         InputPathTextBox.Text = currentTopic.Words[indexOfElement].Path;
                     }
+
+                    
                 }
                 else
                 {
@@ -429,7 +465,7 @@ namespace Shebist
             else if (currentTopic.Words.Count == 1)
                 currentTopic.SequenceOfIndices.Add(1);
             else currentTopic.SequenceOfIndices
-                    .Add(currentTopic.SequenceOfIndices.Count);
+                    .Add((short)currentTopic.SequenceOfIndices.Count);
             string s = " ";
 
             foreach (int i in currentTopic.SequenceOfIndices)
@@ -437,17 +473,11 @@ namespace Shebist
                 s += i + " ";
             }
             MessageBox.Show(s);
-
-            int newWordId = 0;
-            foreach (Word word in currentTopic.Words)
-            {
-                if (word.Id > newWordId) newWordId = word.Id;
-            }
-            newWordId++;
+            
 
             WordsDataGrid.Items.Add(new Word
             {
-                Id = newWordId,
+                Id = "temp" + (WordsDataGrid.Items.Count + 1),
                 Question = InputQuestionTextBox2.Text.Trim(),
                 Hint = InputHintTextBox2.Text.Trim(),
                 Answer = InputAnswerTextBox2.Text.Trim(),
@@ -456,7 +486,7 @@ namespace Shebist
 
             currentTopic.Words.Add(new Word
             {
-                Id = newWordId,
+                Id = "temp" + (currentTopic.Words.Count + 1),
                 TopicId = currentTopic.Id,
                 Question = InputQuestionTextBox2.Text.Trim(),
                 Hint = InputHintTextBox2.Text.Trim(),
@@ -466,7 +496,7 @@ namespace Shebist
 
             currentTopic.currentWords.Add(new Word
             {
-                Id = newWordId,
+                Id = "temp" + (currentTopic.currentWords.Count+1),
                 TopicId = currentTopic.Id,
                 Question = InputQuestionTextBox2.Text.Trim(),
                 Hint = InputHintTextBox2.Text.Trim(),
@@ -516,12 +546,29 @@ namespace Shebist
                     }
                 }
                 MessageBox.Show(indexOfElement.ToString());
-                wordId = word.Id;
                 InputQuestionTextBox.Text = word.Question;
                 InputHintTextBox.Text = word.Hint;
                 InputAnswerTextBox.Text = word.Answer;
                 InputPathTextBox.Text = word.Path;
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBox.Show(oldTopics.Count + " " + newTopics.Count);
+            if (currentTopic != null)
+            {
+                for (int i = 0; i < newTopics.Count; i++)
+                {
+                    if (newTopics[i].Name == currentTopic.Name)
+                    {
+                        newTopics[i] = currentTopic;
+                    }
+                }
+            }
+
+            if (needToUpdate)
+                newUser.Update(oldUser, newUser, oldTopics, newTopics, indicesOfDeletedTopics, deletedWords);
         }
 
         private void UpButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -551,7 +598,7 @@ namespace Shebist
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             bool hasData = false;
-            foreach (Topic topic in topics)
+            foreach (Topic topic in newTopics)
             {
                 if (topic.Name.ToLower().Contains(SearchTextBox.Text.ToLower()))
                 {
@@ -563,7 +610,7 @@ namespace Shebist
             if (hasData)
             {
                 ExistingTopicsDataGrid2.Items.Clear();
-                foreach (Topic topic in topics)
+                foreach (Topic topic in newTopics)
                 {
                     if (topic.Name.ToLower().Contains(SearchTextBox.Text.ToLower())) { ExistingTopicsDataGrid2.Items.Add(topic); }
                 }
@@ -571,7 +618,7 @@ namespace Shebist
             else
             {
                 ExistingTopicsDataGrid2.Items.Clear();
-                foreach (Topic topic in topics)
+                foreach (Topic topic in newTopics)
                 {
                     ExistingTopicsDataGrid2.Items.Add(topic);
                 }

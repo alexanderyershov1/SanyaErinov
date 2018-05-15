@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d"
-      Title="Шебист" Loaded="Window_Loaded" Width="1366" Height="728"
+      Title="Шебист" Loaded="Window_Loaded" Closing="Window_Closing" Width="1366" Height="728"
       >
 
     <Grid x:Name="MainGrid" Background="White">
@@ -30,11 +30,12 @@
 
 
             <Grid x:Name="EnteringAWordGrid">
-                <Image x:Name="NextButton" MouseLeftButtonUp="NextButton_MouseLeftButtonUp" MouseEnter="NextButton_MouseEnter" MouseLeave="NextButton_MouseLeave" MouseLeftButtonDown="NextButton_MouseLeftButtonDown" Source="rightArrow.png" Height="30px" Width="30px" Margin="546,372,308,153" RenderTransformOrigin="1.167,-0.067"/>
-                <Image x:Name="BackButton" MouseLeftButtonUp="BackButton_MouseLeftButtonUp"  MouseLeftButtonDown="BackButton_MouseLeftButtonDown" MouseEnter="BackButton_MouseEnter" MouseLeave="BackButton_MouseLeave" Source="leftArrow.png" Height="30px" Width="30px" Margin="322,370,532,155"/>
-                <Image x:Name="AgainButton" MouseLeftButtonUp="AgainButton_MouseLeftButtonUp" MouseEnter="AgainButton_MouseEnter" MouseLeave="AgainButton_MouseLeave" MouseLeftButtonDown="AgainButton_MouseLeftButtonDown" Source="again.png"  Height="30px" Width="30px" Margin="394,408,459,95"/>
-                <Image x:Name="ToTheChoiceOfTopicButton" MouseEnter="ToTheChoiceOfTopicButton_MouseEnter" MouseLeave="ToTheChoiceOfTopicButton_MouseLeave" Source="stop.png" MouseLeftButtonDown="ToTheChoiceOfTopicButton_MouseLeftButtonDown" Height="30px" Width="30px" Margin="472,408,381,95" RenderTransformOrigin="0.278,0.578"/>
-                <Image x:Name="MixButton" MouseLeftButtonUp="MixButton_MouseLeftButtonUp" MouseEnter="MixButton_MouseEnter" MouseLeave="MixButton_MouseLeave" MouseLeftButtonDown="MixButton_MouseLeftButtonDown" Source="shuffle.png" Height="30px" Width="30px" Margin="432,408,421,95" RenderTransformOrigin="-0.45,0.5"/>
+                <Image x:Name="NextButton" ToolTip="К следующему вопросу" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="NextButton_MouseLeftButtonDown" Source="rightArrow.png" Height="30px" Width="30px" Margin="546,372,308,153" RenderTransformOrigin="1.167,-0.067"/>
+                <Image x:Name="BackButton" ToolTip="К предыдущему вопросу" MouseLeftButtonUp="Button_MouseLeftButtonUp"  MouseLeftButtonDown="BackButton_MouseLeftButtonDown" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Source="leftArrow.png" Height="30px" Width="30px" Margin="322,370,532,155"/>
+                <Image x:Name="AgainButton" ToolTip="Начать сначала" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="AgainButton_MouseLeftButtonDown" Source="again.png"  Height="30px" Width="30px" Margin="394,408,459,95"/>
+                <Image x:Name="ToTheChoiceOfTopicButton" ToolTip="К выбору темы" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Source="stop.png" MouseLeftButtonDown="ToTheChoiceOfTopicButton_MouseLeftButtonDown" Height="30px" Width="30px" Margin="497,477,357,164" RenderTransformOrigin="0.278,0.578"/>
+                <Image x:Name="MixButton" ToolTip="Перемешать" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="MixButton_MouseLeftButtonDown" Source="shuffle.png" Height="30px" Width="30px" Margin="430,476,424,165" RenderTransformOrigin="-0.45,0.5"/>
+                <Image x:Name="SortByDefaultButton" ToolTip="Сортировать по умолчанию" MouseEnter="Button_MouseEnter" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="SortByDefaultButton_MouseLeftButtonDown" Source="SortByDefault.png" Height="30px" Width="30px" Margin="465,475,389,166"/>
 
                 <TextBox x:Name="EnteringAWordTextBox"
                  Background="Transparent"

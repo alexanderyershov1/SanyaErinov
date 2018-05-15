@@ -27,9 +27,12 @@ namespace Shebist
     public partial class AccountWindow : Window
     {
         public int userid;
-        public User user;
+        public bool needToUpdate;
+        public User oldUser, newUser;
         public Topic MainWords;
-        public List<Topic> topics;
+        public List<Topic> oldTopics, newTopics;
+        List<int> indicesOfDeletedTopics = new List<int>();
+        List<Word> deletedWords = new List<Word>();
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
         public AccountWindow()
@@ -39,6 +42,7 @@ namespace Shebist
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
+            needToUpdate = true;
             AuthorizationWindow aw = new AuthorizationWindow
             {
                 WindowState = this.WindowState,
@@ -60,8 +64,10 @@ namespace Shebist
                 Left = this.Left,
                 Width = this.Width,
                 Height = this.Height,
-                user = user,
-                topics = topics,
+                oldUser = oldUser,
+                newUser = newUser,
+                oldTopics = oldTopics,
+                newTopics = newTopics,
                 MainWords = MainWords
             };
             mw.Show();
@@ -76,10 +82,11 @@ namespace Shebist
 
         private void AccountPage_Loaded(object sender, RoutedEventArgs e)
         {
-            LoginTextBox.Text = user.Login;
-            NameTextBox.Text = user.Name;
-            EmailTextBox.Text = user.Email;
-            PasswordTextBox.Text = user.Password;
+            LoginTextBox.Text = newUser.Login;
+            NameTextBox.Text = newUser.Name;
+            EmailTextBox.Text = newUser.Email;
+            PasswordBox.Password = newUser.Password;
+            AgainPasswordBox.Password = newUser.Password;
         }
 
         private void DeleteAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -115,6 +122,7 @@ namespace Shebist
                     command.CommandText = $"DELETE FROM [UserDB] WHERE Id = {userid}";
                     command.ExecuteNonQuery();
                 }
+
                 AuthorizationWindow aw = new AuthorizationWindow
                 {
                     WindowState = this.WindowState,
@@ -130,9 +138,54 @@ namespace Shebist
         }
 
         SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (needToUpdate)
+                newUser.Update(oldUser, newUser, oldTopics, newTopics, indicesOfDeletedTopics, deletedWords);
+        }
+
         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
         private void ChangeButton_Click(object sender, RoutedEventArgs e)
         {
+            using(SqlConnection connection = new SqlConnection(connectionString))
+            {
+                bool canUpdate = true;
+                connection.Open();
+                command.Connection = connection;
+                
+                if (EmailTextBox.Text != oldUser.Email)
+                {
+                    command.CommandText = $"SELECT Email FROM Users WHERE Email = N'{EmailTextBox.Text}'";
+                    reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        MessageBox.Show("Данная почта занята");
+                        canUpdate = false;
+                    } 
+                    reader.Close();       
+                }
+
+                if (AgainPasswordBox.Password != PasswordBox.Password)
+                {
+                    MessageBox.Show("Пароли не совпадают");
+                    canUpdate = false;
+                }
+
+                if (canUpdate)
+                {
+                    command.CommandText = $"UPDATE Users SET Name = N'{NameTextBox.Text}'," +
+                        $"Email = N'{EmailTextBox.Text}', Password = N'{PasswordBox.Password}' WHERE Login = N'{oldUser.Login}'";
+                    command.ExecuteNonQuery();
+                    MessageBox.Show("Данные обновлены");
+                    oldUser.Name = NameTextBox.Text;
+                    oldUser.Email = EmailTextBox.Text;
+                    oldUser.Password = PasswordBox.Password;
+                    newUser.Name = NameTextBox.Text;
+                    newUser.Email = EmailTextBox.Text;
+                    newUser.Password = PasswordBox.Password;
+                }
+            }
             //if (LoginTextBox.Text == "" || NameTextBox.Text == "" || EmailTextBox.Text == "" || PasswordTextBox.Text == "")
             //{
             //    MessageBox.Show($"Не все поля заполнены");

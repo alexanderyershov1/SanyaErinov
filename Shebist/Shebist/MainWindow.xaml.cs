@@ -11,13 +11,9 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.IO;
-using System.Data.SqlClient;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.Win32;
-using System.Data;
 
 
 namespace Shebist
@@ -34,62 +30,69 @@ namespace Shebist
             EnteringAWordGrid.Visibility = Visibility.Hidden;
         }
 
-        public List<Topic> topics = new List<Topic>();
+        public List<Topic> oldTopics, newTopics;
         static string Debug = Directory.GetCurrentDirectory(),//путь к папке Debug
         Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();//путь к папке Shebist
 
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {Shebist}\UserDB.mdf;Integrated Security=True";//Строка подключения к базе данных
-        int numberofword;
+        short numberofword;
         //номер слова по порядку
-        SqlCommand command = new SqlCommand();//Создание запросов к бд
-        SqlDataReader reader;//Чтение данных из бд
         Random rand = new Random();//генерация рандомных чисел
-        List<Word> currentWords = new List<Word>();//список слов
+        List<int> indicesOfDeletedTopics = new List<int>();
+        List<Word> deletedWords = new List<Word>();
 
         //При загрузке страницы
-        public User user;
+        public User oldUser, newUser;
         Topic currentTopic;
         public Topic MainWords;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if(user != null)
+            AccountMenuItem.Header = newUser.Name;
+            AccountMenuItem.Width = 20;
+            for (int i = 0; i < AccountMenuItem.Header.ToString().Length; i++)
             {
-                AccountMenuItem.Header = user.Name;
-                AccountMenuItem.Width = 20;
-                for (int i = 0; i < AccountMenuItem.Header.ToString().Length; i++)
+                AccountMenuItem.Width += 9;
+            }
+
+            if (newUser.ChoiceOfTopicGridVisibility == "Visible")
+            {
+                ChoiceOfTopicGrid.Visibility = Visibility.Visible;
+                EnteringAWordGrid.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
+                EnteringAWordGrid.Visibility = Visibility.Visible;
+            }
+
+            foreach (Topic topic in newTopics)
+            {
+                ExistingTopicsDataGrid.Items.Add(topic);
+            }
+            
+            if (EnteringAWordGrid.Visibility == Visibility.Visible)
+            {
+                if (newUser.CurrentTopicId == "MainWords")
                 {
-                    AccountMenuItem.Width += 9;
-                }
-                if (user.ChoiceOfTopicGridVisibility == "Visible")
-                {
-                    ChoiceOfTopicGrid.Visibility = Visibility.Visible;
-                    EnteringAWordGrid.Visibility = Visibility.Hidden;
+                    currentTopic = MainWords;
+                    currentTopic.Id = "MainWords";
+                    currentTopic.CurrentIndex = newUser.IndexOfMainWords;
+                    currentTopic.SequenceOfIndices = newUser.SequenceOfIndicesOfMainWords;
                 }
                 else
                 {
-                    ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
-                    EnteringAWordGrid.Visibility = Visibility.Visible;
-                }
-                foreach (Topic topic in topics)
-                {
-                    ExistingTopicsDataGrid.Items.Add(topic);
+                    foreach (Topic topic in newTopics)
+                    {
+                        if (topic.Id == newUser.CurrentTopicId) currentTopic = topic;
+                    }
                 }
 
-                foreach (Topic topic in topics)
-                {
-                    if (topic.Id == user.CurrentTopicId) currentTopic = topic;
-                }
-                if (user.CurrentTopicId == 0) currentTopic = MainWords;
-
-                if (EnteringAWordGrid.Visibility == Visibility.Visible)
-                {
-                    WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
-                    WordsCounterLabel.Content = "/" + currentTopic.currentWords.Count;
-                    numberofword = currentTopic.CurrentIndex + 1;
-                    SearchByNumberTextBox.Text = numberofword.ToString();
-                    DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
-                }
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                WordsCounterLabel.Content = "/" + currentTopic.currentWords.Count;
+                numberofword = (short)(currentTopic.CurrentIndex + 1);
+                SearchByNumberTextBox.Text = numberofword.ToString();
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
             }
         }
 
@@ -120,11 +123,21 @@ namespace Shebist
                     EnteringAWordTextBox.Foreground = Brushes.Green;
                     EnteringAWordTextBox.Text = currentTopic.currentWords[currentTopic.CurrentIndex].Answer;
 
+                    NextButton.MouseLeftButtonDown -= NextButton_MouseLeftButtonDown;
+                    BackButton.MouseLeftButtonDown -= BackButton_MouseLeftButtonDown;
+                    AgainButton.MouseLeftButtonDown -= AgainButton_MouseLeftButtonDown;
+                    MixButton.MouseLeftButtonDown -= MixButton_MouseLeftButtonDown;
+                    ToTheChoiceOfTopicButton.MouseLeftButtonDown -= ToTheChoiceOfTopicButton_MouseLeftButtonDown;
                     while (player.HasAudio)
                     {
                         await Task.Delay(1);
                     }
                     await Task.Delay(1000);
+                    NextButton.MouseLeftButtonDown += NextButton_MouseLeftButtonDown;
+                    BackButton.MouseLeftButtonDown += BackButton_MouseLeftButtonDown;
+                    AgainButton.MouseLeftButtonDown += AgainButton_MouseLeftButtonDown;
+                    MixButton.MouseLeftButtonDown += MixButton_MouseLeftButtonDown;
+                    ToTheChoiceOfTopicButton.MouseLeftButtonDown += ToTheChoiceOfTopicButton_MouseLeftButtonDown;
 
                     EnteringAWordTextBox.Clear();
                     EnteringAWordTextBox.Foreground = Brushes.Black;
@@ -269,26 +282,6 @@ namespace Shebist
             }
         }
 
-        private void NextButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            NextButton.Width = NextButton.Height = 35;
-        }
-
-        private void NextButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            NextButton.Width = NextButton.Height = 30;
-        }
-
-        private void BackButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            BackButton.Width = BackButton.Height = 35;
-        }
-
-        private void BackButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            BackButton.Width = BackButton.Height = 30;
-        }
-
         //При нажатии на AgainButton
         private void AgainButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {//Высота и ширина AgainButton равна 30
@@ -311,9 +304,10 @@ namespace Shebist
             EnteringAWordGrid.Visibility = Visibility.Hidden;
             CorrectAnswerTextBlock.Text = "";
             EnteringAWordTextBox.Clear();
-            if (currentTopic.Id != 0)
+
+            if (currentTopic.Id != "MainWords")
             {
-                foreach (Topic topic in topics)
+                foreach (Topic topic in newTopics)
                 {
                     if (topic.Name == currentTopic.Name)
                     {
@@ -322,7 +316,11 @@ namespace Shebist
                     }
                 }
             }
-            else user.IndexOfMainWords = currentTopic.CurrentIndex;
+            else
+            {
+                newUser.SequenceOfIndicesOfMainWords = currentTopic.SequenceOfIndices;
+                newUser.IndexOfMainWords = currentTopic.CurrentIndex;
+            } 
         }
 
         //При нажатии на MixButton
@@ -333,89 +331,57 @@ namespace Shebist
             CorrectAnswerTextBlock.Text = "";
 
             //создаём список чисел indicies с длиной currentTopic.currentWords.Count
-            List<int> indices = new List<int>(currentTopic.currentWords.Count);
+            List<short> indices = new List<short>(currentTopic.currentWords.Count);
             //Заполняем его от 0 до currentTopic.currentWords.Count
-            for (int i = 0; i < currentTopic.currentWords.Count; i++)
-            {
+            for (short i = 0; i < currentTopic.currentWords.Count; i++)
                 indices.Add(i);
-            }
 
-            int randomIndex, element;
+
+            short randomIndex, element;
             currentTopic.SequenceOfIndices.Clear();
 
             for (int i = 0; i < currentTopic.currentWords.Count; i++)
             {
-                element = rand.Next(0, indices.Count - 1);
+                element = (short)rand.Next(0, indices.Count - 1);
                 randomIndex = indices.ElementAt(element);
-                currentTopic.currentWords[randomIndex] = new Word
+                currentTopic.currentWords[i] = new Word
                 {
-                    Question = currentTopic.Words[i].Question,
-                    Hint = currentTopic.Words[i].Hint,
-                    Answer = currentTopic.Words[i].Answer,
-                    Path = currentTopic.Words[i].Path,
+                    Question = currentTopic.Words[randomIndex].Question,
+                    Hint = currentTopic.Words[randomIndex].Hint,
+                    Answer = currentTopic.Words[randomIndex].Answer,
+                    Path = currentTopic.Words[randomIndex].Path,
                 };
                 indices.RemoveAt(element);
                 currentTopic.SequenceOfIndices.Add(randomIndex);
             }
+
             string s = " ";
             foreach (int i in currentTopic.SequenceOfIndices)
-            {
                 s += i + " ";
-            }
+
             MessageBox.Show(s);
             WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
             DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
         }
-
-        private void NextButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+ 
+        private void Button_MouseEnter(object sender, MouseEventArgs e)
         {
-            NextButton.Width = NextButton.Height = 35;
+            Image button = (Image)sender;
+            button.Width = button.Height = 35;
         }
 
-        private void BackButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void Button_MouseLeave(object sender, MouseEventArgs e)
         {
-            BackButton.Width = BackButton.Height = 35;
+            Image button = (Image)sender;
+            button.Width = button.Height = 30;
         }
 
-        private void AgainButton_MouseEnter(object sender, MouseEventArgs e)
+        private void Button_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            AgainButton.Width = AgainButton.Height = 35;
+            Image button = (Image)sender;
+            button.Width = button.Height = 35;
         }
 
-        private void MixButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            MixButton.Width = MixButton.Height = 35;
-        }
-
-        private void MixButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            MixButton.Width = MixButton.Height = 35;
-        }
-
-        private void MixButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            MixButton.Width = MixButton.Height = 30;
-        }
-
-        private void ToTheChoiceOfTopicButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            ToTheChoiceOfTopicButton.Width = ToTheChoiceOfTopicButton.Height = 35;
-        }
-
-        private void ToTheChoiceOfTopicButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            ToTheChoiceOfTopicButton.Width = ToTheChoiceOfTopicButton.Height = 30;
-        }
-
-        private void AgainButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            AgainButton.Width = AgainButton.Height = 35;
-        }
-
-        private void AgainButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            AgainButton.Width = AgainButton.Height = 30;
-        }
 
         private void BackButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -423,8 +389,8 @@ namespace Shebist
             CorrectAnswerTextBlock.Text = "";
             if (numberofword == 1)
             {
-                currentTopic.CurrentIndex = currentTopic.currentWords.Count - 1;
-                numberofword = currentTopic.currentWords.Count;
+                currentTopic.CurrentIndex = (short)(currentTopic.currentWords.Count - 1);
+                numberofword = (short)currentTopic.currentWords.Count;
                 WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
                 DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                 SearchByNumberTextBox.Text = numberofword.ToString();
@@ -449,10 +415,10 @@ namespace Shebist
             currentTopic = MainWords;
             ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
             EnteringAWordGrid.Visibility = Visibility.Visible;
-            user.ChoiceOfTopicGridVisibility = "Hidden";
-            currentTopic.CurrentIndex = user.IndexOfMainWords;
-            user.CurrentTopicId = 0;
-            numberofword = currentTopic.CurrentIndex + 1;
+            newUser.ChoiceOfTopicGridVisibility = "Hidden";
+            currentTopic.CurrentIndex = newUser.IndexOfMainWords;
+            newUser.CurrentTopicId = "MainWords";
+            numberofword = (short)(currentTopic.CurrentIndex + 1);
             WordsCounterLabel.Content = "/" + currentTopic.Words.Count;
             SearchByNumberTextBox.Text = numberofword.ToString();
             WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
@@ -461,15 +427,19 @@ namespace Shebist
 
         private void TopicEditorMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            needToUpdate = false;
             TopicEditorWindow tew = new TopicEditorWindow
             {
+                needToUpdate = true,
                 WindowState = this.WindowState,
                 Top = this.Top,
                 Left = this.Left,
                 Width = this.Width,
                 Height = this.Height,
-                user = user,
-                topics = topics,
+                oldUser = oldUser,
+                newUser = newUser,
+                oldTopics = oldTopics,
+                newTopics = newTopics,
                 MainWords = MainWords
             };
             tew.Show();
@@ -493,15 +463,15 @@ namespace Shebist
                 currentTopic = topic;
                 MessageBox.Show(currentTopic.currentWords.Count.ToString());
                 if (currentTopic.CurrentIndex > currentTopic.Words.Count - 1)
-                    currentTopic.CurrentIndex = currentTopic.Words.Count - 1;
-                user.CurrentTopicId = currentTopic.Id;
-                numberofword = currentTopic.CurrentIndex + 1;
+                    currentTopic.CurrentIndex = (short)(currentTopic.Words.Count - 1);
+                newUser.CurrentTopicId = currentTopic.Id;
+                numberofword = (short)(currentTopic.CurrentIndex + 1);
                 SearchByNumberTextBox.Text = numberofword.ToString();
                 WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
                 DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                 WordsCounterLabel.Content = "/" + currentTopic.currentWords.Count;
                 ChoiceOfTopicGrid.Visibility = Visibility.Hidden;
-                user.ChoiceOfTopicGridVisibility = "Hidden";
+                newUser.ChoiceOfTopicGridVisibility = "Hidden";
                 EnteringAWordGrid.Visibility = Visibility.Visible;
             }
         }
@@ -509,45 +479,128 @@ namespace Shebist
         private void TopicSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             bool hasData = false;
-            foreach (Topic topic in topics)
-            {
+
+            foreach (Topic topic in newTopics)
                 if (topic.Name.ToLower().Contains(TopicSearchTextBox.Text.ToLower()))
                 {
                     hasData = true;
                     break;
                 }
-            }
-
+            
             if (hasData)
             {
                 ExistingTopicsDataGrid.Items.Clear();
-                foreach (Topic topic in topics)
-                {
-                    if (topic.Name.ToLower().Contains(TopicSearchTextBox.Text.ToLower())) { ExistingTopicsDataGrid.Items.Add(topic); }
-                }
+                foreach (Topic topic in newTopics)
+                    if (topic.Name.ToLower().Contains(TopicSearchTextBox.Text.ToLower()))
+                        ExistingTopicsDataGrid.Items.Add(topic);
             }
             else
             {
                 ExistingTopicsDataGrid.Items.Clear();
-                foreach (Topic topic in topics)
-                {
+                foreach (Topic topic in newTopics)
                     ExistingTopicsDataGrid.Items.Add(topic);
-                }
             }
         }
 
-        private void Menu_MouseEnter(object sender, MouseEventArgs e)
+        bool isEnterAnimationEnabled, isLeaveAnimationEnabled;
+
+        public bool needToUpdate;
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Menu.Opacity = 1;
+            
+            if (EnteringAWordGrid.Visibility == Visibility.Visible)
+            {
+                if (currentTopic.Id != "MainWords")
+                {
+                    for (int i = 0; i < newTopics.Count; i++)
+                    {
+                        if (newTopics[i].Id == currentTopic.Id)
+                        {
+                            newTopics[i] = currentTopic;
+                        }
+                    }
+                }
+                else
+                {
+                    newUser.CurrentTopicId = "MainWords";
+                    newUser.IndexOfMainWords = currentTopic.CurrentIndex;
+                    newUser.SequenceOfIndicesOfMainWords = currentTopic.SequenceOfIndices;
+                }
+            }
+
+            MessageBox.Show(oldUser.IndexOfMainWords + " " + newUser.IndexOfMainWords);
+            if (needToUpdate)
+            {
+                newUser.Update(oldUser, newUser, oldTopics, newTopics, indicesOfDeletedTopics, deletedWords);
+            }
         }
 
-        private void Menu_MouseLeave(object sender, MouseEventArgs e)
+        private void SortByDefaultButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Menu.Opacity = 0;
+            SortByDefaultButton.Width = SortByDefaultButton.Height = 30;
+
+            if(newUser.CurrentTopicId == "MainWords")
+            {
+                currentTopic.currentWords.Clear();
+                newUser.SequenceOfIndicesOfMainWords.Clear();
+                for(short i = 0; i < MainWords.Words.Count; i++)
+                {
+                    currentTopic.currentWords.Add(MainWords.Words[i]);
+                    newUser.SequenceOfIndicesOfMainWords.Add(i);
+                }
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
+            }
+            else
+            {
+                currentTopic.currentWords.Clear();
+                currentTopic.SequenceOfIndices.Clear();
+                for (short i = 0; i < currentTopic.Words.Count; i++)
+                {
+                    currentTopic.currentWords.Add(currentTopic.Words[i]);
+                    currentTopic.SequenceOfIndices.Add(i);
+                }
+                WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
+                DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
+            }
+        }
+
+        private async void Menu_MouseEnter(object sender, MouseEventArgs e)
+        {
+            isEnterAnimationEnabled = true;
+            isLeaveAnimationEnabled = false;
+            if (isEnterAnimationEnabled && !isLeaveAnimationEnabled)
+            {
+                for (int i = 1; i < 11; i++)
+                {
+                    Menu.Opacity = 0.1 * i;
+                    await Task.Delay(50);
+                }
+                isEnterAnimationEnabled = false;
+                isLeaveAnimationEnabled = true;
+            }
+        }
+
+        private async void Menu_MouseLeave(object sender, MouseEventArgs e)
+        {
+            isLeaveAnimationEnabled = true;
+            isEnterAnimationEnabled = false;
+            if(isLeaveAnimationEnabled && !isEnterAnimationEnabled)
+            {
+                for (int i = 10; i > -1; i--)
+                {
+                    Menu.Opacity = 0.1 * i;
+                    await Task.Delay(50);
+                }
+                isLeaveAnimationEnabled = false;
+                isEnterAnimationEnabled = true;
+            }
         }
 
         private void AccountMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            needToUpdate = false;
+
             AccountWindow aw = new AccountWindow
             {
                 WindowState = this.WindowState,
@@ -555,9 +608,13 @@ namespace Shebist
                 Left = this.Left,
                 Width = this.Width,
                 Height = this.Height,
-                user = user,
-                topics = topics,
-                MainWords = MainWords };
+                oldUser = oldUser,
+                newUser = newUser,
+                oldTopics = oldTopics,
+                newTopics = newTopics,
+                MainWords = MainWords
+            };
+
             aw.Show();
             this.Close();
         }
@@ -569,10 +626,10 @@ namespace Shebist
             {
                 try
                 {
-                    numberofword = Int32.Parse(SearchByNumberTextBox.Text);
+                    numberofword = short.Parse(SearchByNumberTextBox.Text);
                     if (numberofword >= 1 && numberofword <= currentTopic.currentWords.Count)
                     {
-                        currentTopic.CurrentIndex = numberofword - 1;
+                        currentTopic.CurrentIndex = (short)(numberofword - 1);
                         WordOutputLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Question;
                         DescriptionLabel.Content = currentTopic.currentWords[currentTopic.CurrentIndex].Hint;
                     }

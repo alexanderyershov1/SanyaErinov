@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       Title="Шебист"
       Loaded="Page_Loaded"
-      Width="1366" Height="728">
+      Width="1366" Height="728" Closing="Window_Closing">
     <Grid Width="1366" Height="728">
         <Menu x:Name="Menu" VerticalAlignment="Top" Height="31" MouseEnter="Menu_MouseEnter" MouseLeave="Menu_MouseLeave"
               Background="Black" Foreground="White" FontWeight="Bold" FontSize="14">

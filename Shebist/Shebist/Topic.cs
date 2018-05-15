@@ -8,10 +8,11 @@ namespace Shebist
 {
     public class Topic
     {
-        public int Id;
+        public string Id;
         public string Name { get; set; }
         public List<Word> Words = new List<Word>(), currentWords = new List<Word>();
-        public List<int> SequenceOfIndices = new List<int>();
-        public int CurrentIndex;
+        public List<short> SequenceOfIndices = new List<short>();
+        public short CurrentIndex;
+        
     }
 }
