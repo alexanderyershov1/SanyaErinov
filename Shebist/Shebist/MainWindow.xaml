@@ -8,55 +8,31 @@
       Title="Шебист" Loaded="Window_Loaded" Closing="Window_Closing" Width="1366" Height="728"
       >
 
-    <Grid x:Name="MainGrid" Background="White">
-        <Menu x:Name="Menu" VerticalAlignment="Top" Height="31"
-              MouseEnter="Menu_MouseEnter" MouseLeave="Menu_MouseLeave"
-              Background="Black" Foreground="White" FontWeight="Bold" FontSize="14">
+    <Canvas x:Name="Main" Width="1366" Height="728" Background="White" MouseLeftButtonDown="Main_MouseLeftButtonDown">
+        <Image x:Name="OpenMenu" MouseLeftButtonDown="OpenMenu_MouseLeftButtonDown" MouseLeftButtonUp="OpenMenu_MouseLeftButtonUp" Source="openmenu.png" Width="40" Height="40"/>
+        <Grid x:Name="MenuGrid" MouseEnter="MenuGrid_MouseEnter" MouseLeave="MenuGrid_MouseLeave" Width="200" Height="728" Background="Black">
+            <Label x:Name="AccountLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="AccountLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 10, 0, 0" FontWeight="Bold">Аккаунт</Label>
+            <Label x:Name="LearnLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="LearnLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 40, 0, 0" FontWeight="Bold">Учить слова</Label>
+            <Label x:Name="TopicEditorLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="TopicEditorLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 70, 0, 0" FontWeight="Bold">Редактор тем</Label>
+            <Label x:Name="SettingsLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="SettingsLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 100, 0, 0" FontWeight="Bold">Настройки</Label>
+            <Label x:Name="ExitLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="ExitLabel_MouseLeftButtonDown"  Foreground="White" FontSize="16" Margin="40, 130, 0, 0" FontWeight="Bold">Выход</Label>
+        </Grid>
+        <Grid x:Name="SentenceOutputGrid" Panel.ZIndex="2" Width="auto" Height="45" Canvas.Left="700" Canvas.Top="200" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Красав-ва" FontSize="30" FontFamily="Times New Roman" FontWeight="Bold" Margin="-83,0,83,0"/>
+        </Grid>
+        <Grid x:Name="CheckSentenceGrid" Width="auto" Height="45" Canvas.Top="200" HorizontalAlignment="Center" VerticalAlignment="Center"></Grid>
 
-            <MenuItem x:Name="AccountMenuItem"
-                      Click="AccountMenuItem_Click"
-                      Width="62"
-                      />
-            <MenuItem Header="Настройки"
-                      x:Name="SettingsMenuItem"
-                      Click="SettingsMenuItem_Click" Width="100"
-                      />
-            <MenuItem x:Name="TopicEditorMenuItem" Click="TopicEditorMenuItem_Click" Header="Редактор тем" Height="31" Width="104"
-                     ></MenuItem>
+        <Canvas x:Name="EnteringAWordGrid" Canvas.Left="577" Canvas.Top="164" Background="Transparent" Width="248" Height="217">
 
-        </Menu>
-        <Grid Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Rectangle Fill="White" Width="700" Height="400" Margin="92,119,92,36" RadiusX="25" RadiusY="25" Stroke="Black" StrokeThickness="5"></Rectangle>
-
-
-            <Grid x:Name="EnteringAWordGrid">
-                <Image x:Name="NextButton" ToolTip="К следующему вопросу" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="NextButton_MouseLeftButtonDown" Source="rightArrow.png" Height="30px" Width="30px" Margin="546,372,308,153" RenderTransformOrigin="1.167,-0.067"/>
-                <Image x:Name="BackButton" ToolTip="К предыдущему вопросу" MouseLeftButtonUp="Button_MouseLeftButtonUp"  MouseLeftButtonDown="BackButton_MouseLeftButtonDown" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Source="leftArrow.png" Height="30px" Width="30px" Margin="322,370,532,155"/>
-                <Image x:Name="AgainButton" ToolTip="Начать сначала" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="AgainButton_MouseLeftButtonDown" Source="again.png"  Height="30px" Width="30px" Margin="394,408,459,95"/>
-                <Image x:Name="ToTheChoiceOfTopicButton" ToolTip="К выбору темы" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Source="stop.png" MouseLeftButtonDown="ToTheChoiceOfTopicButton_MouseLeftButtonDown" Height="30px" Width="30px" Margin="497,477,357,164" RenderTransformOrigin="0.278,0.578"/>
-                <Image x:Name="MixButton" ToolTip="Перемешать" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="MixButton_MouseLeftButtonDown" Source="shuffle.png" Height="30px" Width="30px" Margin="430,476,424,165" RenderTransformOrigin="-0.45,0.5"/>
-                <Image x:Name="SortByDefaultButton" ToolTip="Сортировать по умолчанию" MouseEnter="Button_MouseEnter" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="SortByDefaultButton_MouseLeftButtonDown" Source="SortByDefault.png" Height="30px" Width="30px" Margin="465,475,389,166"/>
-
-                <TextBox x:Name="EnteringAWordTextBox"
-                 Background="Transparent"
-                 BorderThickness="0"   
-                 KeyDown="EnteringAWordTextBox_KeyDown"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 FontWeight="Bold"
-                 Height="30"
-                 TextWrapping="NoWrap"
-                 TextAlignment="Left"
-                 Width="150"
-                 IsEnabled="True"
-                 Visibility="Visible"
-                 Foreground="Black"
-                 FontSize="17" Margin="374,370,360,155" Panel.ZIndex="4"/>
-                <Line x:Name="EnteringAWordLine" X1="0" Y1="0" X2="150" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="374,400,360,153"/>
-                <TextBlock x:Name="CorrectAnswerTextBlock" Opacity="0.5" FontSize="17" Foreground="Red" FontWeight="Bold" HorizontalAlignment="Center" TextAlignment="Left" Margin="376,383,358,170" TextWrapping="Wrap" VerticalAlignment="Center" Height="28" Width="150"/>
+            <Image x:Name="NextButton" ToolTip="К следующему вопросу" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="NextButton_MouseLeftButtonDown" Source="rightArrow.png" Height="30px" Width="30px" Margin="208,98,10,89"/>
+            <Image x:Name="BackButton" ToolTip="К предыдущему вопросу" MouseLeftButtonUp="Button_MouseLeftButtonUp"  MouseLeftButtonDown="BackButton_MouseLeftButtonDown" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Source="leftArrow.png" Height="30px" Width="30px" Margin="10,98,208,89"/>
+            <Image x:Name="AgainButton" ToolTip="Начать сначала" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="AgainButton_MouseLeftButtonDown" Source="again.png"  Height="30px" Width="30px" Margin="45,98,173,89" RenderTransformOrigin="0.211,1.256"/>
+            <Image x:Name="ToTheChoiceOfTopicButton" ToolTip="К выбору темы" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Source="stop.png" MouseLeftButtonDown="ToTheChoiceOfTopicButton_MouseLeftButtonDown" Height="30px" Width="30px" Margin="168,98,50,89"/>
+            <Image x:Name="MixButton" ToolTip="Перемешать" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="MixButton_MouseLeftButtonDown" Source="shuffle.png" Height="30px" Width="30px" Margin="85,98,133,89"/>
+            <Image x:Name="SortByDefaultButton" ToolTip="Сортировать по умолчанию" MouseEnter="Button_MouseEnter" MouseLeftButtonUp="Button_MouseLeftButtonUp" MouseLeave="Button_MouseLeave" MouseLeftButtonDown="SortByDefaultButton_MouseLeftButtonDown" Source="SortByDefault.png" Height="30px" Width="30px" Margin="127,98,91,89"/>
 
 
-                <TextBox x:Name="SearchByNumberTextBox"
+            <TextBox x:Name="SearchByNumberTextBox"
                      BorderThickness="0"
                      Text="1"
                      FontSize="20"
@@ -69,33 +45,9 @@
                  Width="65"
                  IsEnabled="True"
                  Visibility="Visible"
-                 KeyDown="SearchByNumberTextBox_KeyDown" Margin="362,250,457,251" />
+                 KeyDown="SearchByNumberTextBox_KeyDown" Canvas.Left="40"/>
 
-
-
-                <Label x:Name="WordOutputLabel"
-               Foreground="#7B68EE"
-               HorizontalAlignment="Center"
-               HorizontalContentAlignment="Center"
-               VerticalAlignment="Center"
-               Content="Вывод"
-               IsEnabled="True"
-               Visibility="Visible"
-               FontWeight="Bold"
-               FontSize="28" Width="690" Height="48" Margin="97,283,97,224"/>
-
-                <Label x:Name="DescriptionLabel"
-               Foreground="Black"
-               HorizontalContentAlignment="Center"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Content="Описание"
-               IsEnabled="True"
-               Visibility="Visible"
-               FontWeight="Bold"
-               FontSize="16" Height="34" Margin="97,331,97,190" Width="690"/>
-
-                <Label x:Name="WordsCounterLabel"
+            <Label x:Name="WordsCounterLabel"
                Foreground="Black"
                FontSize="20"
                FontWeight="Bold"
@@ -104,19 +56,19 @@
                VerticalAlignment="Center"
                IsEnabled="True"
                Width="108"
-               Visibility="Visible" Height="37" Margin="361,228,293,235"/>
+               Visibility="Visible" Height="37" Canvas.Left="102" Canvas.Top="-5"/>
 
-            </Grid>
+        </Canvas>
 
 
 
-            <Grid x:Name="ChoiceOfTopicGrid">
-                <DataGrid x:Name="ExistingTopicsDataGrid" IsReadOnly="True" SelectionChanged="ExistingTopicsDataGrid_SelectionChanged" Background="White" BorderBrush="Black" FontWeight="Bold" HorizontalAlignment="Center" Height="100" Margin="388,325,347,246" VerticalAlignment="Center" Width="149">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Тема" Binding="{Binding Path=Name}" Width="120" />
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Button x:Name="MainWordsButton"
+        <Grid x:Name="ChoiceOfTopicGrid" Canvas.Left="615" Width="180" Height="205" Canvas.Top="325">
+            <DataGrid x:Name="ExistingTopicsDataGrid" IsReadOnly="True" SelectionChanged="ExistingTopicsDataGrid_SelectionChanged" Background="White" BorderBrush="Black" FontWeight="Bold" HorizontalAlignment="Center" Height="100" VerticalAlignment="Center" Width="149">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Тема" Binding="{Binding Path=Name}" Width="120" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button x:Name="MainWordsButton"
                 Click="MainWordsButton_Click"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -128,11 +80,9 @@
                 BorderBrush="Black"
                 FontSize="12"    
                 IsEnabled="True"
-                Visibility="Visible" Margin="388,434,347,213"
+                Visibility="Visible" Margin="16,171,15,10"
                 />
-                <TextBox x:Name="TopicSearchTextBox" FontWeight="Bold" BorderThickness="0" TextChanged="TopicSearchTextBox_TextChanged" HorizontalAlignment="Center" Height="24" Margin="388,290,347,357" TextWrapping="NoWrap" VerticalAlignment="Center" Width="149"/>
-                <Line X1="0" Y1="0" X2="149" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="387,314,347,355"/>
-            </Grid>
+            <TextBox x:Name="TopicSearchTextBox" FontWeight="Bold" BorderThickness="0, 0, 0, 2" BorderBrush="Black" TextChanged="TopicSearchTextBox_TextChanged" HorizontalAlignment="Center" Height="24" TextWrapping="NoWrap" VerticalAlignment="Center" Width="149" Margin="16,10,15,171"/>
         </Grid>
-    </Grid>
+    </Canvas>
 </Window>

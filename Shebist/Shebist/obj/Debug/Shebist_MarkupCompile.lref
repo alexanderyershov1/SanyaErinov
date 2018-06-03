@@ -1,6 +1,7 @@
 ﻿
 
 FD:\SanyaErinov\Shebist\Shebist\AccountWindow.xaml;;
+FD:\SanyaErinov\Shebist\Shebist\UserStatisticsWindow.xaml;;
 FD:\SanyaErinov\Shebist\Shebist\AuthorizationWindow.xaml;;
 FD:\SanyaErinov\Shebist\Shebist\DataRecovery2Window.xaml;;
 FD:\SanyaErinov\Shebist\Shebist\DataRecoveryWindow.xaml;;
@@ -8,4 +9,6 @@ FD:\SanyaErinov\Shebist\Shebist\MainWindow.xaml;;
 FD:\SanyaErinov\Shebist\Shebist\RegistrationWindow.xaml;;
 FD:\SanyaErinov\Shebist\Shebist\SettingsWindow.xaml;;
 FD:\SanyaErinov\Shebist\Shebist\TopicEditorWindow.xaml;;
+FD:\SanyaErinov\Shebist\Shebist\DispatchWindow.xaml;;
+FD:\SanyaErinov\Shebist\Shebist\SentencesEditorWindow.xaml;;
 

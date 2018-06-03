@@ -32,7 +32,7 @@ namespace Shebist
         }
 
         BinaryFormatter formatter = new BinaryFormatter();
-
+        User user = new User();
         static string Debug = Directory.GetCurrentDirectory();
         static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
         static string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
@@ -41,15 +41,32 @@ namespace Shebist
         SqlDataReader reader;
         User currentUser;
 
-        static List<short> ReadIndices(string s)
+        static List<int> ReadIndices(string s)
         {
-            List<short> SequenceOfIndices = new List<short>();
+            List<int> SequenceOfIndices = new List<int>();
             int startIndex = 0, length = 0;
             for (int i = 0; i < s.Length; i++)
             {
-                if (s[i] == ';')
+                if (s[i] == '~')
                 {//если символ равен ;, добавляем в список indiciesForSave элемент, начиная с startIndex длиной в length
-                    SequenceOfIndices.Add(short.Parse(s.Substring(startIndex, length)));
+                    SequenceOfIndices.Add(int.Parse(s.Substring(startIndex, length)));
+                    startIndex = i + 1;//прибавляем 1 к startIndex
+                    length = 0;//обнуляем длину
+                }
+                else length++;//иначе увеличиваем на 1 длину строки
+            }
+            return SequenceOfIndices;
+        }
+
+        static List<string> ReadSequence(string s)
+        {
+            List<string> SequenceOfIndices = new List<string>();
+            int startIndex = 0, length = 0;
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s[i] == '~')
+                {//если символ равен ;, добавляем в список indiciesForSave элемент, начиная с startIndex длиной в length
+                    SequenceOfIndices.Add(s.Substring(startIndex, length));
                     startIndex = i + 1;//прибавляем 1 к startIndex
                     length = 0;//обнуляем длину
                 }
@@ -60,214 +77,267 @@ namespace Shebist
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (User user in users)
+            if (LoginTextBox.Text == "Admin" && PasswordBox.Password == "0000")
             {
-                if ((LoginTextBox.Text == user.Login || LoginTextBox.Text == user.Email) && PasswordBox.Password == user.Password)
+                UserStatisticsWindow usw = new UserStatisticsWindow()
                 {
-                    currentUser = user;
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    WindowState = this.WindowState,
+                    Top = this.Top,
+                    Left = this.Left,
+                    Width = this.Width,
+                    Height = this.Height
+                };
+                usw.Show();
+                this.Close();
+            }
+            else
+            {
+                foreach (User user in users)
+                {
+                    if ((LoginTextBox.Text == user.Login || LoginTextBox.Text == user.Email) && PasswordBox.Password == user.Password)
                     {
-                        connection.Open();
-                        command.Connection = connection;
-
-                        if (RememberMeCheckBox.IsChecked == true)
+                        currentUser = user;
+                        using (SqlConnection connection = new SqlConnection(connectionString))
                         {
-                            using (FileStream fs = new FileStream($"{Debug}\\Data\\currentUser", FileMode.OpenOrCreate))
+                            connection.Open();
+                            command.Connection = connection;
+
+                            if (RememberMeCheckBox.IsChecked == true)
                             {
-                                formatter.Serialize(fs, currentUser);
+                                using (FileStream fs = new FileStream($"{Debug}\\Data\\currentUser", FileMode.OpenOrCreate))
+                                {
+                                    formatter.Serialize(fs, currentUser);
+                                }
                             }
-                        }
 
-                        command.CommandText = $"SELECT Name, CurrentTopicId, ChoiceOfTopicGridVisibility, SequenceOfIndicesOfMainWords, IndexOfMainWords FROM Users WHERE Login = N'{currentUser.Login}'";
-                        reader = command.ExecuteReader();
-                        reader.Read();
-                        currentUser.Name = reader.GetString(0);
-                        currentUser.CurrentTopicId = reader.GetString(1);
-                        currentUser.ChoiceOfTopicGridVisibility = reader.GetString(2);
-                        currentUser.SequenceOfIndicesOfMainWords = ReadIndices(reader.GetString(3));
-                        currentUser.IndexOfMainWords = reader.GetInt16(4);
-                        reader.Close();
 
-                        List<Topic> oldTopics = new List<Topic>(), newTopics = new List<Topic>();
-                        command.CommandText = $"SELECT Id, Name, SequenceOfIndices, CurrentIndex FROM Topics WHERE UserLogin = N'{currentUser.Login}'";
-                        reader = command.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
+                            command.CommandText = $"UPDATE Users SET LastEntrance = N'{DateTime.Now.ToString()}', Status = N'Online' WHERE Login = N'{currentUser.Login}'";
+                            command.ExecuteNonQuery();
+                             DateTime entryTime = DateTime.Now;
+
+                            command.CommandText = $"SELECT Name, CurrentTopicId, ChoiceOfTopicGridVisibility, SequenceOfIndicesOfMainTopic, IndexOfMainTopic, Id FROM Users WHERE Login = N'{currentUser.Login}'";
+                            reader = command.ExecuteReader();
+                            reader.Read();
+                            currentUser.Name = reader.GetString(0);
+                            currentUser.CurrentTopicId = reader.GetString(1);
+                            currentUser.ChoiceOfTopicGridVisibility = reader.GetString(2);
+                            currentUser.SequenceOfIndicesOfMainTopic = ReadIndices(reader.GetString(3));
+                            currentUser.IndexOfMainTopic = reader.GetInt16(4);
+                            currentUser.Id = reader.GetInt32(5);
+                            reader.Close();
+
+                            List<Topic> oldTopics = new List<Topic>(), newTopics = new List<Topic>();
+                            command.CommandText = $"SELECT Id, Name, SequenceOfIndices, CurrentIndex FROM Topics WHERE UserId = {currentUser.Id}";
+                            reader = command.ExecuteReader();
+                            if (reader.HasRows)
                             {
-                                oldTopics.Add(new Topic
+                                while (reader.Read())
                                 {
-                                    Id = reader.GetInt32(0).ToString(),
-                                    Name = reader.GetString(1).Trim(),
-                                    SequenceOfIndices = ReadIndices(reader.GetString(2)),
-                                    CurrentIndex = reader.GetInt16(3)
-                                });
-
-                                newTopics.Add(new Topic
-                                {
-                                    Id = reader.GetInt32(0).ToString(),
-                                    Name = reader.GetString(1).Trim(),
-                                    SequenceOfIndices = ReadIndices(reader.GetString(2)),
-                                    CurrentIndex = reader.GetInt16(3)
-                                });
-
-                            }
-                        }
-                        reader.Close();
-
-                        if (oldTopics.Count > 0)
-                        {
-                            foreach (Topic topic in oldTopics)
-                            {
-                                command.CommandText = $"SELECT Id, Question, Hint, Answer, Path FROM " +
-                                    $"Words WHERE TopicId = {Int32.Parse(topic.Id)}";
-                                reader = command.ExecuteReader();
-                                if (reader.HasRows)
-                                {
-                                    while (reader.Read())
+                                    oldTopics.Add(new Topic
                                     {
-                                        topic.Words.Add(new Word
-                                        {
-                                            Id = reader.GetInt32(0).ToString(),
-                                            TopicId = topic.Id,
-                                            Question = reader.GetString(1).Trim(),
-                                            Hint = reader.GetString(2).Trim(),
-                                            Answer = reader.GetString(3).Trim(),
-                                            Path = reader.GetString(4).Trim(),
-                                        });
-                                    }
+                                        Id = reader.GetInt32(0).ToString(),
+                                        Name = reader.GetString(1).Trim(),
+                                        SequenceOfIndices = ReadIndices(reader.GetString(2)),
+                                        CurrentIndex = reader.GetInt16(3)
+                                    });
+
+                                    newTopics.Add(new Topic
+                                    {
+                                        Id = reader.GetInt32(0).ToString(),
+                                        Name = reader.GetString(1).Trim(),
+                                        SequenceOfIndices = ReadIndices(reader.GetString(2)),
+                                        CurrentIndex = reader.GetInt16(3)
+                                    });
+
                                 }
                             }
                             reader.Close();
-                            
-                            foreach (Topic topic in newTopics)
+
+                            if (oldTopics.Count > 0)
                             {
-                                command.CommandText = $"SELECT Id, Question, Hint, Answer, Path FROM " +
-                                    $"Words WHERE TopicId = {Int32.Parse(topic.Id)}";
-                                reader = command.ExecuteReader();
-                                if (reader.HasRows)
+                                foreach (Topic topic in oldTopics)
                                 {
-                                    while (reader.Read())
+                                    command.CommandText = $"SELECT Id, isQuestionFirst, Questions, Contexts, Translations, WaysToQuestionsVoice, " +
+                                        $"WayToSentenceVoice FROM " +
+                                        $"Sentences WHERE TopicId = {Int32.Parse(topic.Id)}";
+                                    reader = command.ExecuteReader();
+                                    if (reader.HasRows)
                                     {
-                                        topic.Words.Add(new Word
+                                        while (reader.Read())
                                         {
-                                            Id = reader.GetInt32(0).ToString(),
-                                            TopicId = topic.Id,
-                                            Question = reader.GetString(1).Trim(),
-                                            Hint = reader.GetString(2).Trim(),
-                                            Answer = reader.GetString(3).Trim(),
-                                            Path = reader.GetString(4).Trim(),
-                                        });
+                                            topic.Sentences.Add(new Sentence
+                                            {
+                                                id = reader.GetInt32(0).ToString(),
+                                                topicId = topic.Id,
+                                                isQuestionFirst = bool.Parse(reader.GetString(1)),
+                                                questions = ReadSequence(reader.GetString(2)),
+                                                contexts = ReadSequence(reader.GetString(3)),
+                                                translations = ReadSequence(reader.GetString(4)),
+                                                waysToQuestionsVoice = ReadSequence(reader.GetString(5)),
+                                                wayToSentenceVoice = reader.GetString(6)
+                                            });
+                                        }
+                                    }
+                                    reader.Close();
+                                }
+
+
+                                foreach (Topic topic in newTopics)
+                                {
+                                    command.CommandText = $"SELECT Id, isQuestionFirst, Questions, Contexts, Translations, WaysToQuestionsVoice, " +
+                                        $"WayToSentenceVoice FROM " +
+                                        $"Sentences WHERE TopicId = {Int32.Parse(topic.Id)}";
+                                    reader = command.ExecuteReader();
+                                    if (reader.HasRows)
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            topic.Sentences.Add(new Sentence
+                                            {
+                                                id = reader.GetInt32(0).ToString(),
+                                                topicId = topic.Id,
+                                                isQuestionFirst = bool.Parse(reader.GetString(1)),
+                                                questions = ReadSequence(reader.GetString(2)),
+                                                contexts = ReadSequence(reader.GetString(3)),
+                                                translations = ReadSequence(reader.GetString(4)),
+                                                waysToQuestionsVoice = ReadSequence(reader.GetString(5)),
+                                                wayToSentenceVoice = reader.GetString(6)
+                                            });
+                                        }
+                                    }
+                                    reader.Close();
+                                }
+
+                            }
+
+                            Topic MainTopic = new Topic();
+                            command.CommandText = "SELECT Id, isQuestionFirst, Questions, Contexts, Translations, WaysToQuestionsVoice, " +
+                                        $"WayToSentenceVoice FROM MainTopic";
+                            reader = command.ExecuteReader();
+
+                            while (reader.Read())
+                            {
+                                MainTopic.Sentences.Add(new Sentence
+                                {
+                                    id = reader.GetInt32(0).ToString(),
+                                    isQuestionFirst = bool.Parse(reader.GetString(1)),
+                                    questions = ReadSequence(reader.GetString(2)),
+                                    contexts = ReadSequence(reader.GetString(3)),
+                                    translations = ReadSequence(reader.GetString(4)),
+                                    waysToQuestionsVoice = ReadSequence(reader.GetString(5)),
+                                    wayToSentenceVoice = reader.GetString(6)
+
+                                });
+                            }
+                            reader.Close();
+
+                            if (currentUser.SequenceOfIndicesOfMainTopic.Count == MainTopic.Sentences.Count)
+                            {
+                                for (int i = 0; i < MainTopic.Sentences.Count; i++)
+                                {
+
+                                    MainTopic.currentSentences.Add(MainTopic.Sentences[currentUser.SequenceOfIndicesOfMainTopic[i]]);
+                                }
+                            }
+                            else if (currentUser.SequenceOfIndicesOfMainTopic.Count < MainTopic.Sentences.Count)
+                            {
+                                int maxIndex = currentUser.SequenceOfIndicesOfMainTopic.Count - 1;
+                                if (currentUser.IndexOfMainTopic > maxIndex)
+                                    currentUser.IndexOfMainTopic = maxIndex;
+                                for (int i = 0; i < MainTopic.Sentences.Count; i++)
+                                {
+                                    if (i <= maxIndex)
+                                        MainTopic.currentSentences.Add(MainTopic.Sentences[currentUser.SequenceOfIndicesOfMainTopic[i]]);
+                                    else
+                                    {
+                                        MainTopic.currentSentences.Add(MainTopic.Sentences[i]);
+                                        currentUser.SequenceOfIndicesOfMainTopic.Add(i);
                                     }
                                 }
+                                command.CommandText = $"UPDATE Users SET SequenceOfIndicesOfMainTopic = N'{User.WriteSequence(currentUser.SequenceOfIndicesOfMainTopic)}' " +
+                                    $"WHERE Id = {currentUser.Id}";
+                                command.ExecuteNonQuery();
                             }
-
-                            foreach (Topic topic in oldTopics)
+                            else
                             {
-                                for (int i = 0; i < topic.Words.Count; i++)
+                                currentUser.SequenceOfIndicesOfMainTopic.Clear();
+                                for (int i = 0; i < MainTopic.Sentences.Count; i++)
                                 {
-                                    topic.currentWords.Add(topic.Words[topic.SequenceOfIndices[i]]);
+                                    MainTopic.currentSentences.Add(MainTopic.Sentences[i]);
+                                    currentUser.SequenceOfIndicesOfMainTopic.Add(i);
                                 }
+                                command.CommandText = $"UPDATE Users SET SequenceOfIndicesOfMainTopic = N'{User.WriteSequence(currentUser.SequenceOfIndicesOfMainTopic)}' " +
+                                    $"WHERE Id = {currentUser.Id}";
+                                command.ExecuteNonQuery();
                             }
 
-                            foreach (Topic topic in newTopics)
+
+                            List<int> soiomtOldUser = new List<int>(), soiomtNewUser = new List<int>();
+                            for (int i = 0; i < currentUser.SequenceOfIndicesOfMainTopic.Count; i++)
                             {
-                                for (int i = 0; i < topic.Words.Count; i++)
+                                soiomtOldUser.Add(currentUser.SequenceOfIndicesOfMainTopic[i]);
+                                soiomtNewUser.Add(currentUser.SequenceOfIndicesOfMainTopic[i]);
+                            }
+
+                            MainWindow mw = new MainWindow
+                            {
+                                needToUpdate = true,
+                                WindowState = this.WindowState,
+                                Top = this.Top,
+                                Left = this.Left,
+                                Width = this.Width,
+                                Height = this.Height,
+                                entryTime = entryTime,
+
+                                oldUser = new User
                                 {
-                                    topic.currentWords.Add(topic.Words[topic.SequenceOfIndices[i]]);
-                                }
-                            }
+                                    Id = currentUser.Id,
+                                    Login = currentUser.Login,
+                                    Password = currentUser.Password,
+                                    Name = currentUser.Name,
+                                    Email = currentUser.Email,
+                                    ChoiceOfTopicGridVisibility = currentUser.ChoiceOfTopicGridVisibility,
+                                    CurrentTopicId = currentUser.CurrentTopicId,
+                                    IndexOfMainTopic = currentUser.IndexOfMainTopic,
+                                    SequenceOfIndicesOfMainTopic = soiomtOldUser
+                                },
+
+
+                                newUser = new User
+                                {
+                                    Id = currentUser.Id,
+                                    Login = currentUser.Login,
+                                    Password = currentUser.Password,
+                                    Name = currentUser.Name,
+                                    Email = currentUser.Email,
+                                    ChoiceOfTopicGridVisibility = currentUser.ChoiceOfTopicGridVisibility,
+                                    CurrentTopicId = currentUser.CurrentTopicId,
+                                    IndexOfMainTopic = currentUser.IndexOfMainTopic,
+                                    SequenceOfIndicesOfMainTopic = soiomtNewUser
+                                },
+
+                                MainTopic = MainTopic,
+                                oldTopics = oldTopics,
+                                newTopics = newTopics
+
+                            };
+                            mw.Show();
+                            this.Close();
                         }
 
+                        break;
+                    }
+                    else
+                    {
                         reader.Close();
-                        Topic MainWords = new Topic();
-                        command.CommandText = "SELECT Id, Question, Hint, Answer, Path FROM MainWords";
-                        reader = command.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            MainWords.Words.Add(new Word
-                            {
-                                Id = reader.GetInt32(0).ToString(),
-                                Question = reader.GetString(1).Trim(),
-                                Hint = reader.GetString(2).Trim(),
-                                Answer = reader.GetString(3).Trim(),
-                                Path = reader.GetString(4).Trim()
-
-                            });
-                        }
-                        reader.Close();
-
-                        for (int i = 0; i < MainWords.Words.Count; i++)
-                        {
-                            MainWords.currentWords.Add(new Word());
-                        }
-
-                        for (int i = 0; i < MainWords.Words.Count; i++)
-                        {
-                            MainWords.currentWords[i] = MainWords.Words[currentUser.SequenceOfIndicesOfMainWords[i]];
-                        }
-
-                        List<short> soiomwOldUser = new List<short>(), soiomwNewUser = new List<short>();
-                        for(short i = 0; i < currentUser.SequenceOfIndicesOfMainWords.Count; i++)
-                        {
-                            soiomwOldUser.Add(currentUser.SequenceOfIndicesOfMainWords[i]);
-                            soiomwNewUser.Add(currentUser.SequenceOfIndicesOfMainWords[i]);
-                        }
-                        
-                        MainWindow mw = new MainWindow
-                        {
-                            needToUpdate = true,
-                            WindowState = this.WindowState,
-                            Top = this.Top,
-                            Left = this.Left,
-                            Width = this.Width,
-                            Height = this.Height,
-
-                            oldUser = new User
-                            {
-                                Login = currentUser.Login,
-                                Password = currentUser.Password,
-                                Name = currentUser.Name,
-                                Email = currentUser.Email,
-                                ChoiceOfTopicGridVisibility = currentUser.ChoiceOfTopicGridVisibility,
-                                CurrentTopicId = currentUser.CurrentTopicId,
-                                IndexOfMainWords = currentUser.IndexOfMainWords,
-                                SequenceOfIndicesOfMainWords = soiomwOldUser
-                            },
-
-
-                            newUser = new User
-                            {
-                                Login = currentUser.Login,
-                                Password = currentUser.Password,
-                                Name = currentUser.Name,
-                                Email = currentUser.Email,
-                                ChoiceOfTopicGridVisibility = currentUser.ChoiceOfTopicGridVisibility,
-                                CurrentTopicId = currentUser.CurrentTopicId,
-                                IndexOfMainWords = currentUser.IndexOfMainWords,
-                                SequenceOfIndicesOfMainWords = soiomwNewUser
-                            },
-
-                            MainWords = MainWords,
-                            oldTopics = oldTopics,
-                            newTopics = newTopics
-
-                        };
-                        mw.Show();
-                        this.Close();
+                        WrongDataLabel.Visibility = Visibility.Visible;
                     }
                 }
-                else
-                {
-                    reader.Close();
-                    WrongDataLabel.Visibility = Visibility.Visible;
-                }
-            }
 
-            using (FileStream fs = new FileStream($"{Debug}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
+                using (FileStream fs = new FileStream($"{Debug}\\Data\\RememberMeCheckBoxIsChecked", FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(fs, RememberMeCheckBox.IsChecked);
+                }
             }
         }
 
@@ -357,34 +427,24 @@ namespace Shebist
             this.Close();
         }
 
-        private void LoginTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             WrongDataLabel.Visibility = Visibility.Hidden;
+        }
+
+        private void Label_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ((Label)sender).FontSize = 13;
+        }
+
+        private void Label_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ((Label)sender).FontSize = 12;
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             WrongDataLabel.Visibility = Visibility.Hidden;
-        }
-
-        private void DataRecoveryLabel_MouseEnter(object sender, MouseEventArgs e)
-        {
-            DataRecoveryLabel.FontSize = 13;
-        }
-
-        private void DataRecoveryLabel_MouseLeave(object sender, MouseEventArgs e)
-        {
-            DataRecoveryLabel.FontSize = 12;
-        }
-
-        private void NoAccountYet_MouseEnter(object sender, MouseEventArgs e)
-        {
-            NoAccountYet.FontSize = 13;
-        }
-
-        private void NoAccountYet_MouseLeave(object sender, MouseEventArgs e)
-        {
-            NoAccountYet.FontSize = 12;
         }
     }
 }

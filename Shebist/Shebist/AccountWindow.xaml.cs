@@ -27,17 +27,140 @@ namespace Shebist
     public partial class AccountWindow : Window
     {
         public int userid;
+        public DateTime entryTime;
         public bool needToUpdate;
         public User oldUser, newUser;
-        public Topic MainWords;
+        public Topic MainTopic;
         public List<Topic> oldTopics, newTopics;
-        List<int> indicesOfDeletedTopics = new List<int>();
-        List<Word> deletedWords = new List<Word>();
+        public List<int> indicesOfDeletedTopics = new List<int>();
+        public List<Sentence> deletedSentences = new List<Sentence>();
         SqlCommand command = new SqlCommand();
         SqlDataReader reader;
         public AccountWindow()
         {
             InitializeComponent();
+            MenuGrid.Visibility = Visibility.Hidden;
+        }
+
+        private void AccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MenuGrid.Visibility = Visibility.Hidden;
+            Canvas.SetLeft(OpenMenu, 0);
+        }
+
+        private void SettingsLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            //SettingsWindow sw = new SettingsWindow(Main);
+            //sw.Owner = this;
+            //sw.Show();
+        }
+
+        private void TopicEditorLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            needToUpdate = false;
+            TopicEditorWindow tew = new TopicEditorWindow
+            {
+                needToUpdate = true,
+                entryTime = entryTime,
+                WindowState = this.WindowState,
+                Top = this.Top,
+                Left = this.Left,
+                Width = this.Width,
+                Height = this.Height,
+                oldUser = oldUser,
+                newUser = newUser,
+                oldTopics = oldTopics,
+                newTopics = newTopics,
+                MainTopic = MainTopic,
+                indicesOfDeletedTopics = indicesOfDeletedTopics,
+                deletedSentences = deletedSentences
+            };
+            tew.Show();
+            this.Close();
+        }
+
+        private void LearnLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MainWindow mw = new MainWindow
+            {
+                needToUpdate = true,
+                WindowState = this.WindowState,
+                entryTime = entryTime,
+                Top = this.Top,
+                Left = this.Left,
+                Width = this.Width,
+                Height = this.Height,
+                oldUser = oldUser,
+                newUser = newUser,
+                oldTopics = oldTopics,
+                newTopics = newTopics,
+                MainTopic = MainTopic,
+                indicesOfDeletedTopics = indicesOfDeletedTopics,
+                deletedSentences = deletedSentences
+            };
+            mw.Show();
+            this.Close();
+        }
+
+        private void ExitLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            needToUpdate = true;
+            AuthorizationWindow aw = new AuthorizationWindow
+            {
+                WindowState = this.WindowState,
+                Top = this.Top,
+                Left = this.Left,
+                Width = this.Width,
+                Height = this.Height
+            };
+            aw.Show();
+            this.Close();
+        }
+
+        private void OpenMenu_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Main.MouseLeftButtonDown -= Main_MouseLeftButtonDown;
+        }
+
+        private void Main_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MenuGrid.Visibility = Visibility.Hidden;
+            Canvas.SetLeft(OpenMenu, 0);
+        }
+
+        private void OpenMenu_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (MenuGrid.Visibility == Visibility.Hidden)
+            {
+                MenuGrid.Visibility = Visibility.Visible;
+                Canvas.SetLeft(OpenMenu, 200);
+            }
+            else
+            {
+                MenuGrid.Visibility = Visibility.Hidden;
+                Canvas.SetLeft(OpenMenu, 0);
+            }
+            Main.MouseLeftButtonDown += Main_MouseLeftButtonDown;
+        }
+
+        private void Label_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ((Label)sender).FontSize = 18;
+        }
+
+        private void Label_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ((Label)sender).FontSize = 16;
+        }
+
+        private void MenuGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Main.MouseLeftButtonDown -= Main_MouseLeftButtonDown;
+        }
+
+        private void MenuGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Main.MouseLeftButtonDown += Main_MouseLeftButtonDown;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -54,34 +177,16 @@ namespace Shebist
             aw.Show();
             this.Close();
         }
-
-        private void BackMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow mw = new MainWindow
-            {
-                WindowState = this.WindowState,
-                Top = this.Top,
-                Left = this.Left,
-                Width = this.Width,
-                Height = this.Height,
-                oldUser = oldUser,
-                newUser = newUser,
-                oldTopics = oldTopics,
-                newTopics = newTopics,
-                MainWords = MainWords
-            };
-            mw.Show();
-            this.Close();
-        }
-
+        
         static string Debug = Directory.GetCurrentDirectory();
         static string Shebist = Directory.GetParent(Directory.GetParent(Debug).ToString()).ToString();
 
         public string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
         {Shebist}\UserDB.mdf;Integrated Security=True";
 
-        private void AccountPage_Loaded(object sender, RoutedEventArgs e)
+        private void AccountWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            AccountLabel.Content = newUser.Name;
             LoginTextBox.Text = newUser.Login;
             NameTextBox.Text = newUser.Name;
             EmailTextBox.Text = newUser.Email;
@@ -142,7 +247,7 @@ namespace Shebist
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (needToUpdate)
-                newUser.Update(oldUser, newUser, oldTopics, newTopics, indicesOfDeletedTopics, deletedWords);
+                newUser.Update(oldUser, newUser, oldTopics, newTopics, indicesOfDeletedTopics, deletedSentences, entryTime);
         }
 
         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");

@@ -1,0 +1,33 @@
+﻿<Window x:Class="Shebist.UserStatisticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Shebist"
+        mc:Ignorable="d"
+        Title="Шебист" Height="728" Width="1366" Loaded="Window_Loaded">
+    <Canvas>
+        <Grid Background="Black" Height="50" VerticalAlignment="Top" Width="1366">
+            <Label x:Name="UserStatisticsLabel" MouseLeftButtonDown="UserStatisticsLabel_MouseLeftButtonDown" Margin="10, 10, 0, 0" FontSize="18" FontWeight="Bold" Foreground="White">Статистика пользователей</Label>
+            <Label x:Name="SentenceEditorLabel" MouseLeftButtonDown="SentenceEditorLabel_MouseLeftButtonDown" Margin="260, 10, 0, 0" FontSize="18" FontWeight="Bold" Foreground="White">Редактор предложений</Label>
+            <Label x:Name="DispatchLabel" MouseLeftButtonDown="DispatchLabel_MouseLeftButtonDown" Margin="480, 10, 0, 0" FontSize="18" FontWeight="Bold" Foreground="White">Рассылка</Label>
+            <Label x:Name="ExitLabel" MouseLeftButtonDown="ExitLabel_MouseLeftButtonDown" Margin="580, 10, 0, 0" FontSize="18" FontWeight="Bold" Foreground="White">Выход</Label>
+        </Grid>
+        <DataGrid x:Name="UsersDataGrid" Background="White" BorderBrush="Black" FontWeight="Bold" HorizontalAlignment="Center" Height="352" VerticalAlignment="Center" Width="882" Canvas.Left="52" Canvas.Top="155">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Логин" Binding="{Binding Path=login}" />
+                <DataGridTextColumn Header="Имя" Binding="{Binding Path=name}"/>
+                <DataGridTextColumn Header="Почта" Binding="{Binding Path=email}"/>
+                <DataGridTextColumn Header="Дата регистрации" Binding="{Binding Path=dateOfRegistration}"/>
+                <DataGridTextColumn Header="Последний вход" Binding="{Binding Path=lastEntrance}"/>
+                <DataGridTextColumn Header="Всего времени в приложении" Binding="{Binding Path=totalInTheApp}"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Path=status}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Label x:Name="TotalUsersLabel" FontSize="16" FontWeight="Bold" Content="Всего пользвователей" Canvas.Left="964" Canvas.Top="153"/>
+        <Label x:Name="OnlineUsersLabel" FontSize="16" FontWeight="Bold" Content="Сейчас онлайн" Canvas.Left="964" Canvas.Top="184"/>
+        <Label x:Name="NewForTodayLabel" FontSize="16" FontWeight="Bold" Content="Новых за сегодня" Canvas.Left="964" Canvas.Top="215"/>
+        <Label x:Name="CameTodayLabel" FontSize="16" FontWeight="Bold" Content="Заходили сегодня" Canvas.Left="964" Canvas.Top="246"/>
+        <Button x:Name="UpdateButton" Click="UpdateButton_Click" Content="Обновить" FontWeight="Bold"  Background="White" Canvas.Left="964" Canvas.Top="306" Width="75"/>
+    </Canvas>
+</Window>

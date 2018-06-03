@@ -8,16 +8,16 @@
       Title="Шебист"
       Loaded="Page_Loaded"
       Width="1366" Height="728" Closing="Window_Closing">
-    <Grid Width="1366" Height="728">
-        <Menu x:Name="Menu" VerticalAlignment="Top" Height="31" MouseEnter="Menu_MouseEnter" MouseLeave="Menu_MouseLeave"
-              Background="Black" Foreground="White" FontWeight="Bold" FontSize="14">
-            <MenuItem x:Name="BackMenuItem"
-                      Click="BackMenuItem_Click"
-                      Width="62"
-                      Header="Назад" Height="31"
-                      />
-
-        </Menu>
+    <Canvas x:Name="Main" Width="1366" Height="728" MouseLeftButtonDown="Main_MouseLeftButtonDown">
+        <Image x:Name="OpenMenu" MouseLeftButtonDown="OpenMenu_MouseLeftButtonDown" MouseLeftButtonUp="OpenMenu_MouseLeftButtonUp" Source="openmenu.png" Width="40" Height="40"/>
+        <Grid x:Name="MenuGrid" Panel.ZIndex="2" MouseEnter="MenuGrid_MouseEnter" MouseLeave="MenuGrid_MouseLeave" Width="200" Height="728" Background="Black">
+            <Label x:Name="AccountLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="AccountLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 10, 0, 0" FontWeight="Bold">Аккаунт</Label>
+            <Label x:Name="LearnLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="LearnLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 40, 0, 0" FontWeight="Bold">Учить слова</Label>
+            <Label x:Name="TopicEditorLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="TopicEditorLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 70, 0, 0" FontWeight="Bold">Редактор тем</Label>
+            <Label x:Name="SettingsLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="SettingsLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 100, 0, 0" FontWeight="Bold">Настройки</Label>
+            <Label x:Name="ExitLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="ExitLabel_MouseLeftButtonDown"  Foreground="White" FontSize="16" Margin="40, 130, 0, 0" FontWeight="Bold">Выход</Label>
+        </Grid>
+        
         <TabControl Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1" Height="690" Margin="0,38,0,0">
             <TabItem x:Name="CreateTabItem" FontWeight="Bold" Header="Создать тему" BorderBrush="Black">
                 <Grid HorizontalAlignment="Center"
@@ -32,7 +32,7 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Height="26"
-                           Margin="148,129,235,141"
+                           Margin="130,73,259,197"
                            x:Name="CheckNameLabel" RenderTransformOrigin="0.567,-0.24" Width="25"/>
                     <TextBox x:Name="TopicsNameTextBox"
                              TextChanged="TopicsNameTextBox_TextChanged"
@@ -40,9 +40,9 @@
                              FontWeight="Bold"
                              Height="22"
                              VerticalAlignment="Center"
-                             BorderThickness="0"
-                             TextWrapping="Wrap" Width="120" Margin="23,127,271,147"/>
-                    <Line X1="0" Y1="0" X2="120" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="23,149,241,145"/>
+                             BorderThickness="0, 0, 0, 2"
+                             BorderBrush="Black"
+                             TextWrapping="NoWrap" Width="120" Margin="0,77,294,197"/>
                     <Button x:Name="CreateTopicButton"
                             Click="CreateTopicButton_Click"
                             BorderBrush="Black"
@@ -50,11 +50,11 @@
                             FontWeight="Bold"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Content="Создать" Width="87" Margin="42,162,279,114"/>
+                            Content="Создать" Width="87" Margin="23,114,304,162"/>
                     <Label Content="Название темы"
                            FontWeight="Bold"
                            Height="30"
-                           Margin="35,194,279,72"
+                           Margin="10,150,304,116"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
                     <Label Content="✖"
@@ -62,11 +62,11 @@
                            Foreground="Red"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Height="23" Margin="153,223,235,50" Width="20"/>
+                           Height="30" Margin="130,177,255,89" Width="29"/>
                     <Label Content="Название темы"
                            Height="30"
                            FontWeight="Bold"
-                           Margin="35,94,279,172"
+                           Margin="10,42,304,224"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center" RenderTransformOrigin="1.894,1.45"/>
                     <TextBox x:Name="DeleteTopicsNameTextBox"
@@ -74,11 +74,12 @@
                              Height="22"
                              FontWeight="Bold"
                              Width="120"
-                             Margin="23,224,271,50"
-                             BorderThickness="0"
+                             Margin="0,185,294,89"
+                             BorderThickness="0, 0, 0, 2"
+                             BorderBrush="Black"
                              HorizontalAlignment="Center"
+                             TextWrapping="NoWrap"
                              VerticalAlignment="Center"/>
-                    <Line X1="0" Y1="0" X2="120" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="23,246,241,48"/>
                     <Button x:Name="DeleteTopicButton"
                             Background="White"
                             BorderBrush="Black"
@@ -86,74 +87,77 @@
                             Click="DeleteTopicButton_Click"
                             Content="Удалить"
                             Width="87"
-                            Margin="42,259,279,17"
+                            Margin="23,223,304,53"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="EditTabItem" FontWeight="Bold" Header="Редактировать тему" BorderBrush="Black">
                 <Grid>
-
-                    <DataGrid x:Name="WordsDataGrid" SelectionChanged="WordsDataGrid_SelectionChanged" FontWeight="Bold" Background="White" BorderBrush="Black" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="537" Height="200" Margin="587,269,230,193">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Вопрос" Binding="{Binding Path=Question}"/>
-                            <DataGridTextColumn Header="Подсказка" Binding="{Binding Path=Hint}"/>
-                            <DataGridTextColumn Header="Ответ" Binding="{Binding Path=Answer}"/>
-                            <DataGridTextColumn Header="Путь к файлу озвучки" Binding="{Binding Path=Path}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
                     <Label x:Name="TopicNameLabel" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="776,150,440,512" Width="138"/>
                     <TextBox Height="23" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="SearchTextBox" TextChanged="SearchTextBox_TextChanged" Margin="208,147,1020,731" Width="132"/>
-                    <DataGrid x:Name="ExistingTopicsDataGrid2" FontWeight="Bold" Background="White" BorderBrush="Black" Margin="205,56,974,432" SelectionChanged="ExistingTopicsDataGrid2_SelectionChanged" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="175" Height="174">
+                    <DataGrid x:Name="ExistingTopicsDataGrid2" FontWeight="Bold" Background="White" BorderBrush="Black" Margin="19,74,1166,414" SelectionChanged="ExistingTopicsDataGrid2_SelectionChanged" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Center" Width="175" Height="174">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Тема" Binding="{Binding Path=Name}" Width="120" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TabControl x:Name="CreateEditTabControl" BorderBrush="Black" IsEnabled="False" Margin="205,260,799,193" Width="350">
-                        <TabItem Header="Изменить" FontWeight="Bold" BorderBrush="Black">
-                            <Grid Margin="0,-1,0,-2">
-                                <Image x:Name="UpButton" MouseLeftButtonDown="UpButton_MouseLeftButtonDown" Source="upbutton.png" Width="20" Height="20" Margin="280,27,44,128"/>
-                                <Image Source="downbutton.png" x:Name="DownButton" MouseLeftButtonDown="DownButton_MouseLeftButtonDown" Width="20" Height="20" Margin="280,60,44,95" RenderTransformOrigin="1.725,2.825"/>
-                                <Image Source="changebutton.png" x:Name="ChangeButton" MouseLeftButtonDown="ChangeButton_MouseLeftButtonDown" Margin="273,86,39,65"/>
-                                <Image Source="deletebutton.png" x:Name="DeleteButton" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown" Margin="273,120,39,31"/>
-                                <TextBox x:Name="InputQuestionTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="169,35,99,121"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="169,52,25,121"/>
-                                <TextBox x:Name="InputHintTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,63,98,93"/>
-                                <TextBox x:Name="InputAnswerTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,89,98,67"/>
-                                <TextBox x:Name="InputPathTextBox" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="170,112,98,42"/>
-                                <Label  Content="Вопрос" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="88,26,201,121" Width="55" Height="28"/>
-                                <Label Content="Подсказка" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="67,54,201,95" Width="76"/>
-                                <Label Content="Ответ" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="93,82,201,67" Width="50"/>
-                                <Label Content="Путь к файлу озвучки" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="13,110,191,36" Width="140"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="170,80,24,93"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="170,106,24,67"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="170,132,24,41"/>
 
-                            </Grid>
+                    <TabControl x:Name="CreateEditTabControl" Height="333" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="17,276,13,53" Width="1330">
+
+                        <TabItem Header="Изменить">
+                            <Canvas>
+                                <Grid AllowDrop="True" x:Name="WordInputGrid" Drop="WordInputGrid_Drop"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="97"/>
+                                <Grid AllowDrop="True" x:Name="TranslateInputGrid" Drop="WordInputGrid_Drop"   HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="137">
+                                </Grid>
+                                <Grid AllowDrop="True" x:Name="QuestionVoiceInputGrid" Drop="WordInputGrid_Drop"   HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="177">
+                                </Grid>
+                                <Grid AllowDrop="True"  x:Name="SentenceVoiceInputGrid" Drop="WordInputGrid_Drop" HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="217">
+                                </Grid>
+
+                                <Image x:Name="NewQuestionButton" Source="question.png" Width="38
+               "  MouseLeftButtonDown="NewQuestionButton_MouseLeftButtonDown" Height="31" Canvas.Left="18" Canvas.Top="26"></Image>
+                                <Image x:Name="NewContextButton" Source="context.png" Width="38
+               " Canvas.Left="61" Canvas.Top="15"  MouseLeftButtonDown="NewQuestionButton_MouseLeftButtonDown" Height="50" RenderTransformOrigin="0.636,1.516"></Image>
+                                <Button x:Name="TranslateButton" FontSize="20" Background="Transparent" Content="+" FontWeight="Bold" Canvas.Left="146" Canvas.Top="126" Width="32" Height="30"/>
+                                <Button x:Name="QuestionVoiceButton" FontSize="20" Background="Transparent" FontWeight="Bold" Content="+" Canvas.Left="146" Canvas.Top="166" Width="32" Height="30"/>
+                                <Button x:Name="SentenceVoiceButton" Content="+" FontSize="20" Background="Transparent" FontWeight="Bold" Canvas.Left="146" Canvas.Top="206" Width="32" Height="30">
+                                </Button>
+                                <Label Content="Перевод" FontWeight="Bold" Canvas.Left="5" Canvas.Top="126" Width="66"/>
+                                <Label Content="Озвучка вопросов" FontWeight="Bold" Canvas.Left="1" Canvas.Top="166" Width="129"/>
+                                <Label Content="Озвучка предложения" FontWeight="Bold" Canvas.Left="1" Canvas.Top="208" Width="156"/>
+                                <Image x:Name="UpButton" MouseLeftButtonDown="UpButton_MouseLeftButtonDown" Source="upbutton.png" Width="30" Height="30" Canvas.Left="22" Canvas.Top="253"></Image>
+                                <Image x:Name="DownButton" MouseLeftButtonDown="DownButton_MouseLeftButtonDown" Source="downbutton.png" Width="30" Height="30" Canvas.Left="54" Canvas.Top="256"></Image>
+                                <Image x:Name="DeleteButton" MouseLeftButtonDown="DeleteButton_MouseLeftButtonDown" Source="deletebutton.png" Width="30" Height="30" Canvas.Left="97" Canvas.Top="254"></Image>
+                            </Canvas>
                         </TabItem>
-                        <TabItem Header="Добавить" FontWeight="Bold" BorderBrush="Black">
-                            <Grid>
-                                <Image x:Name="AddButton" MouseLeftButtonDown="AddButton_MouseLeftButtonDown" Source="addbutton.png" HorizontalAlignment="Center" VerticalAlignment="Center" Height="30" Margin="276,75,38,67"/>
-                                <TextBox x:Name="InputQuestionTextBox2" BorderThickness="0" FontWeight="Bold" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="169,35,99,121"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="169,51,25,119"/>
-                                <TextBox x:Name="InputHintTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,63,98,93"/>
-                                <TextBox x:Name="InputAnswerTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="170,89,98,67"/>
-                                <TextBox x:Name="InputPathTextBox2" FontWeight="Bold" BorderThickness="0" MaxLength="50" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Height="18" Margin="170,112,98,42"/>
-                                <Label  Content="Вопрос" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="88,26,201,121" Width="55" Height="28"/>
-                                <Label Content="Подсказка" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="67,54,201,95" Width="76"/>
-                                <Label Content="Ответ" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="93,82,201,67" Width="50"/>
-                                <Label Content="Путь к файлу озвучки" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="13,110,191,36" Width="140"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="170,79,24,91"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="170,105,24,65"/>
-                                <Line X1="0" Y1="0" X2="76" Y2="0" StrokeThickness="2" Stroke="Black" Width="150" Height="2" Margin="170,131,24,39"/>
-                            </Grid>
+                        <TabItem Header="Добавить">
+                            <Canvas>
+                                <Image x:Name="AddButton" MouseLeftButtonDown="AddButton_MouseLeftButtonDown" Source="addbutton.png" Width="30" Height="30" Canvas.Left="26" Canvas.Top="250"></Image>
+                                <Grid AllowDrop="True" x:Name="WordInputGrid2" Drop="WordInputGrid2_Drop"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="97"/>
+                                <Grid AllowDrop="True" x:Name="TranslateInputGrid2" Drop="WordInputGrid2_Drop"   HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="137"/>
+                                <Grid AllowDrop="True" x:Name="QuestionVoiceInputGrid2" Drop="WordInputGrid2_Drop"   HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="177"/>
+                                <Grid AllowDrop="True"  x:Name="SentenceVoiceInputGrid2" Drop="WordInputGrid2_Drop" HorizontalAlignment="Center" VerticalAlignment="Center" Width="1108" Height="40" Background="#f0f8ff" Canvas.Left="192" Canvas.Top="217"/>
+                                <Image x:Name="NewQuestionButton2" Source="question.png" Width="38
+               "  MouseLeftButtonDown="NewQuestionButton_MouseLeftButtonDown" Height="31" Canvas.Left="18" Canvas.Top="26"></Image>
+                                <Image x:Name="NewContextButton2" Source="context.png" Width="38
+               " Canvas.Left="63" Canvas.Top="21"  MouseLeftButtonDown="NewQuestionButton_MouseLeftButtonDown" Height="36" RenderTransformOrigin="0.636,1.516"></Image>
+                                <Button x:Name="TranslateButton2" FontSize="20" Background="Transparent" Content="+" FontWeight="Bold" Canvas.Left="146" Canvas.Top="126" Width="32" Height="30"/>
+                                <Button x:Name="QuestionVoiceButton2" FontSize="20" Background="Transparent" FontWeight="Bold" Content="+" Canvas.Left="146" Canvas.Top="166" Width="32" Height="30"/>
+                                <Button x:Name="SentenceVoiceButton2" Content="+" FontSize="20" Background="Transparent" FontWeight="Bold" Canvas.Left="146" Canvas.Top="206" Width="32" Height="30">
+                                </Button>
+                                <Label Content="Перевод" FontWeight="Bold" Canvas.Left="5" Canvas.Top="126" Width="66"/>
+                                <Label Content="Озвучка вопросов" FontWeight="Bold" Canvas.Left="1" Canvas.Top="166" Width="129"/>
+                                <Label Content="Озвучка предложения" FontWeight="Bold" Canvas.Left="1" Canvas.Top="208" Width="156"/>
+                            </Canvas>
                         </TabItem>
                     </TabControl>
+
 
                 </Grid>
             </TabItem>
 
 
+
         </TabControl>
-    </Grid>
+    </Canvas>
 </Window>

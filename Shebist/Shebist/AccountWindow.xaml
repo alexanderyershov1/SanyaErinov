@@ -5,30 +5,30 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Shebist"
       mc:Ignorable="d"
-      Title="Шебист" Width="1366" Height="728" Loaded="AccountPage_Loaded" Closing="Window_Closing">
+      Title="Шебист" Width="1366" Height="728" Loaded="AccountWindow_Loaded" Closing="Window_Closing">
 
-    <Grid Background="White">
-        <TextBox x:Name="LoginTextBox" IsReadOnly="True" BorderThickness="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="369,103,413,271" TextWrapping="NoWrap" Width="120"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="393,120,437,271" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBox x:Name="NameTextBox" BorderThickness="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="369,134,413,240" TextWrapping="NoWrap" Width="120"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="393,151,437,240" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBox x:Name="EmailTextBox" BorderThickness="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="369,165,413,209" TextWrapping="NoWrap" Width="120"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="393,182,437,209" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <PasswordBox x:Name="PasswordBox" BorderThickness="0" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="369,196,413,178" Width="120"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="393,213,437,178" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Label Content="Логин" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="336,95,570,271" RenderTransformOrigin="0.328,0.483"/>
-        <Label Content="Имя" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="347,125,570,241" RenderTransformOrigin="0.328,0.483"/>
-        <Label Content="Почта" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="336,157,571,209" RenderTransformOrigin="0.328,0.483"/>
-        <Label Content="Пароль" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="328,188,571,178" RenderTransformOrigin="0.328,0.483"/>
-        <Button x:Name="ChangeButton" FontWeight="Bold" Background="White" Click="ChangeButton_Click" Content="Изменить" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="619,430,665,247" Width="74"/>
-        <Button x:Name="ExitButton" FontWeight="Bold" Background="White" Click="ExitButton_Click" Content="Выход" HorizontalAlignment="Center" Margin="619,464,665,213" VerticalAlignment="Center" Width="74"/>
-        <Menu Height="31" VerticalAlignment="Top">
-            <MenuItem x:Name="BackMenuItem" Click="BackMenuItem_Click" Header="Назад" Height="31" Width="76"/>
-        </Menu>
-        <Label x:Name="DeleteAccountLabel" MouseLeftButtonDown="DeleteAccountLabel_MouseLeftButtonDown" Content="Удалить аккаунт" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="404,356,437,10" RenderTransformOrigin="0.328,0.483" Width="109"/>
-        <PasswordBox x:Name="AgainPasswordBox" BorderThickness="0" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="598,384,640,294" Width="120" Height="19"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="598,402,640,293" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Label Content="Ещё раз" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="528,380,768,291" Width="62"/>
+    <Canvas x:Name="Main" MouseLeftButtonDown="Main_MouseLeftButtonDown" Background="White" Width="1366" Height="728">
+        <Image x:Name="OpenMenu" MouseLeftButtonDown="OpenMenu_MouseLeftButtonDown" MouseLeftButtonUp="OpenMenu_MouseLeftButtonUp" Source="openmenu.png" Width="40" Height="40" Margin="0,0,1326,688"/>
+        <Grid x:Name="MenuGrid" MouseEnter="MenuGrid_MouseEnter" MouseLeave="MenuGrid_MouseLeave" Width="200" Height="728" Background="Black" Margin="0,0,1166,0">
+            <Label x:Name="AccountLabel"  MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="AccountLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 10, 0, 0" FontWeight="Bold">Аккаунт</Label>
+            <Label x:Name="LearnLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="LearnLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 40, 0, 0" FontWeight="Bold">Учить слова</Label>
+            <Label x:Name="TopicEditorLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="TopicEditorLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 70, 0, 0" FontWeight="Bold">Редактор тем</Label>
+            <Label x:Name="SettingsLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="SettingsLabel_MouseLeftButtonDown" Foreground="White" FontSize="16" Margin="40, 100, 0, 0" FontWeight="Bold">Настройки</Label>
+            <Label x:Name="ExitLabel" MouseEnter="Label_MouseEnter" MouseLeave="Label_MouseLeave" MouseLeftButtonDown="ExitLabel_MouseLeftButtonDown"  Foreground="White" FontSize="16" Margin="40, 130, 0, 0" FontWeight="Bold">Выход</Label>
+        </Grid>
+        <TextBox x:Name="LoginTextBox" IsReadOnly="True" BorderThickness="0, 0, 0, 2" BorderBrush="Black" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap" Width="120" Canvas.Left="611" Canvas.Top="197"/>
+        <TextBox x:Name="NameTextBox" BorderThickness="0, 0, 0, 2" BorderBrush="Black" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap" Width="120" Canvas.Left="611" Canvas.Top="240"/>
+        <TextBox x:Name="EmailTextBox" BorderThickness="0, 0, 0, 2" BorderBrush="Black" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="NoWrap" Width="120" Canvas.Left="611" Canvas.Top="278"/>
+        <PasswordBox x:Name="PasswordBox" BorderThickness="0, 0, 0, 2" BorderBrush="Black" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" Canvas.Left="611" Canvas.Top="316"/>
+        <Label Content="Логин" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.328,0.483" Canvas.Left="528" Canvas.Top="189"/>
+        <Label Content="Имя" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.328,0.483" Canvas.Left="528" Canvas.Top="232"/>
+        <Label Content="Почта" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.328,0.483" Canvas.Left="528" Canvas.Top="270"/>
+        <Label Content="Пароль" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.328,0.483" Canvas.Left="528" Canvas.Top="308"/>
+        <Button x:Name="ChangeButton" FontWeight="Bold" Background="White" Click="ChangeButton_Click" Content="Изменить" HorizontalAlignment="Center" VerticalAlignment="Center" Width="74" Canvas.Left="636" Canvas.Top="398"/>
+        <Button x:Name="ExitButton" FontWeight="Bold" Background="White" Click="ExitButton_Click" Content="Выход" HorizontalAlignment="Center" VerticalAlignment="Center" Width="74" Canvas.Left="636" Canvas.Top="436"/>
+        <Label x:Name="DeleteAccountLabel" MouseLeftButtonDown="DeleteAccountLabel_MouseLeftButtonDown" Content="Удалить аккаунт" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.328,0.483" Width="109" Canvas.Left="622" Canvas.Top="493"/>
+        <PasswordBox x:Name="AgainPasswordBox" BorderThickness="0, 0, 0, 2" BorderBrush="Black" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" Height="18" Canvas.Left="611" Canvas.Top="352"/>
+        <Label Content="Ещё раз" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Width="62" Canvas.Left="528" Canvas.Top="344"/>
 
-    </Grid>
+    </Canvas>
 </Window>

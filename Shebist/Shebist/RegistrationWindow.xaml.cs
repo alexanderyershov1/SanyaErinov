@@ -28,10 +28,10 @@ namespace Shebist
         {
             InitializeComponent();
             ConfrimRegistrationGrid.Visibility = Visibility.Hidden;
-            CheckLoginLabel.Content = "";
-            CheckNameLabel.Content = "";
-            CheckEmailLabel.Content = "";
-            CheckPasswordLabel.Content = "";
+            CheckLoginLabel.Content = 
+            CheckNameLabel.Content = 
+            CheckEmailLabel.Content = 
+            CheckPasswordLabel.Content = 
             CheckPasswordsLabel.Content = "";
 
         }
@@ -51,7 +51,6 @@ namespace Shebist
         }
 
         static string Shebist = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).ToString()).ToString();
-
         string connectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Shebist}\UserDB.mdf;Integrated Security=True";
 
         MailAddress from = new MailAddress("alexanderyershov1@gmail.com", "Шебист");
@@ -83,7 +82,15 @@ namespace Shebist
 
         private void AlreadyHaveAnAccountLabel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            AuthorizationWindow aw = new AuthorizationWindow { users = users };
+            AuthorizationWindow aw = new AuthorizationWindow
+            {
+                WindowState = this.WindowState,
+                Top = this.Top,
+                Left = this.Left,
+                Width = this.Width,
+                Height = this.Height,
+                users = users
+            };
             aw.Show();
             this.Close();
         }
@@ -99,10 +106,23 @@ namespace Shebist
                     {
                         connection.Open();
                         command.Connection = connection;
-                        command.CommandText = $"INSERT INTO Users (Login, Name, Email, Password, CurrentTopicId, ChoiceOfTopicGridVisibility)" +
+                        string sequenceOfIndicesOfMainTopic = "";
+                        command.CommandText = "SELECT * FROM MainTopic";
+                        reader = command.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            int indexOfRow = 0;
+                            while (reader.Read())
+                            {
+                                sequenceOfIndicesOfMainTopic += indexOfRow++ + "~"; 
+                            }
+                        }
+                        reader.Close();
+
+                        command.CommandText = $"INSERT INTO Users (Login, Name, Email, Password, CurrentTopicId, ChoiceOfTopicGridVisibility, DateOfRegistration, LastEntrance, TotalInTheApp, SequenceOfIndicesOfMainTopic, IndexOfMainTopic, Status)" +
                         $" VALUES (N'{LoginTextBox.Text.Trim()}'," +
                             $" N'{NameTextBox.Text.Trim()}', N'{EmailTextBox.Text.Trim()}', N'{PasswordBox.Password.Trim()}'," +
-                            $" 0, 'Visible')";
+                            $" 0, 'Visible', N'{DateTime.Now.ToString()}', N'', N'{DateTime.MinValue.Subtract(DateTime.MinValue).ToString()}', N'{sequenceOfIndicesOfMainTopic}', 0, N'Offline')";
                         command.ExecuteNonQuery();
                         MessageBox.Show("Вы зарегистрированы");
                         command.CommandText = $"SELECT Login FROM Users WHERE Login = N'{LoginTextBox.Text.Trim()}'";
@@ -146,7 +166,16 @@ namespace Shebist
                     }
                 }
 
-                AuthorizationWindow aw = new AuthorizationWindow { users = users };
+                AuthorizationWindow aw = new AuthorizationWindow
+                {
+                    WindowState = this.WindowState,
+                    Top = this.Top,
+                    Left = this.Left,
+                    Width = this.Width,
+                    Height = this.Height,
+                    users = users
+                };
+
                 aw.Show();
                 this.Close();
             }

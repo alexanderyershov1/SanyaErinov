@@ -72,9 +72,19 @@
     <Compile Include="AccountWindow.xaml.cs">
       <DependentUpon>AccountWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DispatchWindow.xaml.cs">
+      <DependentUpon>DispatchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SentencesEditorWindow.xaml.cs">
+      <DependentUpon>SentencesEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserStatisticsWindow.xaml.cs">
+      <DependentUpon>UserStatisticsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AuthorizationWindow.xaml.cs">
       <DependentUpon>AuthorizationWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CurrentSentence.cs" />
     <Compile Include="DataRecovery2Window.xaml.cs">
       <DependentUpon>DataRecovery2Window.xaml</DependentUpon>
     </Compile>
@@ -84,6 +94,7 @@
     <Compile Include="RegistrationWindow.xaml.cs">
       <DependentUpon>RegistrationWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Sentence.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -92,8 +103,20 @@
       <DependentUpon>TopicEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="User.cs" />
-    <Compile Include="Word.cs" />
+    <Compile Include="UserForAdmin.cs" />
     <Page Include="AccountWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DispatchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SentencesEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserStatisticsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -188,6 +211,9 @@
     <Resource Include="downbutton.png" />
     <Resource Include="addbutton.png" />
     <Resource Include="SortByDefault.png" />
+    <Resource Include="question.png" />
+    <Resource Include="context.png" />
+    <Resource Include="openmenu.png" />
     <Content Include="UserDB.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

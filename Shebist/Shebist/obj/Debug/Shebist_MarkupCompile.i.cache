@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\SanyaErinov\Shebist\Shebist\App.xaml
-8-1351419692
+111697803680
 2-111805958
-19-1039277446
+24740537976
 131569487696
-AccountWindow.xaml;AuthorizationWindow.xaml;DataRecovery2Window.xaml;DataRecoveryWindow.xaml;MainWindow.xaml;RegistrationWindow.xaml;SettingsWindow.xaml;TopicEditorWindow.xaml;
+AccountWindow.xaml;DispatchWindow.xaml;SentencesEditorWindow.xaml;UserStatisticsWindow.xaml;AuthorizationWindow.xaml;DataRecovery2Window.xaml;DataRecoveryWindow.xaml;MainWindow.xaml;RegistrationWindow.xaml;SettingsWindow.xaml;TopicEditorWindow.xaml;
 
 False
 

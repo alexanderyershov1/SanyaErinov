@@ -10,8 +10,7 @@
 
     <Grid Background="White">
 
-        <TextBox x:Name="EnterYourEmailTextBox" BorderThickness="0" TextAlignment="Center" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="23" Margin="249,239,252,173" TextWrapping="Wrap" Width="285"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="285" Y2="0" Margin="336,261,339,173" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBox x:Name="EnterYourEmailTextBox" BorderThickness="0, 0, 0, 2" BorderBrush="Black" TextAlignment="Center" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="23" Margin="249,239,252,173" TextWrapping="Wrap" Width="285"/>
         <Label x:Name="EnterYourEmailLabel" Content="Введите вашу почту"  Foreground="Black" FontWeight="Bold"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="326,202,339,207"  RenderTransformOrigin="0.261,-0.301"/>
         <Label x:Name="BackLabel"
                Foreground="Black"
@@ -39,7 +38,7 @@
             <TextBox x:Name="ConfirmTextBox"
                  TextChanged="ConfirmTextBox_TextChanged"
                  MaxLength="5"
-                 BorderThickness="0"
+                 BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                  TextAlignment="Center"
                  HorizontalAlignment="Center"
                  Height="24"

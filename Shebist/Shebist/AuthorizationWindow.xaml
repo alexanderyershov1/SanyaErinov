@@ -13,18 +13,17 @@
         <TextBox x:Name="LoginTextBox"
                  FontWeight="Bold"
                  Foreground="Gray"
-                 TextChanged="LoginTextBox_TextChanged"
+                 TextChanged="TextBox_TextChanged"
                  TextAlignment="Center"
-                 BorderThickness="0"
+                 BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                  HorizontalAlignment="Center" Height="22" Margin="314,90,284,233" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="314,111,284,233" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Label x:Name="LoginLabel" FontSize="16" FontWeight="Bold" Foreground="Black" Content="Логин" HorizontalAlignment="Center" Margin="339,54,321,260" VerticalAlignment="Center"/>
         <Label x:Name="PasswordLabel" FontWeight="Bold" FontSize="16" Foreground="Black"  Content="Пароль" HorizontalAlignment="Center" Margin="334,123,315,189" VerticalAlignment="Center"/>
         <Button x:Name="LoginButton" BorderBrush="Black" BorderThickness="2" FontWeight="Bold" Background="White" Content="Войти" HorizontalAlignment="Center" Margin="334,225,308,98" VerticalAlignment="Center" Width="76" Click="LoginButton_Click"/>
         <Label x:Name="NoAccountYet"
                FontSize="12"
-               MouseEnter="NoAccountYet_MouseEnter"
-               MouseLeave="NoAccountYet_MouseLeave"
+               MouseEnter="Label_MouseEnter"
+               MouseLeave="Label_MouseLeave"
                FontWeight="Bold"
                    Foreground="Black"
                MouseLeftButtonDown="NoAccountYet_MouseLeftButtonDown"
@@ -38,12 +37,11 @@
                    Foreground="Black"
                FontWeight="Bold"
                FontSize="12"
-               MouseEnter="DataRecoveryLabel_MouseEnter"
-               MouseLeave="DataRecoveryLabel_MouseLeave"
+               MouseEnter="Label_MouseEnter"
+               MouseLeave="Label_MouseLeave"
             MouseLeftButtonDown="DataRecoveryLabel_MouseLeftButtonDown"
             Content="Забыли пароль?" HorizontalAlignment="Center" Margin="327,310,285,9" VerticalAlignment="Center"/>
         <Label x:Name="WrongDataLabel" FontWeight="Bold" Content="Неверный логин или пароль" Foreground="Red" HorizontalAlignment="Center" Margin="285,252,253,67" VerticalAlignment="Center"/>
-        <PasswordBox x:Name="PasswordBox" Foreground="Gray" BorderThickness="0" HorizontalContentAlignment="Center" PasswordChanged="PasswordBox_PasswordChanged"  HorizontalAlignment="Center" Margin="305,154,275,164" VerticalAlignment="Center" Width="120" Height="20"/>
-        <Line Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="120" Y2="0" Margin="314,178,284,167" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-    </Grid>
+        <PasswordBox x:Name="PasswordBox" Foreground="Gray" BorderThickness="0, 0, 0, 2" BorderBrush="Black" HorizontalContentAlignment="Center" PasswordChanged="PasswordBox_PasswordChanged"   HorizontalAlignment="Center" Margin="305,154,275,164" VerticalAlignment="Center" Width="120" Height="20"/>
+       </Grid>
 </Window>

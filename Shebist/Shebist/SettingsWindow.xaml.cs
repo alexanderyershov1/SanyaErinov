@@ -21,11 +21,11 @@ namespace Shebist
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        Grid grid;
-        public SettingsWindow(Grid grid)
+        Canvas canvas;
+        public SettingsWindow(Canvas canvas)
         {
             InitializeComponent();
-            this.grid = grid;
+            this.canvas = canvas;
         }
 
         private void MainWindowOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -54,7 +54,7 @@ namespace Shebist
                 //MessageBox.Show(imageData);
                 ImageBrush background = new ImageBrush();
                 background.ImageSource = new BitmapImage(new Uri(fileName, UriKind.Absolute));
-                grid.Background = background;
+                canvas.Background = background;
             }         
         }
     }

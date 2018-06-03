@@ -13,8 +13,7 @@
 
         <TextBox x:Name="LoginTextBox"
                  TextChanged="LoginTextBox_TextChanged"
-                 BorderBrush="Black"
-                 BorderThickness="0"
+                 BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                  MaxLength="50"
                  TextAlignment="Center"
                  HorizontalAlignment="Center"
@@ -22,23 +21,21 @@
                  Height="22" Margin="298,92,266,312"
                  TextWrapping="Wrap"
                  Width="276"/>
-        <Line Stroke="Black" VerticalAlignment="Center" HorizontalAlignment="Center" StrokeThickness="2" X1="0" Y1="0" X2="276" Y2="0" Margin="302,113,269,312"/>
 
         <TextBox x:Name="EmailTextBox"
                  TextChanged="EmailTextBox_TextChanged"
                  MaxLength="50"
-                 BorderThickness="0"
+                 BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                  TextAlignment="Center"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  Height="22" Margin="297,167,266,237"
                  TextWrapping="Wrap"
                  Width="276"/>
-        <Line Stroke="Black" VerticalAlignment="Center" HorizontalAlignment="Center" StrokeThickness="2" X1="0" Y1="0" X2="276" Y2="0" Margin="301,188,270,237"/>
 
         <TextBox x:Name="NameTextBox"
                  TextChanged="NameTextBox_TextChanged"
-                 BorderThickness="0"
+                 BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                  MaxLength="50"
                  TextAlignment="Center"
                  HorizontalAlignment="Center"
@@ -47,7 +44,6 @@
                  Margin="297,129,266,273"
                  TextWrapping="Wrap"
                  Width="276"/>
-        <Line Stroke="Black" VerticalAlignment="Center" HorizontalAlignment="Center" StrokeThickness="2" X1="0" Y1="0" X2="276" Y2="0" Margin="301,152,270,273"/>
 
 
         <Label x:Name="LoginLabel"
@@ -139,7 +135,7 @@
                Width="212"/>
 
         <PasswordBox x:Name="PasswordBox"
-                     BorderThickness="0"
+                     BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                      HorizontalContentAlignment="Center"
                      PasswordChanged="PasswordBox_PasswordChanged"
                      HorizontalAlignment="Center"
@@ -147,10 +143,9 @@
                      Margin="297,204,266,201"
                      Width="276"
                      Height="21"/>
-        <Line Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="2" X1="0" Y1="0" X2="276" Y2="0" Margin="301,224,270,201"/>
 
         <PasswordBox x:Name="ConfirmPasswordBox"
-                     BorderThickness="0"
+                     BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                      HorizontalContentAlignment="Center"
                      PasswordChanged="ConfirmPasswordBox_PasswordChanged"
                      HorizontalAlignment="Center"
@@ -158,7 +153,6 @@
                      Margin="298,244,266,162"
                      Width="276"
                      Height="20"/>
-        <Line Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="2" X1="0" Y1="0" X2="276" Y2="0" Margin="302,263,269,162"/>
 
         <Label x:Name="ConfirmPasswordLabel"
                Foreground="Black"
@@ -177,7 +171,7 @@
                Margin="590,238,45,162"
                Width="212"/>
 
-        <Grid x:Name="ConfrimRegistrationGrid" Width="100" Height="100">
+        <Grid x:Name="ConfrimRegistrationGrid" Height="100" Margin="487,496,387,101">
 
             <Label x:Name="ConfirmRegistrationLabel"
                Foreground="Black"
@@ -185,22 +179,19 @@
                Content="Введите код, отправленный на"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Margin="302,350,0,50"
-               Width="545"/>
+               Width="544" Margin="36,20,-96,54"/>
 
             <TextBox x:Name="ConfirmRegistrationTextBox"
-                 BorderThickness="0"
+                 BorderThickness="0, 0, 0, 2" BorderBrush="Black"
                  TextChanged="ConfirmRegistrationTextBox_TextChanged"
                  MaxLength="5"
                  TextAlignment="Center"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  Height="23"
-                 Margin="298,381,266,22"
                  TextWrapping="Wrap"
-                 Width="276"/>
+                 Width="276" Margin="103,58,105,19"/>
 
-            <Line Stroke="Black" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeThickness="2" X1="0" Y1="0" X2="276" Y2="0" Margin="302,403,269,22"/>
 
         </Grid>
     </Grid>

@@ -37,7 +37,6 @@ D:\SanyaErinov\Shebist\Shebist\bin\Debug\UserDB_log.ldf
 D:\SanyaErinov\Shebist\Shebist\bin\Debug\Shebist.exe.config
 D:\SanyaErinov\Shebist\Shebist\bin\Debug\Shebist.exe
 D:\SanyaErinov\Shebist\Shebist\bin\Debug\Shebist.pdb
-D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.csprojResolveAssemblyReference.cache
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\MainWindow.g.cs
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\SettingsWindow.g.cs
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\App.g.cs
@@ -98,3 +97,10 @@ D:\SanyaErinov\Shebist\Shebist\obj\Debug\DataRecovery2Window.baml
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\DataRecoveryWindow.baml
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\RegistrationWindow.baml
 D:\SanyaErinov\Shebist\Shebist\obj\Debug\TopicEditorWindow.baml
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\Shebist.csprojAssemblyReference.cache
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\UserStatisticsWindow.g.cs
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\UserStatisticsWindow.baml
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\DispatchWindow.g.cs
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\SentencesEditorWindow.g.cs
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\DispatchWindow.baml
+D:\SanyaErinov\Shebist\Shebist\obj\Debug\SentencesEditorWindow.baml
