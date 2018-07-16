@@ -1,0 +1,11 @@
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\bin\Debug\netcoreapp2.0\AspNetCoreChatRoom.deps.json
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\bin\Debug\netcoreapp2.0\AspNetCoreChatRoom.runtimeconfig.json
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\bin\Debug\netcoreapp2.0\AspNetCoreChatRoom.runtimeconfig.dev.json
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\bin\Debug\netcoreapp2.0\AspNetCoreChatRoom.dll
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\bin\Debug\netcoreapp2.0\AspNetCoreChatRoom.pdb
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\obj\Debug\netcoreapp2.0\AspNetCoreChatRoom.csprojResolveAssemblyReference.cache
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\obj\Debug\netcoreapp2.0\AspNetCoreChatRoom.csproj.CoreCompileInputs.cache
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\obj\Debug\netcoreapp2.0\AspNetCoreChatRoom.AssemblyInfoInputs.cache
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\obj\Debug\netcoreapp2.0\AspNetCoreChatRoom.AssemblyInfo.cs
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\obj\Debug\netcoreapp2.0\AspNetCoreChatRoom.dll
+D:\AspNetCoreChatRoom\AspNetCoreChatRoom\obj\Debug\netcoreapp2.0\AspNetCoreChatRoom.pdb
